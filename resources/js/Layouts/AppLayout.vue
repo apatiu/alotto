@@ -75,13 +75,6 @@
                                                     สร้างสาขาใหม่
                                                 </jet-dropdown-link>
 
-
-                                                <div class="border-t border-gray-100"></div>
-
-                                                <jet-dropdown-link :href="route('teams.create')">
-                                                    ตั้งค่าบริษัท
-                                                </jet-dropdown-link>
-
                                             </template>
                                         </div>
                                     </template>
