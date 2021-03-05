@@ -60,6 +60,7 @@ class CreateUserCommand extends Command
 //        $admin = $this->user->create($details);
 //        dd($details);
         $user = $this->creator->create($details);
+        $user->assignRole('admin');
         $this->display($user);
     }
 

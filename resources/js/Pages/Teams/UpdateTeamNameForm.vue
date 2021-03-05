@@ -1,7 +1,7 @@
 <template>
     <jet-form-section @submitted="updateTeamName">
         <template #title>
-            Team Name
+            ชื่อสาขา
         </template>
 
         <template #description>

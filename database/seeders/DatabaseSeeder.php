@@ -15,6 +15,6 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
-        $role = Role::firstOrCreate(['name' => 'superadmin']);
+        $role = Role::firstOrCreate(['name' => 'admin']);
     }
 }
