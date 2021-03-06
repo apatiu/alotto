@@ -230,7 +230,6 @@
 
             <!-- Page Content -->
             <main>
-                {{ $page.props }}
                 <slot></slot>
             </main>
         </div>
