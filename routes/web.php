@@ -28,4 +28,9 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
-Route::resource('company', \App\Http\Controllers\CompanyController::class);
+Route::middleware(['role:admin'])->group(function () {
+
+    Route::resource('settings', \App\Http\Controllers\SettingController::class);
+    Route::resource('company', \App\Http\Controllers\CompanyController::class);
+
+});
