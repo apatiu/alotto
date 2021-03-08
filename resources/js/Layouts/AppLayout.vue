@@ -135,6 +135,9 @@
                                             <jet-responsive-nav-link :href="route('settings.index')">
                                                 System settings
                                             </jet-responsive-nav-link>
+                                            <jet-responsive-nav-link :href="route('users')">
+                                                User manager
+                                            </jet-responsive-nav-link>
                                         </template>
 
                                         <jet-dropdown-link :href="route('api-tokens.index')"

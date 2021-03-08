@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -31,6 +32,27 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 Route::middleware(['role:admin'])->group(function () {
     Route::resource('settings', \App\Http\Controllers\SettingController::class);
     Route::resource('company', \App\Http\Controllers\CompanyController::class);
+
+    Route::get('users', [UsersController::class, 'index'])
+        ->name('users');
+
+    Route::get('users/create', [UsersController::class, 'create'])
+        ->name('users.create');
+
+    Route::post('users', [UsersController::class, 'store'])
+        ->name('users.store');
+
+    Route::get('users/{user}/edit', [UsersController::class, 'edit'])
+        ->name('users.edit');
+
+    Route::put('users/{user}', [UsersController::class, 'update'])
+        ->name('users.update');
+
+    Route::delete('users/{user}', [UsersController::class, 'destroy'])
+        ->name('users.destroy');
+
+    Route::put('users/{user}/restore', [UsersController::class, 'restore'])
+        ->name('users.restore');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
