@@ -10,7 +10,7 @@
 
         <template #form>
             <!-- Profile Photo -->
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-12">
                 <input type="file" class="hidden"
                        ref="photo"
                        @change="updatePhotoPreview">
@@ -42,10 +42,25 @@
             </div>
 
             <!--             Name-->
-            <div class="col-span-6 sm:col-span-4">
+            <div class="col-span-6 sm:col-span-8">
                 <jet-label for="name" value="ชื่อบริษัท"/>
                 <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autocomplete="name"/>
                 <jet-input-error :message="form.errors.name" class="mt-2"/>
+            </div>
+            <div class="col-span-12">
+                <jet-label for="addr" value="ที่อยู่"></jet-label>
+                <jet-input id="addr" type="text" class="mt-1 block w-full" v-model="form.addr" autocomplete="addr"/>
+                <jet-input-error :message="form.errors.addr" class="mt-2"/>
+            </div>
+            <div class="col-span-6">
+                <jet-label for="tax_id" value="เลขผู้เสียภาษี"></jet-label>
+                <jet-input id="tax_id" type="text" class="mt-1 block w-full" v-model="form.tax_id" />
+                <jet-input-error :message="form.errors.tax_id" class="mt-2"/>
+            </div>
+            <div class="col-span-6">
+                <jet-label for="tel" value="เบอร์โทร"></jet-label>
+                <jet-input id="tel" type="text" class="mt-1 block w-full" v-model="form.tel" />
+                <jet-input-error :message="form.errors.tel" class="mt-2"/>
             </div>
 
             <!-- Email -->
@@ -95,6 +110,9 @@ export default {
             form: this.$inertia.form({
                 _method: 'POST',
                 name: this.company.name,
+                addr: this.company.addr,
+                tel: this.company.tel,
+                tax_id: this.company.tax_id,
                 photo: null,
             }),
 

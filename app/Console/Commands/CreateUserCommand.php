@@ -68,7 +68,6 @@ class CreateUserCommand extends Command
     {
         $details['name'] = $this->ask('Name');
         $details['username'] = $this->ask('Username');
-        $details['email'] = $this->ask('Email');
         $details['password'] = $this->secret('Password');
         $details['password_confirmation'] = $this->secret('Confirm password');
 
@@ -90,12 +89,11 @@ class CreateUserCommand extends Command
 
     private function display(User $admin): void
     {
-        $headers = ['Name', 'Username', 'Email'];
+        $headers = ['Name', 'Username'];
 
         $fields = [
             'Name' => $admin->name,
             'username' => $admin->username,
-            'email' => $admin->email
         ];
 
         $this->info('User created');

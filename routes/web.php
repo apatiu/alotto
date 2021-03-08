@@ -29,8 +29,10 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['role:admin'])->group(function () {
-
     Route::resource('settings', \App\Http\Controllers\SettingController::class);
     Route::resource('company', \App\Http\Controllers\CompanyController::class);
+});
 
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::post('teammembers/{team}/members', [\App\Http\Controllers\TeamMemberController::class, 'store'])->name('teammembers.store');
 });
