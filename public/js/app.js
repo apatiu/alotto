@@ -25041,7 +25041,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" ชื่อสาขา ");
 
-var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" The team's name and owner information. ");
+var _hoisted_2 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" ข้อมูลพื้นฐานของสาขา. ");
 
 var _hoisted_3 = {
   "class": "col-span-6"
@@ -25087,7 +25087,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     form: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Team Owner Information "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        value: "Team Owner"
+        value: "ผู้ดูแลสาขา"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("img", {
         "class": "w-12 h-12 rounded-full object-cover",
         src: $props.team.owner.profile_photo_url,
@@ -25100,7 +25100,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       /* TEXT */
       )])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" Team Name "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
         "for": "name",
-        value: "Team Name"
+        value: "ชื่อสาขา"
       }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
         id: "name",
         type: "text",

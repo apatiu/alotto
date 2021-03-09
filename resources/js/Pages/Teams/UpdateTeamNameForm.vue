@@ -5,13 +5,13 @@
         </template>
 
         <template #description>
-            The team's name and owner information.
+            ข้อมูลพื้นฐานของสาขา.
         </template>
 
         <template #form>
             <!-- Team Owner Information -->
             <div class="col-span-6">
-                <jet-label value="Team Owner" />
+                <jet-label value="ผู้ดูแลสาขา" />
 
                 <div class="flex items-center mt-2">
                     <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
@@ -25,7 +25,7 @@
 
             <!-- Team Name -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="Team Name" />
+                <jet-label for="name" value="ชื่อสาขา" />
 
                 <jet-input id="name"
                             type="text"
