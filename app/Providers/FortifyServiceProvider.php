@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Fortify;
+use Laravel\Jetstream\Jetstream;
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -33,6 +34,7 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         Fortify::createUsersUsing(CreateNewUser::class);
         Fortify::updateUserProfileInformationUsing(UpdateUserProfileInformation::class);
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);

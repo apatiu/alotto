@@ -302,7 +302,7 @@ export default {
     data() {
         return {
             addTeamMemberForm: this.$inertia.form({
-                username: '',
+                username: null,
                 role: null,
             }),
 
@@ -322,8 +322,8 @@ export default {
 
     methods: {
         addTeamMember() {
-            this.addTeamMemberForm.post(route('teammembers.store', this.team), {
-                errorBag: 'addTeamMember',
+            this.addTeamMemberForm.post(route('team-members.store', this.team), {
+                errorBag: 'addTeamMemberForm',
                 preserveScroll: true,
                 onSuccess: () => this.addTeamMemberForm.reset(),
             });

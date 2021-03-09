@@ -44,7 +44,8 @@
             <!--             Name-->
             <div class="col-span-6 sm:col-span-8">
                 <jet-label for="name" value="ชื่อบริษัท"/>
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autocomplete="name"/>
+                <jet-input id="name" type="text" class="mt-1 block w-full"
+                           v-model="form.name" autocomplete="name"/>
                 <jet-input-error :message="form.errors.name" class="mt-2"/>
             </div>
             <div class="col-span-12">

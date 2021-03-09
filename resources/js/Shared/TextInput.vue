@@ -1,39 +1,48 @@
 <template>
-  <div>
-    <label v-if="label" class="form-label" :for="id">{{ label }}:</label>
-    <input :id="id" ref="input" v-bind="$attrs" class="form-input" :class="{ error: error }" :type="type" :value="value" @input="$emit('input', $event.target.value)" />
-    <div v-if="error" class="form-error">{{ error }}</div>
-  </div>
+    <jet-label v-if="label" :for="id">{{ label }}:</jet-label>
+    <jet-input :id="id"
+               :type="type"
+               class="w-full"
+               :value="modelValue"
+               @update:modelValue="$emit('update:modelValue', $event)"/>
+    <input-error :message="error"></input-error>
+
 </template>
 
 <script>
+import JetInput from '@/Jetstream/Input'
+import JetLabel from '@/Jetstream/Label'
+import InputError from "@/Jetstream/InputError";
+
 export default {
-  inheritAttrs: false,
-  props: {
-    id: {
-      type: String,
-      default() {
-        return `text-input-${this._uid}`
-      },
+    components: {InputError, JetInput, JetLabel},
+    inheritAttrs: false,
+    props: {
+        id: {
+            type: String,
+        },
+        type: {
+            type: String,
+            default: 'text',
+        },
+        modelValue: String,
+        label: String,
+        error: String,
     },
-    type: {
-      type: String,
-      default: 'text',
+    methods: {
+        focus() {
+            this.$refs.input.focus()
+        },
+        select() {
+            this.$refs.input.select()
+        },
+        setSelectionRange(start, end) {
+            this.$refs.input.setSelectionRange(start, end)
+        },
+        emit($event) {
+            this.$emit('input', $event.target.value);
+            console.log($event.target.value)
+        }
     },
-    value: String,
-    label: String,
-    error: String,
-  },
-  methods: {
-    focus() {
-      this.$refs.input.focus()
-    },
-    select() {
-      this.$refs.input.select()
-    },
-    setSelectionRange(start, end) {
-      this.$refs.input.setSelectionRange(start, end)
-    },
-  },
 }
 </script>
