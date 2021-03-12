@@ -4,14 +4,14 @@
             สร้างสินค้า
         </template>
         <template #content>
-            <div class="grid-cols-3">
-                <div class="col-span-3">
+            <div class="grid-cols-6 space-y-1">
+                <div class="col-span-6">
                     สาขา: {{ $page.props.user.current_team.name }}
                 </div>
-                <div class="">
-                    <jet-label for="name" value="ชื่อ"/>
-                    <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name"/>
-                    <jet-input-error :message="form.errors.name" class="mt-2"/>
+                <div class="col-span-3">
+                    <jet-label for="id" value="รหัสสินค้า"/>
+                    <jet-input id="id" type="text" class="mt-1 block w-full" v-model="form.id"/>
+                    <jet-input-error :message="form.errors.id" class="mt-2"/>
                 </div>
             </div>
         </template>
@@ -35,7 +35,11 @@ export default {
     components: {JetDropdown, JetLabel, JetInput, JetInputError, JetButton, DialogModal},
     props: {
         value: Object,
-        show: {type: Boolean, default: false}
+        show: {type: Boolean, default: false},
+        mode: {
+            type: String,
+            default: 'normal'
+        }
     },
     data() {
         return {
