@@ -49,9 +49,9 @@ class CompanyController extends Controller
         }
 
         Meta::set('company_name', $request->input('name'));
-        Meta::set('company_addr', $request->input('addr',''));
-        Meta::set('company_tel', $request->input('tel',''));
-        Meta::set('company_tax_id', $request->input('tax_id',''));
+        Meta::set('company_addr', $request->input('addr',) ?? '');
+        Meta::set('company_tel', $request->input('tel','') ?? '');
+        Meta::set('company_tax_id', $request->input('tax_id','') ?? '');
         return redirect()->back();
     }
 

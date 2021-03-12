@@ -27,7 +27,8 @@ class UpdateTeamsTable extends Migration
     public function down()
     {
         Schema::table('teams', function (Blueprint $table) {
-            //
+            $table->removeColumn('branch_number');
+            $table->removeColumn('addr');
         });
     }
 }

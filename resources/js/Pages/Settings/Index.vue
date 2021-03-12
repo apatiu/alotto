@@ -14,7 +14,7 @@
                 </div>
 
                 <div v-if="$page.props.jetstream.canUpdatePassword">
-<!--                    <update-password-form class="mt-10 sm:mt-0" />-->
+                    <update-company-config :data="company_config" class="mt-10 sm:mt-0" />
 
                     <jet-section-border />
                 </div>
@@ -41,14 +41,16 @@
 import AppLayout from '@/Layouts/AppLayout'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import CompanyData from './CompanyData'
+import UpdateCompanyConfig from "@/Pages/Settings/UpdateCompanyConfig";
 
 export default {
-    props: ['company'],
+    props: ['company','company_config'],
 
     components: {
         AppLayout,
         JetSectionBorder,
-        CompanyData
+        CompanyData,
+        UpdateCompanyConfig
 
     },
 }

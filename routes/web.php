@@ -1,14 +1,23 @@
 <?php
 
 use App\Http\Controllers\BranchMemberController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyConfigController;
+use App\Http\Controllers\TeamController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Jetstream\Http\Controllers\CurrentTeamController;
 use Laravel\Jetstream\Http\Controllers\Inertia\ApiTokenController;
-use Laravel\Jetstream\Http\Controllers\Inertia\TeamController;
+use Laravel\Jetstream\Http\Controllers\Inertia\CurrentUserController;
+use Laravel\Jetstream\Http\Controllers\Inertia\OtherBrowserSessionsController;
+use Laravel\Jetstream\Http\Controllers\Inertia\PrivacyPolicyController;
+use Laravel\Jetstream\Http\Controllers\Inertia\ProfilePhotoController;
 use Laravel\Jetstream\Http\Controllers\Inertia\TeamMemberController;
+use Laravel\Jetstream\Http\Controllers\Inertia\TermsOfServiceController;
+use Laravel\Jetstream\Http\Controllers\Inertia\UserProfileController;
 use Laravel\Jetstream\Http\Controllers\TeamInvitationController;
 use Laravel\Jetstream\Jetstream;
 
@@ -38,7 +47,8 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::middleware(['role:admin'])->group(function () {
     Route::resource('settings', \App\Http\Controllers\SettingController::class);
-    Route::resource('company', \App\Http\Controllers\CompanyController::class);
+    Route::resource('company', CompanyController::class);
+    Route::resource('company-config', CompanyConfigController::class);
 
     Route::get('users', [UsersController::class, 'index'])
         ->name('users');
@@ -66,6 +76,9 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 });
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
+
+    Route::resource('products',ProductController::class);
+
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
         Route::get('/terms-of-service', [TermsOfServiceController::class, 'show'])->name('terms.show');
         Route::get('/privacy-policy', [PrivacyPolicyController::class, 'show'])->name('policy.show');
