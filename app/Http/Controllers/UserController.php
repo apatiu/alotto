@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Laravel\Jetstream\Jetstream;
 
-class UsersController extends Controller
+class UserController extends Controller
 {
     use PasswordValidationRules;
 

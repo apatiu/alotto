@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\BranchMemberController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyConfigController;
 use App\Http\Controllers\TeamController;
@@ -50,25 +51,25 @@ Route::middleware(['role:admin'])->group(function () {
     Route::resource('company', CompanyController::class);
     Route::resource('company-config', CompanyConfigController::class);
 
-    Route::get('users', [UsersController::class, 'index'])
+    Route::get('users', [UserController::class, 'index'])
         ->name('users');
 
-    Route::get('users/create', [UsersController::class, 'create'])
+    Route::get('users/create', [UserController::class, 'create'])
         ->name('users.create');
 
-    Route::post('users', [UsersController::class, 'store'])
+    Route::post('users', [UserController::class, 'store'])
         ->name('users.store');
 
-    Route::get('users/{user}/edit', [UsersController::class, 'edit'])
+    Route::get('users/{user}/edit', [UserController::class, 'edit'])
         ->name('users.edit');
 
-    Route::put('users/{user}', [UsersController::class, 'update'])
+    Route::put('users/{user}', [UserController::class, 'update'])
         ->name('users.update');
 
-    Route::delete('users/{user}', [UsersController::class, 'destroy'])
+    Route::delete('users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy');
 
-    Route::put('users/{user}/restore', [UsersController::class, 'restore'])
+    Route::put('users/{user}/restore', [UserController::class, 'restore'])
         ->name('users.restore');
 });
 
@@ -78,6 +79,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
 
     Route::resource('products',ProductController::class);
+    Route::resource('customers',CustomerController::class);
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
         Route::get('/terms-of-service', [TermsOfServiceController::class, 'show'])->name('terms.show');

@@ -20,7 +20,8 @@
                                 <jet-nav-link :href="route('dashboard')" :active="route().current('dashboard')">
                                     Dashboard
                                 </jet-nav-link>
-                                <jet-nav-link :href="route('products.index')" :active="route().current('products.index')">
+                                <jet-nav-link :href="route('products.index')"
+                                              :active="route().current('products.index')">
                                     สินค้า
                                 </jet-nav-link>
                             </div>
@@ -66,7 +67,7 @@
                                                                      stroke-width="2" stroke="currentColor"
                                                                      viewBox="0 0 24 24">
                                                                     <path
-                                                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                                 </svg>
                                                                 <div>{{ team.name }}</div>
                                                             </div>
@@ -82,7 +83,7 @@
 
                                                 <!-- Team Settings -->
                                                 <jet-dropdown-link
-                                                    :href="route('teams.show', $page.props.user.current_team)">
+                                                        :href="route('teams.show', $page.props.user.current_team)">
                                                     ตั้งค่าสาขา
                                                 </jet-dropdown-link>
 
@@ -167,13 +168,13 @@
                                     class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
-                                        :class="{'hidden': showingNavigationDropdown, 'inline-flex': ! showingNavigationDropdown }"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16"/>
+                                            :class="{'hidden': showingNavigationDropdown, 'inline-flex': ! showingNavigationDropdown }"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 6h16M4 12h16M4 18h16"/>
                                     <path
-                                        :class="{'hidden': ! showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12"/>
+                                            :class="{'hidden': ! showingNavigationDropdown, 'inline-flex': showingNavigationDropdown }"
+                                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"/>
                                 </svg>
                             </button>
                         </div>
@@ -277,8 +278,13 @@
                 </div>
             </header>
 
+            <side class="sidebar absolute p-1">
+                <sidebar :items="sidebarItems"></sidebar>
+                <slot name="sidebar"></slot>
+            </side>
+
             <!-- Page Content -->
-            <main>
+            <main class="main-content">
                 <slot></slot>
             </main>
         </div>
@@ -286,41 +292,57 @@
 </template>
 
 <script>
-import JetApplicationMark from '@/Jetstream/ApplicationMark'
-import JetBanner from '@/Jetstream/Banner'
-import JetDropdown from '@/Jetstream/Dropdown'
-import JetDropdownLink from '@/Jetstream/DropdownLink'
-import JetNavLink from '@/Jetstream/NavLink'
-import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink'
+    import JetApplicationMark from '@/Jetstream/ApplicationMark'
+    import JetBanner from '@/Jetstream/Banner'
+    import JetDropdown from '@/Jetstream/Dropdown'
+    import JetDropdownLink from '@/Jetstream/DropdownLink'
+    import JetNavLink from '@/Jetstream/NavLink'
+    import JetResponsiveNavLink from '@/Jetstream/ResponsiveNavLink'
+    import Sidebar from "@/Shared/Sidebar";
 
-export default {
-    components: {
-        JetApplicationMark,
-        JetBanner,
-        JetDropdown,
-        JetDropdownLink,
-        JetNavLink,
-        JetResponsiveNavLink,
-    },
-
-    data() {
-        return {
-            showingNavigationDropdown: false,
-        }
-    },
-
-    methods: {
-        switchToTeam(team) {
-            this.$inertia.put(route('current-team.update'), {
-                'team_id': team.id
-            }, {
-                preserveState: false
-            })
+    export default {
+        components: {
+            Sidebar,
+            JetApplicationMark,
+            JetBanner,
+            JetDropdown,
+            JetDropdownLink,
+            JetNavLink,
+            JetResponsiveNavLink,
         },
 
-        logout() {
-            this.$inertia.post(route('logout'));
+        data() {
+            return {
+                showingNavigationDropdown: false,
+                sidebarItems: [
+                    {
+                        icon: 'users',
+                        title: 'ลูกค้า',
+                        route: 'customers.index'
+                    }
+                ]
+            }
+        },
+
+        methods: {
+            switchToTeam(team) {
+                this.$inertia.put(route('current-team.update'), {
+                    'team_id': team.id
+                }, {
+                    preserveState: false
+                })
+            },
+
+            logout() {
+                this.$inertia.post(route('logout'));
+            },
         },
     }
-}
 </script>
+
+
+<style scoped>
+ .main-content {
+     margin-left: 73px;
+ }
+</style>
