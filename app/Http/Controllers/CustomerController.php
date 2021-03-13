@@ -15,6 +15,7 @@ use Laravel\Jetstream\Jetstream;
 class CustomerController extends Controller
 {
     public function index() {
+
         return Inertia::render('Customers/Index',[
             'filters' => request()->all('search', 'role', 'trashed'),
             'items' => Contact::whereHas('roles',function(Builder $query) {

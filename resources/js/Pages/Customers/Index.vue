@@ -59,25 +59,7 @@
                 </tr>
             </table>
         </div>
-        <dialog-modal :show="showCreateModal">
-            <template #title>เพิ่มลูกค้า</template>
-            <template #content>
-                <form-customer :form="formCust"></form-customer>
-            </template>
-            <template #footer>
-                <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                    Saved.
-                </jet-action-message>
-
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing"
-                            @click="showCreateModal=false" color="secondary">
-                    ยกเลิก
-                </jet-button>
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="store">
-                    Save
-                </jet-button>
-            </template>
-        </dialog-modal>
+        <form-customer :show="showCreateModal"></form-customer>
     </div>
 </template>
 
@@ -110,58 +92,22 @@ export default {
     },
     data() {
         return {
-            form: {
+            formSearch: {
                 search: this.filters.search,
                 role: this.filters.role,
                 trashed: this.filters.trashed,
             },
             showCreateModal: false,
-            formCust: this.$inertia.form({
-                initial: null,
-                name: null,
-                team_id: null,
-                contact_person: null,
-                birthday: null,
-                tax_id: null,
-                address: null,
-                city: null,
-                district: null,
-                province: null,
-                country: null,
-                postal_code: null,
-                idcard_start: null,
-                idcard_end: null,
-                idcard_place: null,
-                email: null,
-                phone: null,
-            })
         }
-    },
-    watch: {
-        form: {
-            handler: throttle(function () {
-                let query = pickBy(this.form)
-                this.$inertia.replace(this.route('customers', Object.keys(query).length ? query : {remember: 'forget'}))
-            }, 150),
-            deep: true,
-        },
     },
     methods: {
         reset() {
             this.form = mapValues(this.form, () => null)
         },
-        resetCust() {
-            this.formCust = mapValues(this.cust, () => null)
-        },
         create() {
-            this.resetCust();
             this.showCreateModal = true
         },
-        store() {
-            this.formCust.post(this.route('customers.store'), {
-                errorBag: 'createCust',
-            })
-        }
+
     },
 }
 </script>

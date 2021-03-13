@@ -278,10 +278,10 @@
                 </div>
             </header>
 
-            <side class="sidebar absolute p-1">
+            <div class="sidebar absolute p-1">
                 <sidebar :items="sidebarItems"></sidebar>
                 <slot name="sidebar"></slot>
-            </side>
+            </div>
 
             <!-- Page Content -->
             <main class="main-content">
