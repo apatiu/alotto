@@ -1,9 +1,10 @@
 <template>
-    <jet-label v-if="label" :for="id">{{ label }}:</jet-label>
-    <jet-input :id="id"
-               :type="type"
+    <jet-label v-if="label">{{ label }}:</jet-label>
+    <jet-input :type="type"
                class="w-full"
                :value="modelValue"
+               :readonly="readonly"
+               :disabled="disabled"
                @update:modelValue="$emit('update:modelValue', $event)"/>
     <input-error :message="error"></input-error>
 
@@ -18,9 +19,6 @@ export default {
     components: {InputError, JetInput, JetLabel},
     inheritAttrs: false,
     props: {
-        id: {
-            type: String,
-        },
         type: {
             type: String,
             default: 'text',
@@ -28,6 +26,8 @@ export default {
         modelValue: String,
         label: String,
         error: String,
+        readonly: {type: Boolean, default: false},
+        disabled: {type: Boolean, default: false}
     },
     methods: {
         focus() {

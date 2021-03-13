@@ -23,35 +23,18 @@
         <div class="bg-white rounded-md shadow overflow-x-auto">
             <table class="w-full whitespace-nowrap">
                 <tr class="text-left font-bold">
+                    <th class="px-6 pt-6 pb-4">ID</th>
                     <th class="px-6 pt-6 pb-4">Name</th>
-                    <th class="px-6 pt-6 pb-4">Email</th>
-                    <th class="px-6 pt-6 pb-4" colspan="2">Role</th>
                 </tr>
-                <tr v-for="item in items" :key="item.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
-                    <td class="border-t">
-                        <inertia-link class="px-6 py-4 flex items-center focus:text-indigo-500"
-                                      :href="route('users.edit', item.id)">
-                            <img v-if="item.photo" class="block w-5 h-5 rounded-full mr-2 -my-2" :src="item.photo"/>
-                            {{ item.name }}
-                            <icon v-if="item.deleted_at" name="trash" class="flex-shrink-0 w-3 h-3 fill-gray-400 ml-2"/>
-                        </inertia-link>
+                <tr v-for="item in items" :key="item.id"
+                    class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-100" @click="edit(item.id)">
+                    <td class="border-t px-6 py-4">
+                        <img v-if="item.photo" class="block w-5 h-5 rounded-full mr-2 -my-2" :src="item.photo"/>
+                        {{ item.id }}
                     </td>
-                    <td class="border-t">
-                        <inertia-link class="px-6 py-4 flex items-center" :href="route('users.edit', item.id)"
-                                      tabindex="-1">
-                            {{ item.email }}
-                        </inertia-link>
-                    </td>
-                    <td class="border-t">
-                        <inertia-link class="px-6 py-4 flex items-center" :href="route('users.edit', item.id)"
-                                      tabindex="-1">
-                            {{ item.owner ? 'Owner' : 'User' }}
-                        </inertia-link>
-                    </td>
-                    <td class="border-t w-px">
-                        <inertia-link class="px-4 flex items-center" :href="route('users.edit', item.id)" tabindex="-1">
-                            <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400"/>
-                        </inertia-link>
+                    <td class="border-t px-6 py-4">
+                        <img v-if="item.photo" class="block w-5 h-5 rounded-full mr-2 -my-2" :src="item.photo"/>
+                        {{ item.name }}
                     </td>
                 </tr>
                 <tr v-if="items.length === 0">
@@ -59,7 +42,7 @@
                 </tr>
             </table>
         </div>
-        <form-customer :show="showCreateModal"></form-customer>
+        <form-customer :show="showCreateModal" @close="showCreateModal=false" :edit-id="editId" :editing-item="editingItem"></form-customer>
     </div>
 </template>
 
@@ -89,6 +72,7 @@ export default {
     props: {
         items: Array,
         filters: Object,
+        editingItem: Object,
     },
     data() {
         return {
@@ -98,6 +82,7 @@ export default {
                 trashed: this.filters.trashed,
             },
             showCreateModal: false,
+            editId: null,
         }
     },
     methods: {
@@ -107,6 +92,13 @@ export default {
         create() {
             this.showCreateModal = true
         },
+        edit(id) {
+            this.editId = id;
+            this.$inertia.visit(route('customers.show', id), {}, {
+                only: ['editingItem']
+            })
+            this.showCreateModal = true
+        }
 
     },
 }

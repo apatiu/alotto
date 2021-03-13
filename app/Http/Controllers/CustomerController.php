@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\ContactRole;
+use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -14,13 +16,12 @@ use Laravel\Jetstream\Jetstream;
 
 class CustomerController extends Controller
 {
-    public function index() {
-
-        return Inertia::render('Customers/Index',[
+    public function index()
+    {
+        return Inertia::render('Customers/Index', [
             'filters' => request()->all('search', 'role', 'trashed'),
-            'items' => Contact::whereHas('roles',function(Builder $query) {
-                $query->where('name','customer');
-            })->get()
+            'items' => Customer::all(),
+            'editingItem' => null
         ]);
     }
 
@@ -29,12 +30,12 @@ class CustomerController extends Controller
         $data = $request->all();
         Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
-        ])->validateWithBag('createCust');
+        ])->validateWithBag('createCustomer');
 
         DB::transaction(function () use ($data) {
-            return tap(User::create([
+            return tap(Customer::create([
                 'name' => $data['name'],
-            ]), function (User $user) {
+            ]), function (Customer $customer) {
 
             });
         });
@@ -43,4 +44,7 @@ class CustomerController extends Controller
 
     }
 
+    public function show($id) {
+        return Customer::find($id);
+    }
 }
