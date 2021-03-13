@@ -34,7 +34,7 @@ class CreateContactRolesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contact_contact_roles');
+        Schema::dropIfExists('contact_contact_role');
         Schema::dropIfExists('contact_roles');
     }
 }

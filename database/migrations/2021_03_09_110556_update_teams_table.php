@@ -14,8 +14,8 @@ class UpdateTeamsTable extends Migration
     public function up()
     {
         Schema::table('teams', function (Blueprint $table) {
-            $table->string('branch_number',5);
-            $table->string('addr');
+            $table->string('branch_number',5)->nullable();
+            $table->string('addr')->nullable();
         });
     }
 

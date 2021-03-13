@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
+use Laravel\Jetstream\Jetstream;
 
 class CustomerController extends Controller
 {
@@ -17,4 +22,24 @@ class CustomerController extends Controller
             })->get()
         ]);
     }
+
+    public function store(Request $request)
+    {
+        $data = $request->all();
+        Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+        ])->validateWithBag('createCust');
+
+        DB::transaction(function () use ($data) {
+            return tap(User::create([
+                'name' => $data['name'],
+            ]), function (User $user) {
+
+            });
+        });
+
+        return redirect()->back();
+
+    }
+
 }
