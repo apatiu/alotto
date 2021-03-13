@@ -61,7 +61,7 @@ export default {
         SelectInput,
         TextInput,
     },
-    props: ['show', 'editId', 'editingItem'],
+    props: ['show'],
     data() {
         return {
             form: this.$inertia.form({

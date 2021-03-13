@@ -16,11 +16,10 @@
             <!--                    <option value="only">Only Trashed</option>-->
             <!--                </select>-->
             <!--            </search-filter>-->
-            <inertia-link class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                          :href="route('users.create')">
+            <a-link color='primary' href="users.create">
                 <span>Create</span>
                 <span class="hidden md:inline">User</span>
-            </inertia-link>
+            </a-link>
         </div>
         <div class="bg-white rounded-md shadow overflow-x-auto">
             <table class="w-full whitespace-nowrap">
@@ -66,56 +65,58 @@
 </template>
 
 <script>
-import Icon from '@/Shared/Icon'
-import pickBy from 'lodash/pickBy'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Shared/SearchFilter'
-import AppLayout from "@/Layouts/AppLayout";
-import DialogModal from "@/Jetstream/DialogModal";
-import JetButton from "@/Jetstream/Button";
-import CreateUser from "@/Shared/CreateUser";
+    import Icon from '@/Shared/Icon'
+    import pickBy from 'lodash/pickBy'
+    import throttle from 'lodash/throttle'
+    import mapValues from 'lodash/mapValues'
+    import SearchFilter from '@/Shared/SearchFilter'
+    import AppLayout from "@/Layouts/AppLayout";
+    import DialogModal from "@/Jetstream/DialogModal";
+    import JetButton from "@/Jetstream/Button";
+    import CreateUser from "@/Shared/CreateUser";
+    import ALink from "@/A/ALink";
 
-export default {
-    metaInfo: {title: 'Users'},
-    components: {
-        CreateUser,
-        JetButton,
-        DialogModal,
-        Icon,
-        SearchFilter,
-    },
-    layout: AppLayout,
-    props: {
-        users: Array,
-        filters: Object,
-    },
-    data() {
-        return {
+    export default {
+        metaInfo: {title: 'Users'},
+        components: {
+            ALink,
+            CreateUser,
+            JetButton,
+            DialogModal,
+            Icon,
+            SearchFilter,
+        },
+        layout: AppLayout,
+        props: {
+            users: Array,
+            filters: Object,
+        },
+        data() {
+            return {
+                form: {
+                    search: this.filters.search,
+                    role: this.filters.role,
+                    trashed: this.filters.trashed,
+                },
+                showCreateModal: false
+            }
+        },
+        watch: {
             form: {
-                search: this.filters.search,
-                role: this.filters.role,
-                trashed: this.filters.trashed,
+                handler: throttle(function () {
+                    let query = pickBy(this.form)
+                    this.$inertia.replace(this.route('users', Object.keys(query).length ? query : {remember: 'forget'}))
+                }, 150),
+                deep: true,
             },
-            showCreateModal: false
-        }
-    },
-    watch: {
-        form: {
-            handler: throttle(function () {
-                let query = pickBy(this.form)
-                this.$inertia.replace(this.route('users', Object.keys(query).length ? query : {remember: 'forget'}))
-            }, 150),
-            deep: true,
         },
-    },
-    methods: {
-        reset() {
-            this.form = mapValues(this.form, () => null)
+        methods: {
+            reset() {
+                this.form = mapValues(this.form, () => null)
+            },
+            createUser() {
+                this.showCreateModal = true;
+            }
         },
-        createUser() {
-            this.showCreateModal = true;
-        }
-    },
-}
+    }
 </script>

@@ -16,9 +16,9 @@
             <!--                    <option value="only">Only Trashed</option>-->
             <!--                </select>-->
             <!--            </search-filter>-->
-            <jet-button @click="create">
+            <a-button @click="create" color="primary">
                 <span>เพิ่ม</span>
-            </jet-button>
+            </a-button>
         </div>
         <div class="bg-white rounded-md shadow overflow-x-auto">
             <table class="w-full whitespace-nowrap">
@@ -27,7 +27,8 @@
                     <th class="px-6 pt-6 pb-4">Name</th>
                 </tr>
                 <tr v-for="item in items" :key="item.id"
-                    class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-100" @click="edit(item.id)">
+                    class="cursor-pointer hover:bg-gray-100 focus-within:bg-gray-100"
+                    @click="edit(item.id)">
                     <td class="border-t px-6 py-4">
                         <img v-if="item.photo" class="block w-5 h-5 rounded-full mr-2 -my-2" :src="item.photo"/>
                         {{ item.id }}
@@ -42,64 +43,60 @@
                 </tr>
             </table>
         </div>
-        <form-customer :show="showCreateModal" @close="showCreateModal=false" :edit-id="editId" :editing-item="editingItem"></form-customer>
+        <create :show="showCreateModal" @close="showCreateModal=false"></create>
     </div>
 </template>
 
 <script>
-import Icon from '@/Shared/Icon'
-import pickBy from 'lodash/pickBy'
-import throttle from 'lodash/throttle'
-import mapValues from 'lodash/mapValues'
-import SearchFilter from '@/Shared/SearchFilter'
-import AppLayout from "@/Layouts/AppLayout";
-import DialogModal from "@/Jetstream/DialogModal";
-import JetButton from "@/Jetstream/Button";
-import JetActionMessage from "@/Jetstream/ActionMessage";
-import FormCustomer from "@/Pages/Customers/FormCustomer";
+    import Icon from '@/Shared/Icon'
+    import mapValues from 'lodash/mapValues'
+    import SearchFilter from '@/Shared/SearchFilter'
+    import AppLayout from "@/Layouts/AppLayout";
+    import DialogModal from "@/Jetstream/DialogModal";
+    import JetButton from "@/Jetstream/Button";
+    import JetActionMessage from "@/Jetstream/ActionMessage";
+    import Create from "@/Pages/Customers/Create";
+    import AButton from "@/A/AButton";
 
-export default {
-    metaInfo: {title: 'Customers'},
-    components: {
-        FormCustomer,
-        JetButton,
-        JetActionMessage,
-        DialogModal,
-        Icon,
-        SearchFilter,
-    },
-    layout: AppLayout,
-    props: {
-        items: Array,
-        filters: Object,
-        editingItem: Object,
-    },
-    data() {
-        return {
-            formSearch: {
-                search: this.filters.search,
-                role: this.filters.role,
-                trashed: this.filters.trashed,
+    export default {
+        metaInfo: {title: 'Customers'},
+        components: {
+            AButton,
+            Create,
+            JetButton,
+            JetActionMessage,
+            DialogModal,
+            Icon,
+            SearchFilter,
+        },
+        layout: AppLayout,
+        props: {
+            items: Array,
+            filters: Object,
+            editingItem: Object,
+        },
+        data() {
+            return {
+                formSearch: {
+                    search: this.filters.search,
+                    role: this.filters.role,
+                    trashed: this.filters.trashed,
+                },
+                showCreateModal: false,
+                editId: null,
+            }
+        },
+        methods: {
+            reset() {
+                this.form = mapValues(this.form, () => null)
             },
-            showCreateModal: false,
-            editId: null,
-        }
-    },
-    methods: {
-        reset() {
-            this.form = mapValues(this.form, () => null)
-        },
-        create() {
-            this.showCreateModal = true
-        },
-        edit(id) {
-            this.editId = id;
-            this.$inertia.visit(route('customers.show', id), {}, {
-                only: ['editingItem']
-            })
-            this.showCreateModal = true
-        }
+            create() {
+                this.showCreateModal = true
+            },
+            edit(id) {
+                this.$inertia.visit(route('customers.edit', id));
+            }
 
-    },
-}
+        },
+    }
 </script>

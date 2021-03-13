@@ -28,10 +28,7 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-        ])->validateWithBag('createCustomer');
-
+        Validator::make($data, $this->validateRules())->validateWithBag('createCustomer');
         DB::transaction(function () use ($data) {
             return tap(Customer::create([
                 'name' => $data['name'],
@@ -44,7 +41,33 @@ class CustomerController extends Controller
 
     }
 
-    public function show($id) {
-        return Customer::find($id);
+    public function edit(Customer $customer)
+    {
+        return Inertia::render('Customers/Edit', [
+            'customer' => $customer
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+
+        Validator::make($request->all(), $this->validateRules())->validateWithBag('updateCustomer');
+
+        DB::transaction(function () use ($request, $id) {
+            return tap(Customer::find($id)
+                ->update($request->all()),
+                function ($result) {
+
+                });
+        });
+
+        return redirect()->back();
+    }
+
+    public function validateRules()
+    {
+        return [
+            'name' => ['required', 'string', 'max:255']
+        ];
     }
 }
