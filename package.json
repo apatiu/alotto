@@ -27,6 +27,9 @@
         "vue-loader": "^16.1.2"
     },
     "dependencies": {
-        "popper.js": "^1.16.1"
+        "@fortawesome/free-solid-svg-icons": "^5.15.2",
+        "@fortawesome/vue-fontawesome": "^3.0.0-3",
+        "popper.js": "^1.16.1",
+        "vue-next-select": "^1.2.1"
     }
 }

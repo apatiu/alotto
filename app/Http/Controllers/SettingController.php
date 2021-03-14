@@ -20,9 +20,9 @@ class SettingController extends Controller
             ],
             'company_config' => [
                 'bullion_price_diff' => Meta::get('gold_price_diff','100'),
-                'gold_bath_weight' => Meta::get('gold_bath_weight', '15.2'),
-                'gold_buy_price_devide_by_gold_bath_weight' =>
-                    Meta::get('gold_buy_price_devide_by_gold_bath_weight', 1) ? true : false
+                'gold_baht_weight' => Meta::get('gold_baht_weight', '15.2'),
+                'gold_buy_price_devide_by_gold_baht_weight' =>
+                    Meta::get('gold_buy_price_devide_by_gold_baht_weight', 1) ? true : false
             ]
         ]);
     }

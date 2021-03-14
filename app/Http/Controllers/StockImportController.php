@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\StockImport;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class StockImportController extends Controller
 {
@@ -14,7 +16,10 @@ class StockImportController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('StockImports/Index', [
+            'filters' => request()->all('search', 'role', 'trashed'),
+            'items' => StockImport::all(),
+        ]);
     }
 
     /**
@@ -24,13 +29,20 @@ class StockImportController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('StockImports/Create', [
+            'filters' => request()->all('search', 'role', 'trashed'),
+            'item' => [
+                'd' => date('Y-m-d'),
+                'rows' => []
+            ],
+            'suppliers' => Supplier::all()
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +53,7 @@ class StockImportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\StockImport  $stockImport
+     * @param \App\Models\StockImport $stockImport
      * @return \Illuminate\Http\Response
      */
     public function show(StockImport $stockImport)
@@ -52,7 +64,7 @@ class StockImportController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\StockImport  $stockImport
+     * @param \App\Models\StockImport $stockImport
      * @return \Illuminate\Http\Response
      */
     public function edit(StockImport $stockImport)
@@ -63,8 +75,8 @@ class StockImportController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\StockImport  $stockImport
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\StockImport $stockImport
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, StockImport $stockImport)
@@ -75,7 +87,7 @@ class StockImportController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\StockImport  $stockImport
+     * @param \App\Models\StockImport $stockImport
      * @return \Illuminate\Http\Response
      */
     public function destroy(StockImport $stockImport)

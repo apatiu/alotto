@@ -18,19 +18,19 @@
                 <jet-input-error :message="form.errors.bullionPriceDiff" class="mt-2"/>
             </div>
             <div class="col-span-2">
-                <jet-label for="goldBathWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
-                <jet-input id="goldBathWeight" type="number" step="0.01" class="mt-1 block w-full"
-                           v-model="form.gold_bath_weight"/>
-                <jet-input-error :message="form.errors.goldBathWeight" class="mt-2"/>
+                <jet-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
+                <jet-input id="goldbahtWeight" type="number" step="0.01" class="mt-1 block w-full"
+                           v-model="form.gold_baht_weight"/>
+                <jet-input-error :message="form.errors.goldbahtWeight" class="mt-2"/>
             </div>
             <div class="col-span-4 pt-5">
                 <jet-checkbox id="goldBuyPriceDevideByGoldByWeight"
-                              :value="data.gold_buy_price_devide_by_gold_bath_weight"
-                              v-model:checked="form.gold_buy_price_devide_by_gold_bath_weight"
+                              :value="data.gold_buy_price_devide_by_gold_baht_weight"
+                              v-model:checked="form.gold_buy_price_devide_by_gold_baht_weight"
                               class="mt-1"
                               autocomplete="addr"/>
                 <label for="goldBuyPriceDevideByGoldByWeight" class="ml-2">คำนวนราคารับซื้อด้วยการหารน้ำหนักต่อบาท<br/>(ปกติใช้ *.0656)</label>
-                <jet-input-error :message="form.errors.goldBuyPriceDevideByGoldBathWeight" class="mt-2"/>
+                <jet-input-error :message="form.errors.goldBuyPriceDevideByGoldbahtWeight" class="mt-2"/>
             </div>
 
 
@@ -76,9 +76,9 @@ export default {
         return {
             form: this.$inertia.form({
                 _method: 'POST',
-                gold_bath_weight: this.data.gold_bath_weight,
+                gold_baht_weight: this.data.gold_baht_weight,
                 bullion_price_diff: this.data.bullion_price_diff,
-                gold_buy_price_devide_by_gold_bath_weight: this.data.gold_buy_price_devide_by_gold_bath_weight,
+                gold_buy_price_devide_by_gold_baht_weight: this.data.gold_buy_price_devide_by_gold_baht_weight,
             }),
 
             photoPreview: null,

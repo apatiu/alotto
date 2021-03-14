@@ -1,5 +1,8 @@
 <template>
     <div class="bg-white rounded-md shadow overflow-x-auto">
+        <div v-if="$slots.header" :class="headerClass">
+            <slot name="header"></slot>
+        </div>
         <div class="px-6 py-4">
             <slot></slot>
         </div>
@@ -12,7 +15,14 @@
 
 <script>
     export default {
-        name: "Panel"
+        name: "Panel",
+        data() {
+            return {
+                headerClass: {
+                    'px-6 py-4 border-b': true
+                }
+            }
+        }
     }
 </script>
 
