@@ -1,6 +1,6 @@
 <template>
     <jet-label v-if="label">{{ label }}:</jet-label>
-    <jet-input :type="type"
+    <InputText :type="type"
                class="w-full"
                :value="modelValue"
                :readonly="readonly"

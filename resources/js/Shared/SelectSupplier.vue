@@ -1,24 +1,26 @@
 <template>
-
-    <vue-next-select v-model="selected"
-                     :options="options"></vue-next-select>
+    <div class="flex flex-col">
+        <label for="">ผู้ค้าส่ง</label>
+        <Dropdown v-model="selected" :options="items" optionLabel="name" optionValue="name"/>
+        <input-error :message="error"></input-error>
+    </div>
 </template>
 
 <script>
-    import VueNextSelect from "vue-next-select";
 
-    export default {
-        name: "SelectSupplier",
-        components: {VueNextSelect},
-        props: ['value', 'options'],
-        data() {
-            return {
-                option: ['a', 'b'],
-                items: this.options ?? this.$page.props.suppliers,
-                selected: this.value
-            }
+import InputError from "@/Jetstream/InputError";
+
+export default {
+    name: "SelectSupplier",
+    components: {InputError},
+    props: ['value', 'options', 'error'],
+    data() {
+        return {
+            items: this.options ?? this.$page.props.suppliers,
+            selected: this.value
         }
     }
+}
 </script>
 
 <style scoped>

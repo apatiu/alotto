@@ -2,20 +2,7 @@
     <div class="sm:p-4">
         <h1 class="mb-8 font-bold text-3xl">ผู้จำหน่าย</h1>
         <div class="mb-6 flex justify-between items-center">
-            <!--            <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">-->
-            <!--                <label class="block text-gray-700">Role:</label>-->
-            <!--                <select v-model="form.role" class="mt-1 w-full form-select">-->
-            <!--                    <option :value="null" />-->
-            <!--                    <option value="user">Manager</option>-->
-            <!--                    <option value="owner">Officer</option>-->
-            <!--                </select>-->
-            <!--                <label class="mt-4 block text-gray-700">Trashed:</label>-->
-            <!--                <select v-model="form.trashed" class="mt-1 w-full form-select">-->
-            <!--                    <option :value="null" />-->
-            <!--                    <option value="with">With Trashed</option>-->
-            <!--                    <option value="only">Only Trashed</option>-->
-            <!--                </select>-->
-            <!--            </search-filter>-->
+
             <a-button @click="create" color="primary">
                 <span>เพิ่ม</span>
             </a-button>

@@ -22,6 +22,9 @@
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
         "postcss-import": "^12.0.1",
+        "resolve-url-loader": "^3.1.2",
+        "sass": "^1.32.8",
+        "sass-loader": "^10.1.1",
         "tailwindcss": "^2.0.1",
         "vue": "^3.0.5",
         "vue-loader": "^16.1.2"
@@ -30,6 +33,9 @@
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@fortawesome/vue-fontawesome": "^3.0.0-3",
         "popper.js": "^1.16.1",
+        "primeflex": "^2.0.0",
+        "primeicons": "^4.1.0",
+        "primevue": "^3.3.5",
         "vue-next-select": "^1.2.1"
     }
 }

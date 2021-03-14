@@ -1,6 +1,6 @@
 <template>
     <jet-label v-if="label">{{ label }}:</jet-label>
-    <jet-input :type="type"
+    <InputText :type="type"
                class="w-full"
                :value="modelValue"
                :readonly="readonly"
@@ -11,12 +11,11 @@
 </template>
 
 <script>
-    import JetInput from '@/Jetstream/Input'
     import JetLabel from '@/Jetstream/Label'
     import InputError from "@/Jetstream/InputError";
 
     export default {
-        components: {InputError, JetInput, JetLabel},
+        components: {InputError, JetLabel},
         inheritAttrs: false,
         props: {
             type: {

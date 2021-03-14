@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\StockImport;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
 class StockImportController extends Controller
@@ -32,7 +34,7 @@ class StockImportController extends Controller
         return Inertia::render('StockImports/Create', [
             'filters' => request()->all('search', 'role', 'trashed'),
             'item' => [
-                'd' => date('Y-m-d'),
+                'd' => date('d-m-Y'),
                 'rows' => []
             ],
             'suppliers' => Supplier::all()
@@ -47,7 +49,17 @@ class StockImportController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $data = $request->all();
+        Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
+        DB::transaction(function () use ($data) {
+            return tap(StockImport::create([
+                'name' => $data['name'],
+            ]), function (Supplier $supplier) {
+
+            });
+        });
+
+        return redirect()->back();
     }
 
     /**
@@ -93,5 +105,13 @@ class StockImportController extends Controller
     public function destroy(StockImport $stockImport)
     {
         //
+    }
+
+    public function validateRules()
+    {
+        return [
+            'd' => ['required'],
+            'sup_name' => ['required']
+        ];
     }
 }
