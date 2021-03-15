@@ -1,7 +1,7 @@
 <template>
     <div class="p-4">
         <h1 class="text-2xl">ประเภทสินค้า</h1>
-        <Toolbar class="p-mb-4">
+        <Toolbar class="mb-1">
             <template #left>
                 <Button label="New" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
             </template>

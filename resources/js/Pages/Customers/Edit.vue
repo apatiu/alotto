@@ -2,7 +2,7 @@
     <div class="sm:p-4 ">
         <h1 class="mb-8 font-bold text-3xl">ลูกค้า</h1>
 
-        <panel>
+
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-2">
                     <text-input
@@ -17,13 +17,12 @@
                 </div>
             </div>
 
-            <template #footer>
                 <jet-action-message :on="form.recentlySuccessful" class="mr-3">
                     บันทึกแล้ว.
                 </jet-action-message>
                 <a-button color="primary" @click="update">บันทึก</a-button>
-            </template>
-        </panel>
+
+
     </div>
 </template>
 
@@ -34,14 +33,14 @@
     import JetButton from "@/Jetstream/Button";
     import JetActionMessage from "@/Jetstream/ActionMessage";
     import TextInput from "@/Shared/TextInput";
-    import Panel from "@/A/Panel";
+
     import AButton from "@/A/AButton";
 
     export default {
         metaInfo: {title: 'Customers'},
         components: {
             AButton,
-            Panel,
+
             TextInput,
             JetButton,
             JetActionMessage,

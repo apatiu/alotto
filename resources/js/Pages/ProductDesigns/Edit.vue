@@ -2,7 +2,6 @@
     <div class="sm:p-4 ">
         <h1 class="mb-8 font-bold text-3xl">{{ item.name }}</h1>
 
-        <panel>
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-2">
                     <text-input
@@ -17,15 +16,14 @@
                 </div>
             </div>
 
-            <template #footer>
+
                 <jet-action-message :on="form.recentlySuccessful" class="mr-3">
                     บันทึกแล้ว.
                 </jet-action-message>
 
                 <a-link color="secondary" href="suppliers.index">ยกเลิก</a-link>
                 <a-button color="primary" @click="update">บันทึก</a-button>
-            </template>
-        </panel>
+
     </div>
 </template>
 
@@ -36,7 +34,7 @@
     import JetButton from "@/Jetstream/Button";
     import JetActionMessage from "@/Jetstream/ActionMessage";
     import TextInput from "@/Shared/TextInput";
-    import Panel from "@/A/Panel";
+
     import AButton from "@/A/AButton";
     import ALink from "@/A/ALink";
 
@@ -45,7 +43,7 @@
         components: {
             ALink,
             AButton,
-            Panel,
+
             TextInput,
             JetButton,
             JetActionMessage,

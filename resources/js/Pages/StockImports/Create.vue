@@ -1,54 +1,47 @@
 <template>
-    <div class="pt-2 pr-4">
-        <panel>
-            <template #header>
-                <h1>สร้างใบรับสินค้า</h1>
-            </template>
-
-
-            <div class="grid grid-cols-6 gap-6">
-                <div class="col-span-1">
-                    <text-input
-                        v-model="form.id"
-                        :error="form.errors.id"
-                        label="เลขที่"
-                        disabled
-                    />
-                </div>
-                <div class="col-start-5">
-                    <label for="">วันที่นำเข้า</label>
-                    <Calendar v-model="form.d" dateFormat="dd-mm-yy"></Calendar>
-                    <input-error :message="form.errors.d"></input-error>
-                </div>
-                <div class="col-start-6">
-                    <select-supplier
-                        v-model="form.sup_name"
-                        label="ผู้จำหน่าย"
-                        :error="form.errors.sup_name">
-                    </select-supplier>
-                </div>
-                <div class="col-span-6 text-right">
-                    <Button @click="createLine">Add</Button>
-                </div>
-                <div class="col-span-6">
-                    <DataTable :value="lines">
-                        <Column field="name" header="ชื่อสินค้า"></Column>
-                    </DataTable>
-                </div>
+    <div class="py-4 px-6">
+        <h1 class="text-2xl mb-6">สร้างใบรับสินค้า</h1>
+        <div class="grid grid-cols-6 gap-6">
+            <div class="col-span-1">
+                <text-input
+                    v-model="form.id"
+                    :error="form.errors.id"
+                    label="เลขที่"
+                    disabled
+                />
             </div>
-            <template #footer>
-                <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
-                    บันทึกข้อมูลแล้ว.
-                </jet-action-message>
-
-                <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
-                <Button :class="{ 'opacity-25': form.processing }"
-                        :disabled="form.processing"
-                        @click="store">
-                    Save
-                </Button>
-            </template>
-        </panel>
+            <div class="col-start-5">
+                <label for="">วันที่นำเข้า</label>
+                <Calendar v-model="form.d" dateFormat="dd-mm-yy"></Calendar>
+                <input-error :message="form.errors.d"></input-error>
+            </div>
+            <div class="col-start-6">
+                <select-supplier
+                    v-model="form.sup_name"
+                    label="ผู้จำหน่าย"
+                    :error="form.errors.sup_name">
+                </select-supplier>
+            </div>
+            <div class="col-span-6 text-right">
+                <Button @click="createLine">Add</Button>
+            </div>
+            <div class="col-span-6">
+                <DataTable :value="lines">
+                    <Column field="name" header="ชื่อสินค้า"></Column>
+                </DataTable>
+            </div>
+        </div>
+        <div class="pt-4 flex justify-end">
+            <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
+                บันทึกข้อมูลแล้ว.
+            </jet-action-message>
+            <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
+            <Button :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing"
+                    @click="store">
+                Save
+            </Button>
+        </div>
     </div>
     <Dialog header="เพิ่มสินค้า" v-model:visible="creatingLine" :modal="true" :style="{width:'80vw'}">
         <div class="grid grid-cols-6 gap-4">
@@ -92,7 +85,6 @@ import JetFormSection from "@/Jetstream/FormSection";
 import JetActionMessage from "@/Jetstream/ActionMessage";
 import Input from "@/Jetstream/Input";
 import AInput from "@/A/AInput";
-import Panel from "@/A/Panel";
 import AppLayout from "@/Layouts/AppLayout";
 import SelectSupplier from "@/Shared/SelectSupplier";
 import ATable from "@/A/ATable";
@@ -106,7 +98,6 @@ export default {
         InputError,
         ATable,
         SelectSupplier,
-        Panel,
         AInput,
         Input,
         JetFormSection,

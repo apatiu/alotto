@@ -3,7 +3,7 @@
     <div class="sm:p-4">
         <h1 class="mb-8 font-bold text-3xl">สินค้า</h1>
 
-        <panel>
+
             <table class="w-full whitespace-nowrap">
                 <tr class="text-left font-bold">
                     <th class="px-6 pt-6 pb-4">ID</th>
@@ -25,7 +25,7 @@
                     <td class="border-t px-6 py-4" colspan="4">ยังไม่มีข้อมูล.</td>
                 </tr>
             </table>
-        </panel>
+
     </div>
 </template>
 
@@ -39,12 +39,12 @@
     import JetActionMessage from "@/Jetstream/ActionMessage";
     import Create from "@/Pages/Customers/Create";
     import AButton from "@/A/AButton";
-    import Panel from "@/A/Panel";
+
 
     export default {
         metaInfo: {title: 'Customers'},
         components: {
-            Panel,
+
             AppLayout,
             AButton,
             Create,
