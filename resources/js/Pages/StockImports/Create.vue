@@ -57,6 +57,21 @@
                     v-model="line.id"
                     label="รหัสสินค้า"></a-input>
             </div>
+            <div class="col-span-1">
+                <a-input
+                    v-model="line.gold_percent"
+                    label="เปอร์เซ็นทอง"></a-input>
+            </div>
+            <div class="col-span-1">
+                <a-input
+                    v-model="line.product_group"
+                    label="กลุ่มสินค้า"></a-input>
+            </div>
+            <div class="col-span-3">
+                <a-input
+                    v-model="line.product_design"
+                    label="ลาย"></a-input>
+            </div>
             <div class="col-span-6">
                 <a-input
                     v-model="line.name"
@@ -74,7 +89,7 @@
 import TextInput from '@/Shared/TextInput'
 import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
-import Dropdown from "@/Shared/Dropdown";
+
 import JetFormSection from "@/Jetstream/FormSection";
 import JetActionMessage from "@/Jetstream/ActionMessage";
 import Input from "@/Jetstream/Input";
@@ -96,7 +111,6 @@ export default {
         Input,
         JetFormSection,
         JetActionMessage,
-        Dropdown,
         LoadingButton,
         SelectInput,
         TextInput,

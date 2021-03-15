@@ -48,11 +48,10 @@ import JetLabel from "@/Jetstream/Label";
 import JetInput from "@/Jetstream/Input";
 import JetInputError from "@/Jetstream/InputError"
 import JetButton from "@/Jetstream/Button";
-import JetDropdown from "@/Shared/Dropdown";
 
 export default {
     name: "CreateUser",
-    components: {JetDropdown, JetLabel, JetInput, JetInputError, JetButton, DialogModal},
+    components: {JetLabel, JetInput, JetInputError, JetButton, DialogModal},
     props: {
         value: Object,
         show: {type: Boolean, default: false}

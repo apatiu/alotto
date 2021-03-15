@@ -62,7 +62,7 @@ import AppLayout from '@/Layouts/AppLayout'
 import TextInput from '@/Shared/TextInput'
 import SelectInput from '@/Shared/SelectInput'
 import LoadingButton from '@/Shared/LoadingButton'
-import Dropdown from "@/Shared/Dropdown";
+
 import JetFormSection from "@/Jetstream/FormSection";
 import JetActionMessage from "@/Jetstream/ActionMessage";
 import JetButton from "@/Jetstream/Button";
@@ -77,7 +77,6 @@ export default {
         JetFormSection,
         JetActionMessage,
         JetButton,
-        Dropdown,
         LoadingButton,
         SelectInput,
         TextInput,

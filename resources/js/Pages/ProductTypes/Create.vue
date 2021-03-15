@@ -3,20 +3,22 @@
         :show="show"
         :closeable="false" @close="$emit('close')">
 
-        <template #title>เพิ่มลูกค้า</template>
+        <template #title>สร้างผู้จำหน่าย</template>
         <template #content>
             <div class="grid grid-cols-6 gap-6">
                 <div class="col-span-2">
                     <text-input
                         v-model="form.id"
                         :error="form.errors.id"
-                        label="รหัสลูกค้า"
-                        disabled/>
+                        label="รหัสผู้จำหน่าย"
+                        disabled
+                        />
                 </div>
                 <div class="col-span-6">
                     <text-input
                         v-model="form.name"
-                        :error="form.errors.name" label="ชื่อลูกค้า"/>
+                        :error="form.errors.name"
+                        label="ชื่อ"/>
                 </div>
             </div>
         </template>
@@ -47,7 +49,7 @@ import AInput from "@/A/AInput";
 import DialogModal from "@/Jetstream/DialogModal";
 
 export default {
-    metaInfo: {title: 'Create Customer'},
+    metaInfo: {title: 'Create Suppliers'},
     components: {
         DialogModal,
         AInput,
@@ -64,43 +66,15 @@ export default {
     data() {
         return {
             form: this.$inertia.form({
-                initial: null,
+                id: null,
                 name: null,
-                team_id: null,
-                contact_person: null,
-                birthday: null,
-                tax_id: null,
-                address: null,
-                city: null,
-                district: null,
-                province: null,
-                country: null,
-                postal_code: null,
-                idcard_start: null,
-                idcard_end: null,
-                idcard_place: null,
-                email: null,
-                phone: null,
             }),
-            mode: 'create',
-        }
-    },
-    watch: {
-        editId: function (val) {
-            if (val) {
-                this.mode = 'edit'
-                this.$inertia.get(route('customers.show',this.editId,{
-                    preserveState: true
-                }))
-            } else {
-                this.mode = 'create';
-            }
         }
     },
     methods: {
         store() {
-            this.form.post(route('customers.store'), {
-                errorBag: 'createCustomer',
+            this.form.post(route('suppliers.store'), {
+                errorBag: 'supplierBag',
                 preserveScroll: true,
                 onSuccess: () => {
                     this.form.reset()

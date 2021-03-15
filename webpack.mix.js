@@ -17,7 +17,7 @@ mix.js('resources/js/app.js', 'public/js').vue()
         require('tailwindcss'),
         require('autoprefixer'),
     ])
-    .sass('resources/sass/app.sass', 'public/css/primevue.css')
+    .sass('resources/sass/app.scss', 'public/css/primevue.css')
     .webpackConfig(require('./webpack.config'));
 
 if (mix.inProduction()) {

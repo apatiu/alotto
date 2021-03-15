@@ -36,7 +36,6 @@
 <script>
     import Icon from '@/Shared/Icon'
     import mapValues from 'lodash/mapValues'
-    import SearchFilter from '@/Shared/SearchFilter'
     import AppLayout from "@/Layouts/AppLayout";
     import DialogModal from "@/Jetstream/DialogModal";
     import JetButton from "@/Jetstream/Button";
@@ -53,7 +52,6 @@
             JetActionMessage,
             DialogModal,
             Icon,
-            SearchFilter,
         },
         layout: AppLayout,
         props: {

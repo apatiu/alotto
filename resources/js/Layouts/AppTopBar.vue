@@ -13,7 +13,7 @@
                 <div class="flex">
                     <div class="ml-3 relative">
                         <!-- Teams Dropdown -->
-                        <dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
+                        <jet-dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
                             <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
@@ -78,9 +78,9 @@
                                     </template>
                                 </div>
                             </template>
-                        </dropdown>
+                        </jet-dropdown>
                     </div>
-                    <dropdown align="right" width="48">
+                    <jet-dropdown align="right" width="48">
                         <template #trigger>
                             <button v-if="$page.props.jetstream.managesProfilePhotos"
                                     class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition duration-150 ease-in-out">
@@ -138,7 +138,7 @@
                                 </dropdown-link>
                             </form>
                         </template>
-                    </dropdown>
+                    </jet-dropdown>
                 </div>
             </template>
         </Menubar>
@@ -151,13 +151,13 @@ import Menubar from 'primevue/menubar';
 import Button from 'primevue/button';
 import JetApplicationMark from '@/Jetstream/ApplicationMark'
 import NavLink from "@/Jetstream/NavLink";
-import Dropdown from "@/Jetstream/Dropdown";
+import JetDropdown from "@/Jetstream/JetDropdown";
 import DropdownLink from "@/Jetstream/DropdownLink";
 import ResponsiveNavLink from "@/Jetstream/ResponsiveNavLink";
 
 export default {
     name: "AppTopBar",
-    components: {Menubar, Button, ResponsiveNavLink, DropdownLink, Dropdown, NavLink, JetApplicationMark},
+    components: {Menubar, Button, ResponsiveNavLink, DropdownLink, JetDropdown, NavLink, JetApplicationMark},
     data() {
         return {
             items: [
@@ -169,7 +169,18 @@ export default {
                             url: route('stock-imports.index')
                         }, {
                             label: 'ผู้จำหน่าย',
-                            url: route('stock-imports.index')
+                            url: route('suppliers.index')
+                        }, {
+                            separator: true
+                        }, {
+                            label: 'กลุ่มสินค้า',
+                            url: route('product-types.index')
+                        }, {
+                            label: 'ลายสินค้า',
+                            url: route('product-designs.index')
+                        }, {
+                            label: 'เปอร์เซ็นต์ทอง',
+                            url: route('gold-percents.index')
                         }
                     ]
                 }

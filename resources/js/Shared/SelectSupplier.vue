@@ -1,7 +1,8 @@
 <template>
     <div class="flex flex-col">
         <label for="">ผู้ค้าส่ง</label>
-        <Dropdown v-model="selected" :options="items" optionLabel="name" optionValue="name"/>
+        <Dropdown v-model="selected" :options="items" optionLabel="name" optionValue="name"
+                  :editable="true"/>
         <input-error :message="error"></input-error>
     </div>
 </template>

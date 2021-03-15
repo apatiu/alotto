@@ -100,7 +100,8 @@ const app = createApp({
 })
     .mixin({methods: {route}})
     .use(InertiaPlugin)
-    .use(PrimeVue, {ripple: true});
+    .use(PrimeVue, {ripple: true})
+    .use(ToastService);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

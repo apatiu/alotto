@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\BranchMemberController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\GoldPercentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductDesignController;
+use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyConfigController;
@@ -79,9 +82,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
 
     Route::resource('suppliers',\App\Http\Controllers\SupplierController::class);
+    Route::resource('gold-percents',GoldPercentController::class);
+    Route::resource('product-types',ProductTypeController::class);
+    Route::resource('product-designs',ProductDesignController::class);
     Route::resource('products',ProductController::class);
     Route::resource('customers',CustomerController::class);
     Route::resource('stock-imports',\App\Http\Controllers\StockImportController::class);
+
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
         Route::get('/terms-of-service', [TermsOfServiceController::class, 'show'])->name('terms.show');

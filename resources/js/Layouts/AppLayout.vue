@@ -1,4 +1,5 @@
 <template>
+    <Toast />
    <div class="p-grid">
        <div class="p-col-12">
            <AppTopBar></AppTopBar>

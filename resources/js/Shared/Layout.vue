@@ -49,7 +49,7 @@
 <script>
 import Icon from '@/Shared/Icon'
 import Logo from '@/Shared/Logo'
-import Dropdown from '@/Shared/Dropdown'
+
 import MainMenu from '@/Shared/MainMenu'
 import JetBanner from '@/Jetstream/Banner'
 
