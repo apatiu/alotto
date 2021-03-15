@@ -16588,6 +16588,27 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js":
+/*!**************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js ***!
+  \**************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "SelectGoldPercent",
+  props: ['modelValue'],
+  data: function data() {
+    return {};
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js":
 /*!******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js ***!
@@ -19998,6 +20019,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Shared_SelectSupplier__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @/Shared/SelectSupplier */ "./resources/js/Shared/SelectSupplier.vue");
 /* harmony import */ var _A_ATable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @/A/ATable */ "./resources/js/A/ATable.vue");
 /* harmony import */ var _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @/Jetstream/InputError */ "./resources/js/Jetstream/InputError.vue");
+/* harmony import */ var _A_SelectGoldPercent__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @/A/SelectGoldPercent */ "./resources/js/A/SelectGoldPercent.vue");
+
 
 
 
@@ -20015,6 +20038,7 @@ __webpack_require__.r(__webpack_exports__);
     title: 'Create Suppliers'
   },
   components: {
+    SelectGoldPercent: _A_SelectGoldPercent__WEBPACK_IMPORTED_MODULE_12__.default,
     InputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_11__.default,
     ATable: _A_ATable__WEBPACK_IMPORTED_MODULE_10__.default,
     SelectSupplier: _Shared_SelectSupplier__WEBPACK_IMPORTED_MODULE_9__.default,
@@ -20028,7 +20052,7 @@ __webpack_require__.r(__webpack_exports__);
     TextInput: _Shared_TextInput__WEBPACK_IMPORTED_MODULE_0__.default
   },
   layout: _Layouts_AppLayout__WEBPACK_IMPORTED_MODULE_8__.default,
-  props: ['item'],
+  props: ['item', 'gold_percents'],
   data: function data() {
     var _this$item$id, _this$item$sup_name;
 
@@ -20041,8 +20065,9 @@ __webpack_require__.r(__webpack_exports__);
       }),
       creatingLine: false,
       line: {
-        id: null,
-        name: null
+        product_id: null,
+        gold_percent: null,
+        product_group: null
       }
     };
   },
@@ -21364,12 +21389,10 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     InputError: _Jetstream_InputError__WEBPACK_IMPORTED_MODULE_0__.default
   },
-  props: ['value', 'options', 'error'],
+  props: ['modelValue', 'error'],
   data: function data() {
-    var _this$options;
-
     return {
-      items: (_this$options = this.options) !== null && _this$options !== void 0 ? _this$options : this.$page.props.suppliers,
+      options: this.$page.props.suppliers,
       selected: this.value
     };
   }
@@ -21681,6 +21704,53 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "default")]), _ctx.$slots.footer ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_3, [_ctx.$slots.footer ? (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderSlot)(_ctx.$slots, "footer", {
     key: 0
   }) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render)
+/* harmony export */ });
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
+
+
+var _withId = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.withScopeId)("data-v-22fca7a6");
+
+(0,vue__WEBPACK_IMPORTED_MODULE_0__.pushScopeId)("data-v-22fca7a6");
+
+var _hoisted_1 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "for": ""
+}, "เปอร์เซ็นทอง", -1
+/* HOISTED */
+);
+
+(0,vue__WEBPACK_IMPORTED_MODULE_0__.popScopeId)();
+
+var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_Dropdown = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Dropdown");
+
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Dropdown, {
+    "class": "w-full",
+    options: _ctx.$page.props.gold_percents,
+    optionLabel: "name",
+    optionValue: "id",
+    modelValue: $props.modelValue,
+    "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
+      return _ctx.$emit('update:modelValue', $event);
+    })
+  }, null, 8
+  /* PROPS */
+  , ["options", "modelValue"])], 64
+  /* STABLE_FRAGMENT */
+  );
 });
 
 /***/ }),
@@ -28553,6 +28623,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_a_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("a-input");
 
+  var _component_select_gold_percent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("select-gold-percent");
+
   var _component_Dialog = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Dialog");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_panel, null, {
@@ -28690,19 +28762,18 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_15, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_a_input, {
-        modelValue: $data.line.id,
+        modelValue: $data.line.product_id,
         "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-          return $data.line.id = $event;
+          return $data.line.product_id = $event;
         }),
         label: "รหัสสินค้า"
       }, null, 8
       /* PROPS */
-      , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_a_input, {
+      , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_select_gold_percent, {
         modelValue: $data.line.gold_percent,
         "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
           return $data.line.gold_percent = $event;
-        }),
-        label: "เปอร์เซ็นทอง"
+        })
       }, null, 8
       /* PROPS */
       , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_a_input, {
@@ -32132,11 +32203,11 @@ var render = /*#__PURE__*/_withId(function (_ctx, _cache, $props, $setup, $data,
   var _component_input_error = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("input-error");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Dropdown, {
-    modelValue: $data.selected,
+    modelValue: $props.modelValue,
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $data.selected = $event;
+      return _ctx.$emit('update:modelValue', $event);
     }),
-    options: $data.items,
+    options: $data.options,
     optionLabel: "name",
     optionValue: "name",
     editable: true
@@ -90387,6 +90458,33 @@ _Panel_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.__file =
 
 /***/ }),
 
+/***/ "./resources/js/A/SelectGoldPercent.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/A/SelectGoldPercent.vue ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SelectGoldPercent_vue_vue_type_template_id_22fca7a6_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true */ "./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true");
+/* harmony import */ var _SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SelectGoldPercent.vue?vue&type=script&lang=js */ "./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js");
+
+
+
+_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.render = _SelectGoldPercent_vue_vue_type_template_id_22fca7a6_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render
+_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.__scopeId = "data-v-22fca7a6"
+/* hot reload */
+if (false) {}
+
+_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default.__file = "resources/js/A/SelectGoldPercent.vue"
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_1__.default);
+
+/***/ }),
+
 /***/ "./resources/js/Jetstream/ActionMessage.vue":
 /*!**************************************************!*\
   !*** ./resources/js/Jetstream/ActionMessage.vue ***!
@@ -92885,6 +92983,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js":
+/*!**********************************************************************!*\
+  !*** ./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__.default)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SelectGoldPercent_vue_vue_type_script_lang_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SelectGoldPercent.vue?vue&type=script&lang=js */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=script&lang=js");
+ 
+
+/***/ }),
+
 /***/ "./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js":
 /*!**************************************************************************!*\
   !*** ./resources/js/Jetstream/ActionMessage.vue?vue&type=script&lang=js ***!
@@ -94337,6 +94451,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Panel_vue_vue_type_template_id_457cc588_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_Panel_vue_vue_type_template_id_457cc588_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./Panel.vue?vue&type=template&id=457cc588&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/Panel.vue?vue&type=template&id=457cc588&scoped=true");
+
+
+/***/ }),
+
+/***/ "./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true":
+/*!****************************************************************************************!*\
+  !*** ./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true ***!
+  \****************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SelectGoldPercent_vue_vue_type_template_id_22fca7a6_scoped_true__WEBPACK_IMPORTED_MODULE_0__.render)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_use_0_node_modules_vue_loader_dist_templateLoader_js_ruleSet_1_rules_2_node_modules_vue_loader_dist_index_js_ruleSet_0_use_0_SelectGoldPercent_vue_vue_type_template_id_22fca7a6_scoped_true__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!../../../node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!../../../node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5.use[0]!./node_modules/vue-loader/dist/templateLoader.js??ruleSet[1].rules[2]!./node_modules/vue-loader/dist/index.js??ruleSet[0].use[0]!./resources/js/A/SelectGoldPercent.vue?vue&type=template&id=22fca7a6&scoped=true");
 
 
 /***/ }),

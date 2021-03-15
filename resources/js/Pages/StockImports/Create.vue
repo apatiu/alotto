@@ -54,13 +54,11 @@
         <div class="grid grid-cols-6 gap-4">
             <div class="col-span-1">
                 <a-input
-                    v-model="line.id"
+                    v-model="line.product_id"
                     label="รหัสสินค้า"></a-input>
             </div>
             <div class="col-span-1">
-                <a-input
-                    v-model="line.gold_percent"
-                    label="เปอร์เซ็นทอง"></a-input>
+                <select-gold-percent v-model="line.gold_percent"/>
             </div>
             <div class="col-span-1">
                 <a-input
@@ -99,10 +97,12 @@ import AppLayout from "@/Layouts/AppLayout";
 import SelectSupplier from "@/Shared/SelectSupplier";
 import ATable from "@/A/ATable";
 import InputError from "@/Jetstream/InputError";
+import SelectGoldPercent from "@/A/SelectGoldPercent";
 
 export default {
     metaInfo: {title: 'Create Suppliers'},
     components: {
+        SelectGoldPercent,
         InputError,
         ATable,
         SelectSupplier,
@@ -116,7 +116,7 @@ export default {
         TextInput,
     },
     layout: AppLayout,
-    props: ['item'],
+    props: ['item', 'gold_percents'],
     data() {
         return {
             form: this.$inertia.form({
@@ -127,8 +127,9 @@ export default {
             }),
             creatingLine: false,
             line: {
-                id: null,
-                name: null
+                product_id: null,
+                gold_percent: null,
+                product_group: null,
             }
         }
     },

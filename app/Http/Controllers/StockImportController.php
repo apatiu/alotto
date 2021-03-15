@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GoldPercent;
+use App\Models\ProductDesign;
+use App\Models\ProductType;
 use App\Models\StockImport;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
@@ -14,7 +17,7 @@ class StockImportController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function index()
     {
@@ -27,7 +30,7 @@ class StockImportController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
@@ -37,7 +40,10 @@ class StockImportController extends Controller
                 'd' => date('d-m-Y'),
                 'rows' => []
             ],
-            'suppliers' => Supplier::all()
+            'suppliers' => Supplier::all(),
+            'gold_percents' => GoldPercent::all(),
+            'product_types' => ProductType::all(),
+            'product_designs' => ProductDesign::all()
         ]);
     }
 
