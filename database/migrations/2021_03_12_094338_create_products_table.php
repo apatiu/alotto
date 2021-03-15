@@ -20,7 +20,7 @@ class CreateProductsTable extends Migration
             $table->foreignId('team_id');
 
             $table->decimal('gold_percent');
-            $table->foreignId('product_group_id');
+            $table->foreignId('product_type_id');
             $table->string('design')->nullable();
             $table->string('size')->nullable();
             $table->string('name');

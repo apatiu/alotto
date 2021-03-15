@@ -4,22 +4,22 @@
         <div class="grid grid-cols-6 gap-6">
             <div class="col-span-1">
                 <text-input
-                    v-model="form.id"
-                    :error="form.errors.id"
-                    label="เลขที่"
-                    disabled
+                        v-model="form.id"
+                        :error="form.errors.id"
+                        label="เลขที่"
+                        disabled
                 />
             </div>
             <div class="col-start-5">
                 <label for="">วันที่นำเข้า</label>
-                <Calendar v-model="form.d" dateFormat="dd-mm-yy"></Calendar>
+                <Calendar v-model="form.d" dateFormat="dd-mm-yy" class="w-full"></Calendar>
                 <input-error :message="form.errors.d"></input-error>
             </div>
             <div class="col-start-6">
                 <select-supplier
-                    v-model="form.sup_name"
-                    label="ผู้จำหน่าย"
-                    :error="form.errors.sup_name">
+                        v-model="form.sup_name"
+                        label="ผู้จำหน่าย"
+                        :error="form.errors.sup_name">
                 </select-supplier>
             </div>
             <div class="col-span-6 text-right">
@@ -47,26 +47,28 @@
         <div class="grid grid-cols-6 gap-4">
             <div class="col-span-1">
                 <a-input
-                    v-model="line.product_id"
-                    label="รหัสสินค้า"></a-input>
+                        v-model="line.product_id"
+                        label="รหัสสินค้า"></a-input>
             </div>
             <div class="col-span-1">
                 <select-gold-percent v-model="line.gold_percent"/>
             </div>
             <div class="col-span-1">
-                <a-input
-                    v-model="line.product_group"
-                    label="กลุ่มสินค้า"></a-input>
+                <select-product-type v-model="line.product_type"></select-product-type>
             </div>
-            <div class="col-span-3">
+            <div class="col-span-1">
+                <input-weight v-model="line.product_weight"></input-weight>
+            </div>
+
+            <div class="col-span-2">
                 <a-input
-                    v-model="line.product_design"
-                    label="ลาย"></a-input>
+                        v-model="line.product_design"
+                        label="ลาย"></a-input>
             </div>
             <div class="col-span-6">
                 <a-input
-                    v-model="line.name"
-                    label="ชื่อสินค้า"></a-input>
+                        v-model="line.name"
+                        label="ชื่อสินค้า"></a-input>
             </div>
         </div>
         <template #footer>
@@ -77,67 +79,72 @@
 </template>
 
 <script>
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
+    import TextInput from '@/Shared/TextInput'
+    import SelectInput from '@/Shared/SelectInput'
+    import LoadingButton from '@/Shared/LoadingButton'
 
-import JetFormSection from "@/Jetstream/FormSection";
-import JetActionMessage from "@/Jetstream/ActionMessage";
-import Input from "@/Jetstream/Input";
-import AInput from "@/A/AInput";
-import AppLayout from "@/Layouts/AppLayout";
-import SelectSupplier from "@/Shared/SelectSupplier";
-import ATable from "@/A/ATable";
-import InputError from "@/Jetstream/InputError";
-import SelectGoldPercent from "@/A/SelectGoldPercent";
+    import JetFormSection from "@/Jetstream/FormSection";
+    import JetActionMessage from "@/Jetstream/ActionMessage";
+    import Input from "@/Jetstream/Input";
+    import AInput from "@/A/AInput";
+    import AppLayout from "@/Layouts/AppLayout";
+    import SelectSupplier from "@/Shared/SelectSupplier";
+    import ATable from "@/A/ATable";
+    import InputError from "@/Jetstream/InputError";
+    import SelectGoldPercent from "@/A/SelectGoldPercent";
+    import SelectProductType from "@/Shared/SelectProductType";
+    import InputWeight from "@/Shared/InputWeight";
 
-export default {
-    metaInfo: {title: 'Create Suppliers'},
-    components: {
-        SelectGoldPercent,
-        InputError,
-        ATable,
-        SelectSupplier,
-        AInput,
-        Input,
-        JetFormSection,
-        JetActionMessage,
-        LoadingButton,
-        SelectInput,
-        TextInput,
-    },
-    layout: AppLayout,
-    props: ['item', 'gold_percents'],
-    data() {
-        return {
-            form: this.$inertia.form({
-                id: this.item.id ?? null,
-                d: this.item.d,
-                sup_name: this.item.sup_name ?? null,
-                lines: this.item.lines,
-            }),
-            creatingLine: false,
-            line: {
-                product_id: null,
-                gold_percent: null,
-                product_group: null,
+    export default {
+        metaInfo: {title: 'Create Suppliers'},
+        components: {
+            InputWeight,
+            SelectProductType,
+            SelectGoldPercent,
+            InputError,
+            ATable,
+            SelectSupplier,
+            AInput,
+            Input,
+            JetFormSection,
+            JetActionMessage,
+            LoadingButton,
+            SelectInput,
+            TextInput,
+        },
+        layout: AppLayout,
+        props: ['item', 'gold_percents'],
+        data() {
+            return {
+                form: this.$inertia.form({
+                    id: this.item.id ?? null,
+                    d: this.item.d,
+                    sup_name: this.item.sup_name ?? null,
+                    lines: this.item.lines,
+                }),
+                creatingLine: false,
+                line: {
+                    product_id: null,
+                    gold_percent: null,
+                    product_type_id: null,
+                    product_type: null
+                }
+            }
+        },
+        methods: {
+            createLine() {
+                this.creatingLine = true;
+            },
+            store() {
+                this.form.post(route('stock-imports.store'), {
+                    errorBag: 'stockImportBag',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.form.reset()
+                        this.$emit('close');
+                    }
+                })
             }
         }
-    },
-    methods: {
-        createLine() {
-            this.creatingLine = true;
-        },
-        store() {
-            this.form.post(route('stock-imports.store'), {
-                errorBag: 'stockImportBag',
-                preserveScroll: true,
-                onSuccess: () => {
-                    this.form.reset()
-                    this.$emit('close');
-                }
-            })
-        }
     }
-}
 </script>

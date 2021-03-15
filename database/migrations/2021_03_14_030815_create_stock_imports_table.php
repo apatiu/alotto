@@ -40,7 +40,7 @@ class CreateStockImportsTable extends Migration
             $table->string('stock_import_id');
             $table->string('product_id');
             $table->string('gold_percent');
-            $table->string('product_group');
+            $table->string('product_type_id');
             $table->string('product_design');
             $table->string('product_size');
             $table->string('product_name');

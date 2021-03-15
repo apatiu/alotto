@@ -173,7 +173,7 @@ export default {
                         }, {
                             separator: true
                         }, {
-                            label: 'กลุ่มสินค้า',
+                            label: 'ประเภทสินค้า',
                             url: route('product-types.index')
                         }, {
                             label: 'ลายสินค้า',
