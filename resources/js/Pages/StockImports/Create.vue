@@ -4,10 +4,10 @@
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
                 <text-input
-                    v-model="form.id"
-                    :error="form.errors.id"
-                    label="เลขที่"
-                    disabled
+                        v-model="form.id"
+                        :error="form.errors.id"
+                        label="เลขที่"
+                        disabled
                 />
             </div>
             <div class="col-start-5">
@@ -17,9 +17,9 @@
             </div>
             <div class="col-start-6">
                 <select-supplier
-                    v-model="form.sup_name"
-                    label="ผู้จำหน่าย"
-                    :error="form.errors.sup_name">
+                        v-model="form.sup_name"
+                        label="ผู้จำหน่าย"
+                        :error="form.errors.sup_name">
                 </select-supplier>
             </div>
         </div>
@@ -43,25 +43,33 @@
         </div>
     </div>
     <Dialog header="เพิ่มสินค้า" v-model:visible="creatingLine" :modal="true" :style="{width:'80vw'}">
-        <div class="p-fluid p-grid p-pt-4">
+        <div class="p-fluid p-grid">
             <div class="p-col-9">
                 <div class="p-grid">
                     <div class="p-field p-col-3">
                         <a-input
-                            v-model="product.product_id"
-                            label="รหัสสินค้า"
+                                v-model="product.product_id"
+                                label="รหัสสินค้า"
                         ></a-input>
                     </div>
                     <div class="p-field p-col-9">
                         <a-input
-                            v-model="product.name"
-                            label="ชื่อสินค้า"></a-input>
+                                v-model="product.name"
+                                label="ชื่อสินค้า"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <select-gold-percent v-model="product.gold_percent"/>
+                        <small class="p-error"
+                               v-if="errors.lineBag && errors.lineBag.gold_percent">{{ errors.lineBag.gold_percent }}
+                        </small>
                     </div>
                     <div class="p-field p-col-3">
                         <select-product-type v-model="product.product_type"></select-product-type>
+                        <small class="p-error"
+                               v-if="errors.lineBag && errors.lineBag.product_type_id">{{ errors.lineBag.product_type_id
+                            }}
+                        </small>
+
                     </div>
                     <div class="p-field p-col-3">
                         <input-weight :model-value="[product.weight,product.weightbaht]"
@@ -69,13 +77,13 @@
                     </div>
                     <div class="p-field p-col-9">
                         <a-input
-                            v-model="product.product_design"
-                            label="ลาย"></a-input>
+                                v-model="product.product_design"
+                                label="ลาย"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input
-                            v-model="product.size"
-                            label="ขนาด"></a-input>
+                                v-model="product.size"
+                                label="ขนาด"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input v-model="product.line_qty" label="จำนวน"></a-input>
@@ -172,7 +180,7 @@
         </div>
 
         <template #footer>
-            <div class="flex w-full justify-between">
+            <div class="flex w-full justify-between pt-3">
                 <div>
                     <Button label="ตรวจสอบ" class="p-button-success" @click="checkProduct"></Button>
                 </div>
@@ -180,7 +188,8 @@
                     <Button label="ยกเลิก" icon="pi pi-times"
                             class="p-button-text"
                             @click="creatingLine=false"/>
-                    <Button label="บันทึก" icon="pi pi-check" autofocus/>
+                    <Button label="บันทึก" icon="pi pi-check"
+                            :disabled="errors"/>
                 </div>
             </div>
         </template>
@@ -188,145 +197,167 @@
 </template>
 
 <script>
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
+    import TextInput from '@/Shared/TextInput'
+    import SelectInput from '@/Shared/SelectInput'
+    import LoadingButton from '@/Shared/LoadingButton'
 
-import JetFormSection from "@/Jetstream/FormSection";
-import JetActionMessage from "@/Jetstream/ActionMessage";
-import Input from "@/Jetstream/Input";
-import AInput from "@/A/AInput";
-import AppLayout from "@/Layouts/AppLayout";
-import SelectSupplier from "@/Shared/SelectSupplier";
-import ATable from "@/A/ATable";
-import InputError from "@/Jetstream/InputError";
-import SelectGoldPercent from "@/A/SelectGoldPercent";
-import SelectProductType from "@/A/SelectProductType";
-import InputWeight from "@/A/InputWeight";
-import Weight from "@/plugins/weight";
-import AInputCurrency from "@/A/AInputCurrency";
+    import JetFormSection from "@/Jetstream/FormSection";
+    import JetActionMessage from "@/Jetstream/ActionMessage";
+    import Input from "@/Jetstream/Input";
+    import AInput from "@/A/AInput";
+    import AppLayout from "@/Layouts/AppLayout";
+    import SelectSupplier from "@/Shared/SelectSupplier";
+    import ATable from "@/A/ATable";
+    import InputError from "@/Jetstream/InputError";
+    import SelectGoldPercent from "@/A/SelectGoldPercent";
+    import SelectProductType from "@/A/SelectProductType";
+    import InputWeight from "@/A/InputWeight";
+    import Weight from "@/plugins/weight";
+    import AInputCurrency from "@/A/AInputCurrency";
 
-export default {
-    metaInfo: {title: 'Create Suppliers'},
-    components: {
-        AInputCurrency,
-        InputWeight,
-        SelectProductType,
-        SelectGoldPercent,
-        InputError,
-        ATable,
-        SelectSupplier,
-        AInput,
-        Input,
-        JetFormSection,
-        JetActionMessage,
-        LoadingButton,
-        SelectInput,
-        TextInput,
-    },
-    layout: AppLayout,
-    props: ['item', 'gold_percents'],
-    data() {
-        return {
-            form: this.$inertia.form({
-                id: this.item.id ?? null,
-                d: this.item.d,
-                sup_name: this.item.sup_name ?? null,
-                lines: this.item.lines,
-            }),
-            creatingLine: false,
-            errors: true,
+    export default {
+        metaInfo: {title: 'Create Suppliers'},
+        components: {
+            AInputCurrency,
+            InputWeight,
+            SelectProductType,
+            SelectGoldPercent,
+            InputError,
+            ATable,
+            SelectSupplier,
+            AInput,
+            Input,
+            JetFormSection,
+            JetActionMessage,
+            LoadingButton,
+            SelectInput,
+            TextInput,
+        },
+        layout: AppLayout,
+        props: ['item', 'gold_percents', 'errors'],
+        data() {
+            return {
+                form: this.$inertia.form({
+                    id: this.item.id ?? null,
+                    d: this.item.d,
+                    sup_name: this.item.sup_name ?? null,
+                    lines: this.item.lines,
+                }),
+                creatingLine: false,
+                formProduct: this.$inertia.form({
+                    id: null,
+                    name: 'test'
+                }),
+                product: {
+                    product_id: null,
+                    gold_percent: null,
+                    product_type_id: null,
+                    product_type: null,
+                    product_design_id: null,
+                    size: null,
+                    name: null,
+                    weight: null,
+                    weightbaht: null,
+                    cost_wage: null,
+                    tag_wage: null,
+                    cost_price: null,
+                    tag_price: null,
+                    sale_with_gold_price: null,
+                    wage_by_pcs: null,
+                    line_qty: null,
+                    line_product_weight_total: null,
+                    line_avg_cost_per_baht: null,
+                    line_description: null,
+                    is_new: null
+                }
+            }
+        },
+        watch: {
             product: {
-                product_id: null,
-                gold_percent: null,
-                product_type_id: null,
-                product_type: null,
-                product_design_id: null,
-                size: null,
-                name: null,
-                weight: null,
-                weightbaht: null,
-                cost_wage: null,
-                tag_wage: null,
-                cost_price: null,
-                tag_price: null,
-                sale_with_gold_price: null,
-                wage_by_pcs: null,
-                line_qty: null,
-                line_product_weight_total: null,
-                line_avg_cost_per_baht: null,
-                line_description: null
+                handler(val) {
+                    if (this.product.product_type)
+                        this.product.product_type_id = this.product.product_type.id;
+                },
+                deep: true
+            }
+        },
+        computed: {
+            product_weight_total() {
+                let w = Weight(
+                    this.product.weight,
+                    this.product.weightbaht);
+                return this.product.line_qty * w.toGram();
+
+            }
+        },
+        methods: {
+            createLine() {
+                this.product = _.mapValues(this.product, () => null);
+                this.product.weightbaht = true;
+                this.product.sale_with_gold_price = true;
+                this.product.wage_by_pcs = true;
+                this.creatingLine = true;
+            },
+            updateProductWeight(event) {
+                this.product.weight = event[0]
+                this.product.weightbaht = event[1]
+            },
+            checkProduct() {
+
+                let w = Weight(
+                    this.product.weight,
+                    this.product.weightbaht);
+
+                let productId = '';
+                if (this.product.gold_percent)
+                    productId += this.product.gold_percent;
+                if (this.product.product_type_id)
+                    productId += this.product.product_type_id;
+                if (w.toGram())
+                    productId += w.toGram()
+                if (this.product.product_design_id)
+                    productId += 'D' + this.product.product_design_id
+
+                if (this.product.size)
+                    productId += 'S' + this.product.size;
+
+
+                let query = _.pickBy(this.product)
+                console.log(query);
+
+                this.$inertia.get(route('stock-imports.create'), {
+                    ...this.product,
+                    id: productId,
+                }, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    errorBag: 'lineBag',
+                    only: ['product', 'errors'],
+                    onSuccess: (page) => {
+                        console.log('success');
+                        console.log(page);
+                        if (page.props.product) {
+                            console.log('found')
+                        } else {
+                            console.log('new product')
+                        }
+                    },
+                    onError: (errors) => {
+                        console.log('errors')
+                        console.log(errors);
+                    }
+                })
+            },
+            store() {
+                this.form.post(route('stock-imports.store'), {
+                    errorBag: 'stockImportBag',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.form.reset()
+                        this.$emit('close');
+                    }
+                })
             }
         }
-    },
-    watch: {
-        product: {
-            handler(val) {
-                if (this.product.product_type)
-                    this.product.product_type_id = this.product.product_type.id;
-            },
-            deep: true
-        }
-    },
-    computed: {
-        product_weight_total() {
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-            return this.product.line_qty * w.toGram();
-
-        }
-    },
-    methods: {
-        createLine() {
-            this.product = _.mapValues(this.product, () => null);
-            this.product.weightbaht = true;
-            this.product.sale_with_gold_price = true;
-            this.product.wage_by_pcs = true;
-            this.creatingLine = true;
-        },
-        updateProductWeight(event) {
-            this.product.weight = event[0]
-            this.product.weightbaht = event[1]
-        },
-        checkProduct() {
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-
-            let productId = '';
-            if (this.product.gold_percent)
-                productId += this.product.gold_percent;
-            if (this.product.product_type_id)
-                productId += this.product.product_type_id;
-            if (w.toGram())
-                productId += w.toGram()
-            if (this.product.product_design_id)
-                productId += 'D' + this.product.product_design_id
-
-            if (this.product.size)
-                productId += 'S' + this.product.size;
-
-            this.$inertia.get(route('stock-imports.index'), this.product, {
-                preserveScroll: true,
-                onSuccess: (page) => {
-                    console.log(page);
-                },
-                onError: (errors) => {
-                    console.log(errors);
-                }
-            })
-        },
-        store() {
-            this.form.post(route('stock-imports.store'), {
-                errorBag: 'stockImportBag',
-                preserveScroll: true,
-                onSuccess: () => {
-                    this.form.reset()
-                    this.$emit('close');
-                }
-            })
-        }
     }
-}
 </script>

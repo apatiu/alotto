@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GoldPercent;
+use App\Models\Product;
 use App\Models\ProductDesign;
 use App\Models\ProductType;
 use App\Models\StockImport;
@@ -34,6 +35,20 @@ class StockImportController extends Controller
      */
     public function create()
     {
+        $product = null;
+        $data = request()->query();
+        if (request()->has('id')) {
+            Validator::make($data, [
+                'gold_percent' => ['required'],
+                'product_type_id' => ['required'],
+            ])->validateWithBag('lineBag');
+
+            $product = Product::find($data['id']);
+
+            if (!$product) {
+                $product = new Product($data);
+            }
+        }
         return Inertia::render('StockImports/Create', [
             'filters' => request()->all('search', 'role', 'trashed'),
             'item' => [
@@ -43,7 +58,8 @@ class StockImportController extends Controller
             'suppliers' => Supplier::all(),
             'gold_percents' => GoldPercent::all(),
             'product_types' => ProductType::all(),
-            'product_designs' => ProductDesign::all()
+            'product_designs' => ProductDesign::all(),
+            'product' => Inertia::lazy(function() use ($product) { return $product; }),
         ]);
     }
 
