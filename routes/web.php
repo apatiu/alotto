@@ -6,6 +6,7 @@ use App\Http\Controllers\GoldPercentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductDesignController;
 use App\Http\Controllers\ProductTypeController;
+use App\Http\Controllers\StockImportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyConfigController;
@@ -87,7 +88,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
     Route::resource('product-designs',ProductDesignController::class);
     Route::resource('products',ProductController::class);
     Route::resource('customers',CustomerController::class);
-    Route::resource('stock-imports',\App\Http\Controllers\StockImportController::class);
+    Route::resource('stock-imports',StockImportController::class);
 
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {

@@ -180,8 +180,7 @@
                     <Button label="ยกเลิก" icon="pi pi-times"
                             class="p-button-text"
                             @click="creatingLine=false"/>
-                    <Button label="บันทึก" icon="pi pi-check"
-                            :disabled="this.errors" autofocus/>
+                    <Button label="บันทึก" icon="pi pi-check" autofocus/>
                 </div>
             </div>
         </template>
@@ -263,7 +262,8 @@ export default {
     watch: {
         product: {
             handler(val) {
-
+                if (this.product.product_type)
+                    this.product.product_type_id = this.product.product_type.id;
             },
             deep: true
         }
@@ -307,7 +307,15 @@ export default {
             if (this.product.size)
                 productId += 'S' + this.product.size;
 
-            console.log(productId)
+            this.$inertia.get(route('stock-imports.index'), this.product, {
+                preserveScroll: true,
+                onSuccess: (page) => {
+                    console.log(page);
+                },
+                onError: (errors) => {
+                    console.log(errors);
+                }
+            })
         },
         store() {
             this.form.post(route('stock-imports.store'), {
