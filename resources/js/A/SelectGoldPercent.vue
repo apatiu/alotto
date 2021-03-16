@@ -1,12 +1,13 @@
 <template>
-    <label for="">เปอร์เซ็นทอง</label>
-    <Dropdown class="w-full"
-        :options="$page.props.gold_percents"
-        optionLabel="name"
-        optionValue="id"
-        :modelValue="modelValue"
-        @update:modelValue="$emit('update:modelValue',$event)"
-    ></Dropdown>
+    <span class="p-float-label">
+        <Dropdown class="w-full"
+              :options="$page.props.gold_percents"
+              optionLabel="name"
+              optionValue="id"
+              :modelValue="modelValue"
+              @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
+        <label for="">เปอร์เซ็นทอง</label>
+    </span>
 </template>
 
 <script>

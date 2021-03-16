@@ -1,47 +1,30 @@
 <template>
-    <jet-label v-if="label">{{ label }}:</jet-label>
-    <InputText :type="type"
-               class="w-full"
-               :value="modelValue"
-               :readonly="readonly"
-               :disabled="disabled"
-               @update:modelValue="$emit('update:modelValue', $event)"/>
-    <input-error :message="error"></input-error>
-
+    <span class="p-float-label">
+        <InputText :modelValue="modelValue"
+                   @update:modelValue="$emit('update:modelValue', $event)"
+                   v-bind="$attrs"
+                   :disabled="disabled"
+                   :readonly="readonly"
+        ></InputText>
+        <label v-if="label">{{ label }}</label>
+    </span>
+    <small class="p-error">{{ error }}</small>
 </template>
 
 <script>
-    import JetLabel from '@/Jetstream/Label'
-    import InputError from "@/Jetstream/InputError";
 
-    export default {
-        components: {InputError, JetLabel},
-        inheritAttrs: false,
-        props: {
-            type: {
-                type: String,
-                default: 'text',
-            },
-            modelValue: String,
-            label: String,
-            error: String,
-            readonly: {type: Boolean, default: false},
-            disabled: {type: Boolean, default: false}
+export default {
+    inheritAttrs: false,
+    props: {
+        type: {
+            type: String,
+            default: 'text',
         },
-        methods: {
-            focus() {
-                this.$refs.input.focus()
-            },
-            select() {
-                this.$refs.input.select()
-            },
-            setSelectionRange(start, end) {
-                this.$refs.input.setSelectionRange(start, end)
-            },
-            emit($event) {
-                this.$emit('input', $event.target.value);
-                console.log($event.target.value)
-            }
-        },
+        modelValue: String,
+        label: String,
+        error: String,
+        readonly: {type: Boolean, default: false},
+        disabled: {type: Boolean, default: false}
     }
+}
 </script>

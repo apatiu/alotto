@@ -21,14 +21,13 @@ class CreateProductsTable extends Migration
 
             $table->decimal('gold_percent');
             $table->foreignId('product_type_id');
-            $table->string('design')->nullable();
+            $table->string('product_design_id')->nullable();
             $table->string('size')->nullable();
             $table->string('name');
 
             $table->decimal('min_qty')->nullable();
             $table->decimal('weight')->nullable();
             $table->boolean('weightbaht')->default(true);
-            $table->boolean('pricebybullion')->default(true);
 
             $table->decimal('cost_wage')->nullable();
             $table->decimal('cost_price')->nullable();
@@ -40,8 +39,7 @@ class CreateProductsTable extends Migration
 
             $table->decimal('qty')->default(0);
 
-
-            $table->string('photo_url')->nullable();
+            $table->string('description')->nullable();
 
             $table->timestamps();
         });

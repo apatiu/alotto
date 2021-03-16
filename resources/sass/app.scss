@@ -6,6 +6,27 @@
 html {
     font-size: 14px;
 }
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.layout-topbar {
+    background-color: var(--surface-a);
+    display: flex;
+    .topbar-menu {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        margin-left: auto;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+    }
+}
 .p-toolbar {
     background-color: transparent;
     border: none;

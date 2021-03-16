@@ -57,7 +57,6 @@
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
     import JetButton from '@/Jetstream/Button'
     import JetInput from '@/Jetstream/Input'
-    import JetCheckbox from "@/Jetstream/Checkbox";
     import JetLabel from '@/Jetstream/Label'
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
@@ -67,7 +66,6 @@
             JetAuthenticationCardLogo,
             JetButton,
             JetInput,
-            JetCheckbox,
             JetLabel,
             JetValidationErrors
         },

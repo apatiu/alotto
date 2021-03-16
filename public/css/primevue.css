@@ -10296,6 +10296,25 @@ html {
   font-size: 14px;
 }
 
+body {
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.layout-topbar {
+  background-color: var(--surface-a);
+  display: flex;
+}
+.layout-topbar .topbar-menu {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  margin-left: auto;
+  display: flex;
+}
+
 .p-toolbar {
   background-color: transparent;
   border: none;

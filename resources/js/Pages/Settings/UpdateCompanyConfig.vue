@@ -57,12 +57,10 @@ import JetInputError from '@/Jetstream/InputError'
 import JetLabel from '@/Jetstream/Label'
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
-import JetCheckbox from "@/Jetstream/Checkbox"
 
 export default {
     name: "UpdateCompanyConfig",
     components: {
-        JetCheckbox,
         JetLabel,
         JetInput,
         JetButton,

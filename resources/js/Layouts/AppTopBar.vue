@@ -1,5 +1,8 @@
 <template>
-    <div class="layout-topbar">
+    <div class="p-d-flex">
+
+    </div>
+    <div>
         <Menubar :model="items">
             <template #start>
                 <!-- Logo -->
@@ -10,8 +13,8 @@
                 </div>
             </template>
             <template #end>
-                <div class="flex">
-                    <div class="ml-3 relative">
+                <div class="p-d-flex">
+                    <div class="p-mr-3">
                         <!-- Teams Dropdown -->
                         <jet-dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
                             <template #trigger>
@@ -140,6 +143,7 @@
                         </template>
                     </jet-dropdown>
                 </div>
+
             </template>
         </Menubar>
     </div>

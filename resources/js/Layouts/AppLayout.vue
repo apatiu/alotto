@@ -1,9 +1,7 @@
 <template>
     <Toast />
-   <div class="p-grid">
-       <div class="p-col-12">
-           <AppTopBar></AppTopBar>
-       </div>
+   <div class="layout-wrapper">
+       <AppTopBar></AppTopBar>
        <div class="p-col-12">
            <slot></slot>
        </div>
@@ -17,7 +15,6 @@ import AppTopBar from "@/Layouts/AppTopBar";
 export default {
     components: {
         AppTopBar
-
     },
 
     data() {
