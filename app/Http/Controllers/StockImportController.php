@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helpers\GoldPriceHelper;
 use App\Models\GoldPercent;
 use App\Models\Product;
 use App\Models\ProductDesign;
@@ -54,6 +55,7 @@ class StockImportController extends Controller
             }
         }
         return Inertia::render('StockImports/Create', [
+            'goldprice' => GoldPriceHelper::GoldPrice(),
             'filters' => request()->all('search', 'role', 'trashed'),
             'item' => [
                 'd' => date('d-m-Y'),
@@ -63,7 +65,7 @@ class StockImportController extends Controller
             'gold_percents' => GoldPercent::all(),
             'product_types' => ProductType::all(),
             'product_designs' => ProductDesign::all(),
-            'product' => Inertia::lazy(function () use ($product) {
+            'searchproduct' => Inertia::lazy(function () use ($product) {
                 return $product;
             }),
         ]);
@@ -78,11 +80,10 @@ class StockImportController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
         DB::transaction(function () use ($data) {
-            return tap(StockImport::create([
-                'name' => $data['name'],
-            ]), function (Supplier $supplier) {
+            return tap(StockImport::create($data), function (StockImport $stockImport) {
 
             });
         });
@@ -139,7 +140,6 @@ class StockImportController extends Controller
     {
         return [
             'd' => ['required'],
-            'sup_name' => ['required']
         ];
     }
 }

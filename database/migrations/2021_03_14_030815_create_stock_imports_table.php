@@ -17,8 +17,7 @@ class CreateStockImportsTable extends Migration
             $table->string('id')->primary();
             $table->date('d')->nullable();
             $table->foreignId('team_id');
-            $table->string('team_name')->nullable();
-            $table->string('sup_name')->nullable();
+            $table->string('supplier_id')->nullable();
             $table->string('emp_name')->nullable();
             $table->string('status')->nullable();
             $table->boolean('stock_updated')->nullable();

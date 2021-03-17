@@ -5,8 +5,7 @@
                   @update:modelValue="$emit('update:modelValue',$event)"
                   :options="options"
                   optionLabel="name"
-                  optionValue="name"
-                  :editable="true"/>
+                  optionValue="id"/>
         <input-error :message="error"></input-error>
     </div>
 </template>

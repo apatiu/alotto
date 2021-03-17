@@ -1,6 +1,11 @@
 <template>
     <div class="py-4 px-6">
-        <h1 class="text-2xl mb-6">สร้างใบรับสินค้า</h1>
+        <div class="flex justify-between">
+            <h1 class="text-2xl mb-6">สร้างใบรับสินค้า</h1>
+            <div>
+                ราคาทอง {{ formatNumber(goldprice) }}
+            </div>
+        </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
                 <text-input
@@ -30,12 +35,19 @@
             <Column field="product_id" header="รหัสสินค้า"></Column>
             <Column field="name" header="ชื่อสินค้า"></Column>
             <Column field="weight" header="น้ำหนักต่อชิ้น"></Column>
-            <Column field="qty" header="จำนวน"></Column>
+            <Column field="qty" header="จำนวน">
+                <template #footer>{{ formatNumber(billTotal.qty_total) }}</template>
+            </Column>
             <Column field="cost_wage" header="ค่าแรงทุน"></Column>
+            <Column field="cost_wage_total" header="รวมค่าแรงทุน">
+                <template #footer>{{ formatNumber(billTotal.cost_wage_total) }}</template>
+            </Column>
             <Column field="cost_price" header="ราคาทุน"></Column>
-            <Column field="cost_total" header="รวมทุน"></Column>
+            <Column field="cost_price_total" header="รวมทุน">
+                <template #footer>{{ formatNumber(billTotal.cost_price_total) }}</template>
+            </Column>
             <Column field="product_weight_total" header="รวมน้ำหนัก">
-                <template #footer>{{ formatNumber(g_product_weight_total) }}</template>
+                <template #footer>{{ formatNumber(billTotal.weight_total) }}</template>
             </Column>
         </DataTable>
 
@@ -77,7 +89,7 @@
                         <select-product-type v-model="product.product_type"></select-product-type>
                         <small class="p-error"
                                v-if="errors.lineBag && errors.lineBag.product_type_id">{{
-                                errors.lineBag.product_type_id
+                            errors.lineBag.product_type_id
                             }}
                         </small>
                     </div>
@@ -98,7 +110,7 @@
                     </div>
                     <div class="p-field p-col-3">
                         <a-input-currency v-model="v$.line.qty.$model" label="จำนวน"
-                                 :error="v$.line.qty.$errors.length ? v$.line.qty.$errors[0].$message : null"></a-input-currency>
+                                          :error="v$.line.qty.$errors.length ? v$.line.qty.$errors[0].$message : null"></a-input-currency>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input v-model="product_weight_total"
@@ -146,6 +158,7 @@
                                                  :disabled="product.sale_with_gold_price === false"/>
                                     <label>ค่าแรงทุน</label>
                                 </span>
+                            <input-error :errors="v$.line.cost_wage.$errors"></input-error>
                         </div>
                         <div class="p-field mt-6">
                                 <span class="p-float-label">
@@ -153,6 +166,7 @@
                                                  :disabled="product.sale_with_gold_price === false"/>
                                     <label>ค่าแรงขาย</label>
                                 </span>
+                            <input-error :errors="v$.line.tag_wage.$errors"/>
                         </div>
                     </div>
                     <div class="p-col-6 p-flex-column justify-end">
@@ -168,6 +182,7 @@
                                                  :disabled="product.sale_with_gold_price === true"/>
                                     <label>ราคาทุน</label>
                                 </span>
+                            <input-error :errors="v$.line.cost_price.$errors"/>
                         </div>
                         <div class="p-field mt-6">
                                 <span class="p-float-label">
@@ -175,6 +190,7 @@
                                                  :disabled="product.sale_with_gold_price === true"/>
                                     <label>ราคาขาย</label>
                                 </span>
+                            <input-error :errors="v$.line.tag_price.$errors"/>
                         </div>
                     </div>
 
@@ -202,11 +218,7 @@
                             @click="checkProduct"></Button>
                     <div class="flex items-center">
                         <template v-if="productChecked">
-                            <div
-                                class="rounded-full px-2 bg-blue-100 text-blue-400 text-white text-xs mr-2 flex items-center">
-                                <span class="pi pi-check"></span>
-                                ผ่าน
-                            </div>
+                            <Tag class="p-mr-2" icon="pi pi-check" value="ผ่าน" severity="success"></Tag>
                             <span class="text-blue-800" v-if="product.id">สินค้าในสต้อก</span>
                             <span class="text-red-800" v-else>สินค้าใหม่</span>
                         </template>
@@ -274,7 +286,7 @@ export default {
         TextInput,
     },
     layout: AppLayout,
-    props: ['item', 'gold_percents', 'errors'],
+    props: ['item', 'gold_percents', 'errors','goldprice'],
     data() {
         return {
             form: this.$inertia.form({
@@ -315,6 +327,11 @@ export default {
 
             },
             lines: [],
+            billTotal: {
+                cost_wage_total: 0,
+                cost_price_total: 0,
+                weight_total: 0
+            },
             line: {
                 product_id: null,
                 gold_percent: null,
@@ -342,23 +359,25 @@ export default {
                 qty: {required},
                 avg_cost_per_baht: {required},
                 cost_wage: {
-                    required: requiredIf(function (product) {
-                        return product.sale_with_gold_price;
+                    required: requiredIf(() => {
+                        return this.product.sale_with_gold_price
                     })
                 },
                 tag_wage: {
-                    required: requiredIf( function(product) {
-                        return product.sale_with_gold_price;
-                    })},
+                    required: requiredIf(() => {
+                        return this.product.sale_with_gold_price
+                    })
+                },
                 cost_price: {
-                    required: requiredIf(function (product) {
-                        return !product.sale_with_gold_price;
+                    required: requiredIf(() => {
+                        return !this.product.sale_with_gold_price
                     })
                 },
                 tag_price: {
-                    required: requiredIf( function(product) {
-                        return !product.sale_with_gold_price;
-                    })},
+                    required: requiredIf(() => {
+                        return !this.product.sale_with_gold_price
+                    })
+                }
             },
         }
     },
@@ -393,14 +412,10 @@ export default {
             return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
 
         },
-        g_product_weight_total() {
-            return _.sumBy(this.lines, (o) => {
-                return o.product_weight_total
-            })
-        }
     },
     methods: {
         createLine() {
+            this.v$.$reset();
             this.product = _.mapValues(this.product, () => null);
             this.line = _.mapValues(this.product, () => null);
             this.product.weightbaht = true;
@@ -414,6 +429,7 @@ export default {
         },
         checkProduct() {
 
+            this.v$.$reset();
             this.v$.$touch();
 
             let w = Weight(
@@ -443,18 +459,18 @@ export default {
                 preserveState: true,
                 preserveScroll: true,
                 errorBag: 'lineBag',
-                only: ['product', 'errors'],
+                only: ['searchproduct', 'errors'],
                 onSuccess: (page) => {
                     console.log('success');
                     console.log(page);
-                    if (page.props.product) {
-                        if (page.props.product.id) {
-                            this.product.id = page.props.product.id;
+                    if (page.props.searchproduct) {
+                        if (page.props.searchproduct.id) {
+                            this.product.id = page.props.searchproduct.id;
                         } else {
                             this.product.id = null;
                         }
-                        this.product.product_id = page.props.product.product_id;
-                        this.product.name = page.props.product.name;
+                        this.product.product_id = page.props.searchproduct.product_id;
+                        this.product.name = page.props.searchproduct.name;
                     }
                     this.$nextTick(() => {
                         this.productChecked = true
@@ -476,14 +492,29 @@ export default {
             newline.cost_wage = this.line.cost_wage;
             newline.cost_price = this.line.cost_price;
             newline.product_weight_total = numeral(this.line.qty).multiply(w.toGram()).value();
-            newline.cost_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? this.line.cost_price).value();
+            newline.cost_wage_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? 0).value();
+            newline.cost_price_total = numeral(this.line.qty).multiply(this.line.cost_price ?? 0).value();
             this.lines.push(newline);
 
         },
         updateTotal() {
-            console.log('update total')
+            this.billTotal.weight_total = _.sumBy(this.lines, (o) => {
+                return o.product_weight_total
+            })
+            this.billTotal.cost_wage_total = _.sumBy(this.lines, (o) => {
+                return o.cost_wage_total
+            })
+            this.billTotal.cost_price_total = _.sumBy(this.lines, (o) => {
+                return o.cost_price_total
+            })
+            this.billTotal.qty_total = _.sumBy(this.lines, (o) => {
+                return o.qty
+            })
+
         },
         store() {
+            this.form.lines = this.lines;
+
             this.form.post(route('stock-imports.store'), {
                 errorBag: 'stockImportBag',
                 preserveScroll: true,
@@ -493,8 +524,17 @@ export default {
                 }
             })
         },
-        formatNumber(val) {
-            return numeral(val).format('0,0.00');
+        formatNumber(val, pre = 0) {
+            let format = '';
+            switch (pre) {
+                case 0:
+                    format = '0,0';
+                    break;
+                case 2:
+                    format = '0,0.00';
+                    break;
+            }
+            return numeral(val).format(format);
         }
     }
 }

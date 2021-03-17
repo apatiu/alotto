@@ -4,10 +4,13 @@
             {{ message }}
         </p>
     </div>
+    <small v-for="error in errors" class="p-error">
+        {{error.$message}}
+    </small>
 </template>
 
 <script>
     export default {
-        props: ['message']
+        props: ['message','errors']
     }
 </script>
