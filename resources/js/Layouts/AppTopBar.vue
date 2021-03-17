@@ -195,6 +195,9 @@ export default {
     methods: {
         onMenuToggle(event) {
             this.$emit('menu-toggle', event);
+        },
+        logout() {
+            this.$inertia.post(route('logout'))
         }
     }
 }

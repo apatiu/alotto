@@ -9,10 +9,10 @@
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
                 <text-input
-                    v-model="form.id"
-                    :error="form.errors.id"
-                    label="เลขที่"
-                    disabled
+                        v-model="form.id"
+                        :error="form.errors.id"
+                        label="เลขที่"
+                        disabled
                 />
             </div>
             <div class="col-start-5">
@@ -22,9 +22,9 @@
             </div>
             <div class="col-start-6">
                 <select-supplier
-                    v-model="form.sup_name"
-                    label="ผู้จำหน่าย"
-                    :error="form.errors.sup_name">
+                        v-model="form.sup_name"
+                        label="ผู้จำหน่าย"
+                        :error="form.errors.sup_name">
                 </select-supplier>
             </div>
         </div>
@@ -51,6 +51,42 @@
             </Column>
         </DataTable>
 
+        <div class="grid grid-cols-2 gap-6 mt-6">
+            <div></div>
+            <div>
+                <div class="grid grid-cols-4 grid-rows-3 gap-4">
+                    <div class="flex items-center justify-end auto-cols-max">
+                        น้ำหนักชั่งจริง
+                    </div>
+                    <div>
+                        <InputNumber class="w-full"
+                                     v-model="form.real_weight_total"
+                                     mode="decimal"
+                                     :minFractionDigits="2"
+                                     :maxFractionDigits="2"></InputNumber>
+                    </div>
+                    <div class="flex items-center justify-end">
+                        ราคาทอง
+                    </div>
+                    <div>
+                        <InputText class="w-full"></InputText>
+                    </div>
+                    <div class="flex items-center justify-end">ยอดจ่ายจริง</div>
+                    <div>
+                        <InputNumber v-model="form.real_cost"
+                                     mode="decimal"
+                                     :minFractionDigits="2"
+                                     :maxFractionDigits="2"
+                                     class="w-full"></InputNumber>
+                    </div>
+                    <div class="flex items-center justify-end">ค่าแรง</div>
+                    <div>
+                        <InputText class="w-full" disabled></InputText>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="pt-4 flex justify-end">
             <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
                 บันทึกข้อมูลแล้ว.
@@ -70,14 +106,14 @@
                 <div class="p-grid pt-8">
                     <div class="p-field p-col-3">
                         <a-input
-                            v-model="product.product_id"
-                            label="รหัสสินค้า"
+                                v-model="product.product_id"
+                                label="รหัสสินค้า"
                         ></a-input>
                     </div>
                     <div class="p-field p-col-9">
                         <a-input
-                            v-model="product.name"
-                            label="ชื่อสินค้า"></a-input>
+                                v-model="product.name"
+                                label="ชื่อสินค้า"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <select-gold-percent v-model="product.gold_percent"/>
@@ -99,14 +135,14 @@
                     </div>
                     <div class="p-field p-col-9">
                         <select-product-design
-                            v-model="product.product_design"
-                            :product-type-id="product.product_type_id"
-                            label="ดีไซน์"></select-product-design>
+                                v-model="product.product_design"
+                                :product-type-id="product.product_type_id"
+                                label="ดีไซน์"></select-product-design>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input
-                            v-model="product.size"
-                            label="ขนาด"></a-input>
+                                v-model="product.size"
+                                label="ขนาด"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input-currency v-model="v$.line.qty.$model" label="จำนวน"
@@ -119,9 +155,9 @@
                     </div>
                     <div class="p-field p-col-3">
                         <a-input-currency
-                            v-model="v$.line.avg_cost_per_baht.$model"
-                            label="ต้นทุน/บาท"
-                            :error="v$.line.avg_cost_per_baht.$errors.length ? v$.line.avg_cost_per_baht.$errors[0].$message : null"
+                                v-model="v$.line.avg_cost_per_baht.$model"
+                                label="ต้นทุน/บาท"
+                                :error="v$.line.avg_cost_per_baht.$errors.length ? v$.line.avg_cost_per_baht.$errors[0].$message : null"
                         ></a-input-currency>
                     </div>
                 </div>
@@ -241,301 +277,301 @@
 </template>
 
 <script>
-import TextInput from '@/Shared/TextInput'
-import SelectInput from '@/Shared/SelectInput'
-import LoadingButton from '@/Shared/LoadingButton'
+    import TextInput from '@/Shared/TextInput'
+    import SelectInput from '@/Shared/SelectInput'
+    import LoadingButton from '@/Shared/LoadingButton'
 
-import JetFormSection from "@/Jetstream/FormSection";
-import JetActionMessage from "@/Jetstream/ActionMessage";
-import Input from "@/Jetstream/Input";
-import AInput from "@/A/AInput";
-import AppLayout from "@/Layouts/AppLayout";
-import SelectSupplier from "@/Shared/SelectSupplier";
-import ATable from "@/A/ATable";
-import InputError from "@/Jetstream/InputError";
-import SelectGoldPercent from "@/A/SelectGoldPercent";
-import SelectProductType from "@/A/SelectProductType";
-import InputWeight from "@/A/InputWeight";
-import Weight from "@/plugins/weight";
-import AInputCurrency from "@/A/AInputCurrency";
-import SelectProductDesign from "@/A/SelectProductDesign";
+    import JetFormSection from "@/Jetstream/FormSection";
+    import JetActionMessage from "@/Jetstream/ActionMessage";
+    import Input from "@/Jetstream/Input";
+    import AInput from "@/A/AInput";
+    import AppLayout from "@/Layouts/AppLayout";
+    import SelectSupplier from "@/Shared/SelectSupplier";
+    import ATable from "@/A/ATable";
+    import InputError from "@/Jetstream/InputError";
+    import SelectGoldPercent from "@/A/SelectGoldPercent";
+    import SelectProductType from "@/A/SelectProductType";
+    import InputWeight from "@/A/InputWeight";
+    import Weight from "@/plugins/weight";
+    import AInputCurrency from "@/A/AInputCurrency";
+    import SelectProductDesign from "@/A/SelectProductDesign";
 
-import useVuelidate from '@vuelidate/core';
-import {required, requiredIf} from '@vuelidate/validators'
+    import useVuelidate from '@vuelidate/core';
+    import {required, requiredIf} from '@vuelidate/validators'
 
-export default {
-    setup() {
-        return {v$: useVuelidate()}
-    },
-    metaInfo: {title: 'Create Suppliers'},
-    components: {
-        SelectProductDesign,
-        AInputCurrency,
-        InputWeight,
-        SelectProductType,
-        SelectGoldPercent,
-        InputError,
-        ATable,
-        SelectSupplier,
-        AInput,
-        Input,
-        JetFormSection,
-        JetActionMessage,
-        LoadingButton,
-        SelectInput,
-        TextInput,
-    },
-    layout: AppLayout,
-    props: ['item', 'gold_percents', 'errors','goldprice'],
-    data() {
-        return {
-            form: this.$inertia.form({
-                id: this.item.id ?? null,
-                d: this.item.d,
-                sup_name: this.item.sup_name ?? null,
-                product_weight_total: 0,
-                cost_wage_total: 0,
-                tag_wage_total: 0,
-                cost_price_total: 0,
-                tag_price_total: 0,
-                bullion_cost: 0,
-                real_weight_total: 0,
-                real_cost: 0,
-                lines: this.item.lines,
-            }),
-            creatingLine: false,
-            formProduct: this.$inertia.form(),
-            productChecked: false,
-            product: {
-                id: null,
-                product_id: null,
-                gold_percent: null,
-                product_type_id: null,
-                product_type: null,
-                product_design_id: null,
-                product_design: null,
-                size: null,
-                name: null,
-                weight: null,
-                weightbaht: null,
-                cost_wage: null,
-                tag_wage: null,
-                cost_price: null,
-                tag_price: null,
-                sale_with_gold_price: null,
-                wage_by_pcs: null,
+    export default {
+        setup() {
+            return {v$: useVuelidate()}
+        },
+        metaInfo: {title: 'Create Suppliers'},
+        components: {
+            SelectProductDesign,
+            AInputCurrency,
+            InputWeight,
+            SelectProductType,
+            SelectGoldPercent,
+            InputError,
+            ATable,
+            SelectSupplier,
+            AInput,
+            Input,
+            JetFormSection,
+            JetActionMessage,
+            LoadingButton,
+            SelectInput,
+            TextInput,
+        },
+        layout: AppLayout,
+        props: ['item', 'gold_percents', 'errors', 'goldprice'],
+        data() {
+            return {
+                form: this.$inertia.form({
+                    id: this.item.id ?? null,
+                    d: this.item.d,
+                    sup_name: this.item.sup_name ?? null,
+                    product_weight_total: 0,
+                    cost_wage_total: 0,
+                    tag_wage_total: 0,
+                    cost_price_total: 0,
+                    tag_price_total: 0,
+                    bullion_cost: 0,
+                    real_weight_total: 0,
+                    real_cost: 0,
+                    lines: this.item.lines,
+                }),
+                creatingLine: false,
+                formProduct: this.$inertia.form(),
+                productChecked: false,
+                product: {
+                    id: null,
+                    product_id: null,
+                    gold_percent: null,
+                    product_type_id: null,
+                    product_type: null,
+                    product_design_id: null,
+                    product_design: null,
+                    size: null,
+                    name: null,
+                    weight: null,
+                    weightbaht: null,
+                    cost_wage: null,
+                    tag_wage: null,
+                    cost_price: null,
+                    tag_price: null,
+                    sale_with_gold_price: null,
+                    wage_by_pcs: null,
 
-            },
-            lines: [],
-            billTotal: {
-                cost_wage_total: 0,
-                cost_price_total: 0,
-                weight_total: 0
-            },
-            line: {
-                product_id: null,
-                gold_percent: null,
-                product_type_id: null,
-                product_design_id: null,
-                product_size: null,
-                product_name: null,
-                product_weight: null,
-                product_min: null,
-                qty: null,
-                product_weight_total: null,
-                avg_cost_per_baht: null,
-                description: null,
-                cost_wage: null,
-                tag_wage: null,
-                cost_price: null,
-                tag_price: null,
-                sale_with_gold_price: null,
+                },
+                lines: [],
+                billTotal: {
+                    cost_wage_total: 0,
+                    cost_price_total: 0,
+                    weight_total: 0
+                },
+                line: {
+                    product_id: null,
+                    gold_percent: null,
+                    product_type_id: null,
+                    product_design_id: null,
+                    product_size: null,
+                    product_name: null,
+                    product_weight: null,
+                    product_min: null,
+                    qty: null,
+                    product_weight_total: null,
+                    avg_cost_per_baht: null,
+                    description: null,
+                    cost_wage: null,
+                    tag_wage: null,
+                    cost_price: null,
+                    tag_price: null,
+                    sale_with_gold_price: null,
+                }
             }
-        }
-    },
-    validations() {
-        return {
-            line: {
-                qty: {required},
-                avg_cost_per_baht: {required},
-                cost_wage: {
-                    required: requiredIf(() => {
-                        return this.product.sale_with_gold_price
-                    })
-                },
-                tag_wage: {
-                    required: requiredIf(() => {
-                        return this.product.sale_with_gold_price
-                    })
-                },
-                cost_price: {
-                    required: requiredIf(() => {
-                        return !this.product.sale_with_gold_price
-                    })
-                },
-                tag_price: {
-                    required: requiredIf(() => {
-                        return !this.product.sale_with_gold_price
-                    })
-                }
-            },
-        }
-    },
-    watch: {
-        product: {
-            handler(val, oldVal) {
-                if (this.productChecked) {
-                    this.productChecked = false;
-                    this.product.product_id = null;
-                    this.product.id = null;
-                }
-
-                if (this.product.product_type)
-                    this.product.product_type_id = this.product.product_type.id;
-                if (this.product.product_design)
-                    this.product.product_design_id = this.product.product_design.id;
-            },
-            deep: true
         },
-        lines: {
-            handler(val) {
-                this.updateTotal();
-            },
-            deep: true
-        }
-    },
-    computed: {
-        product_weight_total() {
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-            return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
-
-        },
-    },
-    methods: {
-        createLine() {
-            this.v$.$reset();
-            this.product = _.mapValues(this.product, () => null);
-            this.line = _.mapValues(this.product, () => null);
-            this.product.weightbaht = true;
-            this.product.sale_with_gold_price = true;
-            this.product.wage_by_pcs = true;
-            this.creatingLine = true;
-        },
-        updateProductWeight(event) {
-            this.product.weight = event[0]
-            this.product.weightbaht = event[1]
-        },
-        checkProduct() {
-
-            this.v$.$reset();
-            this.v$.$touch();
-
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-
-            let productId = '';
-            if (this.product.gold_percent)
-                productId += this.product.gold_percent;
-            if (this.product.product_type_id)
-                productId += this.product.product_type_id;
-            if (w.toGram())
-                productId += w.toGram()
-            if (this.product.product_design_id)
-                productId += 'D' + this.product.product_design_id
-
-            if (this.product.size)
-                productId += 'S' + this.product.size;
-
-
-            let query = _.pickBy(this.product)
-
-            this.$inertia.get(route('stock-imports.create'), {
-                checkProduct: true,
-                ...query,
-            }, {
-                preserveState: true,
-                preserveScroll: true,
-                errorBag: 'lineBag',
-                only: ['searchproduct', 'errors'],
-                onSuccess: (page) => {
-                    console.log('success');
-                    console.log(page);
-                    if (page.props.searchproduct) {
-                        if (page.props.searchproduct.id) {
-                            this.product.id = page.props.searchproduct.id;
-                        } else {
-                            this.product.id = null;
-                        }
-                        this.product.product_id = page.props.searchproduct.product_id;
-                        this.product.name = page.props.searchproduct.name;
+        validations() {
+            return {
+                line: {
+                    qty: {required},
+                    avg_cost_per_baht: {required},
+                    cost_wage: {
+                        required: requiredIf(() => {
+                            return this.product.sale_with_gold_price
+                        })
+                    },
+                    tag_wage: {
+                        required: requiredIf(() => {
+                            return this.product.sale_with_gold_price
+                        })
+                    },
+                    cost_price: {
+                        required: requiredIf(() => {
+                            return !this.product.sale_with_gold_price
+                        })
+                    },
+                    tag_price: {
+                        required: requiredIf(() => {
+                            return !this.product.sale_with_gold_price
+                        })
                     }
-                    this.$nextTick(() => {
-                        this.productChecked = true
-                    })
                 },
-                onError: (errors) => {
-                    console.log('errors')
-                    console.log(errors);
-                }
-            })
-        },
-        storeLine() {
-            let newline = _.assign({}, this.line, this.product)
-
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-
-            newline.cost_wage = this.line.cost_wage;
-            newline.cost_price = this.line.cost_price;
-            newline.product_weight_total = numeral(this.line.qty).multiply(w.toGram()).value();
-            newline.cost_wage_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? 0).value();
-            newline.cost_price_total = numeral(this.line.qty).multiply(this.line.cost_price ?? 0).value();
-            this.lines.push(newline);
-
-        },
-        updateTotal() {
-            this.billTotal.weight_total = _.sumBy(this.lines, (o) => {
-                return o.product_weight_total
-            })
-            this.billTotal.cost_wage_total = _.sumBy(this.lines, (o) => {
-                return o.cost_wage_total
-            })
-            this.billTotal.cost_price_total = _.sumBy(this.lines, (o) => {
-                return o.cost_price_total
-            })
-            this.billTotal.qty_total = _.sumBy(this.lines, (o) => {
-                return o.qty
-            })
-
-        },
-        store() {
-            this.form.lines = this.lines;
-
-            this.form.post(route('stock-imports.store'), {
-                errorBag: 'stockImportBag',
-                preserveScroll: true,
-                onSuccess: () => {
-                    this.form.reset()
-                    this.$emit('close');
-                }
-            })
-        },
-        formatNumber(val, pre = 0) {
-            let format = '';
-            switch (pre) {
-                case 0:
-                    format = '0,0';
-                    break;
-                case 2:
-                    format = '0,0.00';
-                    break;
             }
-            return numeral(val).format(format);
+        },
+        watch: {
+            product: {
+                handler(val, oldVal) {
+                    if (this.productChecked) {
+                        this.productChecked = false;
+                        this.product.product_id = null;
+                        this.product.id = null;
+                    }
+
+                    if (this.product.product_type)
+                        this.product.product_type_id = this.product.product_type.id;
+                    if (this.product.product_design)
+                        this.product.product_design_id = this.product.product_design.id;
+                },
+                deep: true
+            },
+            lines: {
+                handler(val) {
+                    this.updateTotal();
+                },
+                deep: true
+            }
+        },
+        computed: {
+            product_weight_total() {
+                let w = Weight(
+                    this.product.weight,
+                    this.product.weightbaht);
+                return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
+
+            },
+        },
+        methods: {
+            createLine() {
+                this.v$.$reset();
+                this.product = _.mapValues(this.product, () => null);
+                this.line = _.mapValues(this.product, () => null);
+                this.product.weightbaht = true;
+                this.product.sale_with_gold_price = true;
+                this.product.wage_by_pcs = true;
+                this.creatingLine = true;
+            },
+            updateProductWeight(event) {
+                this.product.weight = event[0]
+                this.product.weightbaht = event[1]
+            },
+            checkProduct() {
+
+                this.v$.$reset();
+                this.v$.$touch();
+
+                let w = Weight(
+                    this.product.weight,
+                    this.product.weightbaht);
+
+                let productId = '';
+                if (this.product.gold_percent)
+                    productId += this.product.gold_percent;
+                if (this.product.product_type_id)
+                    productId += this.product.product_type_id;
+                if (w.toGram())
+                    productId += w.toGram()
+                if (this.product.product_design_id)
+                    productId += 'D' + this.product.product_design_id
+
+                if (this.product.size)
+                    productId += 'S' + this.product.size;
+
+
+                let query = _.pickBy(this.product)
+
+                this.$inertia.get(route('stock-imports.create'), {
+                    checkProduct: true,
+                    ...query,
+                }, {
+                    preserveState: true,
+                    preserveScroll: true,
+                    errorBag: 'lineBag',
+                    only: ['searchproduct', 'errors'],
+                    onSuccess: (page) => {
+                        console.log('success');
+                        console.log(page);
+                        if (page.props.searchproduct) {
+                            if (page.props.searchproduct.id) {
+                                this.product.id = page.props.searchproduct.id;
+                            } else {
+                                this.product.id = null;
+                            }
+                            this.product.product_id = page.props.searchproduct.product_id;
+                            this.product.name = page.props.searchproduct.name;
+                        }
+                        this.$nextTick(() => {
+                            this.productChecked = true
+                        })
+                    },
+                    onError: (errors) => {
+                        console.log('errors')
+                        console.log(errors);
+                    }
+                })
+            },
+            storeLine() {
+                let newline = _.assign({}, this.line, this.product)
+
+                let w = Weight(
+                    this.product.weight,
+                    this.product.weightbaht);
+
+                newline.cost_wage = this.line.cost_wage;
+                newline.cost_price = this.line.cost_price;
+                newline.product_weight_total = numeral(this.line.qty).multiply(w.toGram()).value();
+                newline.cost_wage_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? 0).value();
+                newline.cost_price_total = numeral(this.line.qty).multiply(this.line.cost_price ?? 0).value();
+                this.lines.push(newline);
+
+            },
+            updateTotal() {
+                this.billTotal.weight_total = _.sumBy(this.lines, (o) => {
+                    return o.product_weight_total
+                })
+                this.billTotal.cost_wage_total = _.sumBy(this.lines, (o) => {
+                    return o.cost_wage_total
+                })
+                this.billTotal.cost_price_total = _.sumBy(this.lines, (o) => {
+                    return o.cost_price_total
+                })
+                this.billTotal.qty_total = _.sumBy(this.lines, (o) => {
+                    return o.qty
+                })
+
+            },
+            store() {
+                this.form.lines = this.lines;
+
+                this.form.post(route('stock-imports.store'), {
+                    errorBag: 'stockImportBag',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.form.reset()
+                        this.$emit('close');
+                    }
+                })
+            },
+            formatNumber(val, pre = 0) {
+                let format = '';
+                switch (pre) {
+                    case 0:
+                        format = '0,0';
+                        break;
+                    case 2:
+                        format = '0,0.00';
+                        break;
+                }
+                return numeral(val).format(format);
+            }
         }
     }
-}
 </script>
