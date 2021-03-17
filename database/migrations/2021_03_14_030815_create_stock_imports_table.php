@@ -16,6 +16,7 @@ class CreateStockImportsTable extends Migration
         Schema::create('stock_imports', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->date('d')->nullable();
+            $table->foreignId('team_id');
             $table->string('team_name')->nullable();
             $table->string('sup_name')->nullable();
             $table->string('emp_name')->nullable();

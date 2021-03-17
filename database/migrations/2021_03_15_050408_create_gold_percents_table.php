@@ -14,7 +14,7 @@ class CreateGoldPercentsTable extends Migration
     public function up()
     {
         Schema::create('gold_percents', function (Blueprint $table) {
-            $table->unsignedInteger('id')->primary();
+            $table->string('id')->primary();
             $table->string('name');
             $table->decimal('percent_sale');
             $table->decimal('add_sale');

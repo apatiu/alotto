@@ -1,5 +1,5 @@
 <template>
-    <span class="p-float-label">
+    <span class="p-float-label p-filled">
         <InputNumber :modelValue="modelValue"
                    @update:modelValue="$emit('update:modelValue', $event)"
                    v-bind="$attrs"

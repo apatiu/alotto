@@ -4,10 +4,10 @@
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
                 <text-input
-                        v-model="form.id"
-                        :error="form.errors.id"
-                        label="เลขที่"
-                        disabled
+                    v-model="form.id"
+                    :error="form.errors.id"
+                    label="เลขที่"
+                    disabled
                 />
             </div>
             <div class="col-start-5">
@@ -17,9 +17,9 @@
             </div>
             <div class="col-start-6">
                 <select-supplier
-                        v-model="form.sup_name"
-                        label="ผู้จำหน่าย"
-                        :error="form.errors.sup_name">
+                    v-model="form.sup_name"
+                    label="ผู้จำหน่าย"
+                    :error="form.errors.sup_name">
                 </select-supplier>
             </div>
         </div>
@@ -27,7 +27,16 @@
             <Button @click="createLine">เพิ่มสินค้า</Button>
         </div>
         <DataTable :value="lines">
+            <Column field="product_id" header="รหัสสินค้า"></Column>
             <Column field="name" header="ชื่อสินค้า"></Column>
+            <Column field="weight" header="น้ำหนักต่อชิ้น"></Column>
+            <Column field="qty" header="จำนวน"></Column>
+            <Column field="cost_wage" header="ค่าแรงทุน"></Column>
+            <Column field="cost_price" header="ราคาทุน"></Column>
+            <Column field="cost_total" header="รวมทุน"></Column>
+            <Column field="product_weight_total" header="รวมน้ำหนัก">
+                <template #footer>{{ formatNumber(g_product_weight_total) }}</template>
+            </Column>
         </DataTable>
 
         <div class="pt-4 flex justify-end">
@@ -42,20 +51,21 @@
             </Button>
         </div>
     </div>
-    <Dialog header="เพิ่มสินค้า" v-model:visible="creatingLine" :modal="true" :style="{width:'80vw'}">
+    <Dialog header="เพิ่มสินค้า" v-model:visible="creatingLine"
+            :modal="true" position="bottom" style="max-width: 800px">
         <div class="p-fluid p-grid">
             <div class="p-col-9">
-                <div class="p-grid">
+                <div class="p-grid pt-8">
                     <div class="p-field p-col-3">
                         <a-input
-                                v-model="product.product_id"
-                                label="รหัสสินค้า"
+                            v-model="product.product_id"
+                            label="รหัสสินค้า"
                         ></a-input>
                     </div>
                     <div class="p-field p-col-9">
                         <a-input
-                                v-model="product.name"
-                                label="ชื่อสินค้า"></a-input>
+                            v-model="product.name"
+                            label="ชื่อสินค้า"></a-input>
                     </div>
                     <div class="p-field p-col-3">
                         <select-gold-percent v-model="product.gold_percent"/>
@@ -66,27 +76,29 @@
                     <div class="p-field p-col-3">
                         <select-product-type v-model="product.product_type"></select-product-type>
                         <small class="p-error"
-                               v-if="errors.lineBag && errors.lineBag.product_type_id">{{ errors.lineBag.product_type_id
+                               v-if="errors.lineBag && errors.lineBag.product_type_id">{{
+                                errors.lineBag.product_type_id
                             }}
                         </small>
-
                     </div>
-                    <div class="p-field p-col-3">
+                    <div class="p-field p-col-4">
                         <input-weight :model-value="[product.weight,product.weightbaht]"
                                       @update:model-value="updateProductWeight"></input-weight>
                     </div>
                     <div class="p-field p-col-9">
-                        <a-input
-                                v-model="product.product_design"
-                                label="ลาย"></a-input>
+                        <select-product-design
+                            v-model="product.product_design"
+                            :product-type-id="product.product_type_id"
+                            label="ดีไซน์"></select-product-design>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input
-                                v-model="product.size"
-                                label="ขนาด"></a-input>
+                            v-model="product.size"
+                            label="ขนาด"></a-input>
                     </div>
                     <div class="p-field p-col-3">
-                        <a-input v-model="product.line_qty" label="จำนวน"></a-input>
+                        <a-input-currency v-model="v$.line.qty.$model" label="จำนวน"
+                                 :error="v$.line.qty.$errors.length ? v$.line.qty.$errors[0].$message : null"></a-input-currency>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input v-model="product_weight_total"
@@ -94,15 +106,20 @@
                                  disabled></a-input>
                     </div>
                     <div class="p-field p-col-3">
-                        <a-input-currency v-model="product.avg_cost_per_baht" label="ต้นทุน/บาท"></a-input-currency>
+                        <a-input-currency
+                            v-model="v$.line.avg_cost_per_baht.$model"
+                            label="ต้นทุน/บาท"
+                            :error="v$.line.avg_cost_per_baht.$errors.length ? v$.line.avg_cost_per_baht.$errors[0].$message : null"
+                        ></a-input-currency>
                     </div>
                 </div>
                 <div class="p-grid">
-                    <div class="p-col-4 p-flex-column">
+                    <div class="p-col-6 p-flex-column">
                         <div class="p-field-radiobutton">
                             <RadioButton v-model="product.sale_with_gold_price"
                                          name="sale_with_gold"
-                                         :value="true"></RadioButton>
+                                         :value="true"
+                                         :disabled="product.id"></RadioButton>
                             <label>ราคาเปลี่ยนตามราคาทอง</label>
                         </div>
                         <div class="flex">
@@ -123,39 +140,38 @@
                                 <label for="wage_by_baht">คิดค่าแรงต่อบาท</label>
                             </div>
                         </div>
-
-                        <div class="p-field mt-8">
+                        <div class="p-field mt-4">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="product.cost_wage"
+                                    <InputNumber v-model="v$.line.cost_wage.$model"
                                                  :disabled="product.sale_with_gold_price === false"/>
                                     <label>ค่าแรงทุน</label>
                                 </span>
                         </div>
-                        <div class="p-field mt-8">
+                        <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="product.tag_wage"
+                                    <InputNumber v-model="v$.line.tag_wage.$model"
                                                  :disabled="product.sale_with_gold_price === false"/>
                                     <label>ค่าแรงขาย</label>
                                 </span>
                         </div>
                     </div>
-                    <div class="p-col-4 p-offset-2 p-flex-column justify-end">
+                    <div class="p-col-6 p-flex-column justify-end">
                         <div class="p-field-radiobutton">
                             <RadioButton v-model="product.sale_with_gold_price"
                                          name="sale_with_gold"
                                          :value="false"></RadioButton>
                             <label>ราคาคงที่</label>
                         </div>
-                        <div class="p-field mt-8">
+                        <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="product.cost_price"
+                                    <InputNumber v-model="v$.line.cost_price.$model"
                                                  :disabled="product.sale_with_gold_price === true"/>
                                     <label>ราคาทุน</label>
                                 </span>
                         </div>
-                        <div class="p-field mt-8">
+                        <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="product.tag_price"
+                                    <InputNumber v-model="v$.line.tag_price.$model"
                                                  :disabled="product.sale_with_gold_price === true"/>
                                     <label>ราคาขาย</label>
                                 </span>
@@ -164,8 +180,8 @@
 
                 </div>
                 <div class="p-grid">
-                    <div class="p-col-12 mt-8">
-                        <a-input v-model="product.description" label="รายละเอียด"></a-input>
+                    <div class="p-col-12 mt-6">
+                        <a-input v-model="line.description" label="รายละเอียด"></a-input>
                     </div>
                 </div>
             </div>
@@ -181,15 +197,31 @@
 
         <template #footer>
             <div class="flex w-full justify-between pt-3">
-                <div>
-                    <Button label="ตรวจสอบ" class="p-button-success" @click="checkProduct"></Button>
+                <div class="flex">
+                    <Button label="ตรวจสอบ" class="p-button-success"
+                            @click="checkProduct"></Button>
+                    <div class="flex items-center">
+                        <template v-if="productChecked">
+                            <div
+                                class="rounded-full px-2 bg-blue-100 text-blue-400 text-white text-xs mr-2 flex items-center">
+                                <span class="pi pi-check"></span>
+                                ผ่าน
+                            </div>
+                            <span class="text-blue-800" v-if="product.id">สินค้าในสต้อก</span>
+                            <span class="text-red-800" v-else>สินค้าใหม่</span>
+                        </template>
+                        <template v-else>
+                            <span class="text-green-700">กรุณาตรวจสอบให้ผ่าน ก่อนกดบันทึก</span>
+                        </template>
+                    </div>
                 </div>
                 <div>
-                    <Button label="ยกเลิก" icon="pi pi-times"
+                    <Button label="ปิด" icon="pi pi-times"
                             class="p-button-text"
                             @click="creatingLine=false"/>
                     <Button label="บันทึก" icon="pi pi-check"
-                            :disabled="errors"/>
+                            :disabled="!productChecked || v$.$error"
+                            @click="storeLine"/>
                 </div>
             </div>
         </template>
@@ -197,167 +229,273 @@
 </template>
 
 <script>
-    import TextInput from '@/Shared/TextInput'
-    import SelectInput from '@/Shared/SelectInput'
-    import LoadingButton from '@/Shared/LoadingButton'
+import TextInput from '@/Shared/TextInput'
+import SelectInput from '@/Shared/SelectInput'
+import LoadingButton from '@/Shared/LoadingButton'
 
-    import JetFormSection from "@/Jetstream/FormSection";
-    import JetActionMessage from "@/Jetstream/ActionMessage";
-    import Input from "@/Jetstream/Input";
-    import AInput from "@/A/AInput";
-    import AppLayout from "@/Layouts/AppLayout";
-    import SelectSupplier from "@/Shared/SelectSupplier";
-    import ATable from "@/A/ATable";
-    import InputError from "@/Jetstream/InputError";
-    import SelectGoldPercent from "@/A/SelectGoldPercent";
-    import SelectProductType from "@/A/SelectProductType";
-    import InputWeight from "@/A/InputWeight";
-    import Weight from "@/plugins/weight";
-    import AInputCurrency from "@/A/AInputCurrency";
+import JetFormSection from "@/Jetstream/FormSection";
+import JetActionMessage from "@/Jetstream/ActionMessage";
+import Input from "@/Jetstream/Input";
+import AInput from "@/A/AInput";
+import AppLayout from "@/Layouts/AppLayout";
+import SelectSupplier from "@/Shared/SelectSupplier";
+import ATable from "@/A/ATable";
+import InputError from "@/Jetstream/InputError";
+import SelectGoldPercent from "@/A/SelectGoldPercent";
+import SelectProductType from "@/A/SelectProductType";
+import InputWeight from "@/A/InputWeight";
+import Weight from "@/plugins/weight";
+import AInputCurrency from "@/A/AInputCurrency";
+import SelectProductDesign from "@/A/SelectProductDesign";
 
-    export default {
-        metaInfo: {title: 'Create Suppliers'},
-        components: {
-            AInputCurrency,
-            InputWeight,
-            SelectProductType,
-            SelectGoldPercent,
-            InputError,
-            ATable,
-            SelectSupplier,
-            AInput,
-            Input,
-            JetFormSection,
-            JetActionMessage,
-            LoadingButton,
-            SelectInput,
-            TextInput,
-        },
-        layout: AppLayout,
-        props: ['item', 'gold_percents', 'errors'],
-        data() {
-            return {
-                form: this.$inertia.form({
-                    id: this.item.id ?? null,
-                    d: this.item.d,
-                    sup_name: this.item.sup_name ?? null,
-                    lines: this.item.lines,
-                }),
-                creatingLine: false,
-                formProduct: this.$inertia.form({
-                    id: null,
-                    name: 'test'
-                }),
-                product: {
-                    product_id: null,
-                    gold_percent: null,
-                    product_type_id: null,
-                    product_type: null,
-                    product_design_id: null,
-                    size: null,
-                    name: null,
-                    weight: null,
-                    weightbaht: null,
-                    cost_wage: null,
-                    tag_wage: null,
-                    cost_price: null,
-                    tag_price: null,
-                    sale_with_gold_price: null,
-                    wage_by_pcs: null,
-                    line_qty: null,
-                    line_product_weight_total: null,
-                    line_avg_cost_per_baht: null,
-                    line_description: null,
-                    is_new: null
-                }
-            }
-        },
-        watch: {
+import useVuelidate from '@vuelidate/core';
+import {required, requiredIf} from '@vuelidate/validators'
+
+export default {
+    setup() {
+        return {v$: useVuelidate()}
+    },
+    metaInfo: {title: 'Create Suppliers'},
+    components: {
+        SelectProductDesign,
+        AInputCurrency,
+        InputWeight,
+        SelectProductType,
+        SelectGoldPercent,
+        InputError,
+        ATable,
+        SelectSupplier,
+        AInput,
+        Input,
+        JetFormSection,
+        JetActionMessage,
+        LoadingButton,
+        SelectInput,
+        TextInput,
+    },
+    layout: AppLayout,
+    props: ['item', 'gold_percents', 'errors'],
+    data() {
+        return {
+            form: this.$inertia.form({
+                id: this.item.id ?? null,
+                d: this.item.d,
+                sup_name: this.item.sup_name ?? null,
+                product_weight_total: 0,
+                cost_wage_total: 0,
+                tag_wage_total: 0,
+                cost_price_total: 0,
+                tag_price_total: 0,
+                bullion_cost: 0,
+                real_weight_total: 0,
+                real_cost: 0,
+                lines: this.item.lines,
+            }),
+            creatingLine: false,
+            formProduct: this.$inertia.form(),
+            productChecked: false,
             product: {
-                handler(val) {
-                    if (this.product.product_type)
-                        this.product.product_type_id = this.product.product_type.id;
-                },
-                deep: true
-            }
-        },
-        computed: {
-            product_weight_total() {
-                let w = Weight(
-                    this.product.weight,
-                    this.product.weightbaht);
-                return this.product.line_qty * w.toGram();
+                id: null,
+                product_id: null,
+                gold_percent: null,
+                product_type_id: null,
+                product_type: null,
+                product_design_id: null,
+                product_design: null,
+                size: null,
+                name: null,
+                weight: null,
+                weightbaht: null,
+                cost_wage: null,
+                tag_wage: null,
+                cost_price: null,
+                tag_price: null,
+                sale_with_gold_price: null,
+                wage_by_pcs: null,
 
-            }
-        },
-        methods: {
-            createLine() {
-                this.product = _.mapValues(this.product, () => null);
-                this.product.weightbaht = true;
-                this.product.sale_with_gold_price = true;
-                this.product.wage_by_pcs = true;
-                this.creatingLine = true;
             },
-            updateProductWeight(event) {
-                this.product.weight = event[0]
-                this.product.weightbaht = event[1]
-            },
-            checkProduct() {
-
-                let w = Weight(
-                    this.product.weight,
-                    this.product.weightbaht);
-
-                let productId = '';
-                if (this.product.gold_percent)
-                    productId += this.product.gold_percent;
-                if (this.product.product_type_id)
-                    productId += this.product.product_type_id;
-                if (w.toGram())
-                    productId += w.toGram()
-                if (this.product.product_design_id)
-                    productId += 'D' + this.product.product_design_id
-
-                if (this.product.size)
-                    productId += 'S' + this.product.size;
-
-
-                let query = _.pickBy(this.product)
-                console.log(query);
-
-                this.$inertia.get(route('stock-imports.create'), {
-                    ...this.product,
-                    id: productId,
-                }, {
-                    preserveState: true,
-                    preserveScroll: true,
-                    errorBag: 'lineBag',
-                    only: ['product', 'errors'],
-                    onSuccess: (page) => {
-                        console.log('success');
-                        console.log(page);
-                        if (page.props.product) {
-                            console.log('found')
-                        } else {
-                            console.log('new product')
-                        }
-                    },
-                    onError: (errors) => {
-                        console.log('errors')
-                        console.log(errors);
-                    }
-                })
-            },
-            store() {
-                this.form.post(route('stock-imports.store'), {
-                    errorBag: 'stockImportBag',
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        this.form.reset()
-                        this.$emit('close');
-                    }
-                })
+            lines: [],
+            line: {
+                product_id: null,
+                gold_percent: null,
+                product_type_id: null,
+                product_design_id: null,
+                product_size: null,
+                product_name: null,
+                product_weight: null,
+                product_min: null,
+                qty: null,
+                product_weight_total: null,
+                avg_cost_per_baht: null,
+                description: null,
+                cost_wage: null,
+                tag_wage: null,
+                cost_price: null,
+                tag_price: null,
+                sale_with_gold_price: null,
             }
         }
+    },
+    validations() {
+        return {
+            line: {
+                qty: {required},
+                avg_cost_per_baht: {required},
+                cost_wage: {
+                    required: requiredIf(function (product) {
+                        return product.sale_with_gold_price;
+                    })
+                },
+                tag_wage: {
+                    required: requiredIf( function(product) {
+                        return product.sale_with_gold_price;
+                    })},
+                cost_price: {
+                    required: requiredIf(function (product) {
+                        return !product.sale_with_gold_price;
+                    })
+                },
+                tag_price: {
+                    required: requiredIf( function(product) {
+                        return !product.sale_with_gold_price;
+                    })},
+            },
+        }
+    },
+    watch: {
+        product: {
+            handler(val, oldVal) {
+                if (this.productChecked) {
+                    this.productChecked = false;
+                    this.product.product_id = null;
+                    this.product.id = null;
+                }
+
+                if (this.product.product_type)
+                    this.product.product_type_id = this.product.product_type.id;
+                if (this.product.product_design)
+                    this.product.product_design_id = this.product.product_design.id;
+            },
+            deep: true
+        },
+        lines: {
+            handler(val) {
+                this.updateTotal();
+            },
+            deep: true
+        }
+    },
+    computed: {
+        product_weight_total() {
+            let w = Weight(
+                this.product.weight,
+                this.product.weightbaht);
+            return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
+
+        },
+        g_product_weight_total() {
+            return _.sumBy(this.lines, (o) => {
+                return o.product_weight_total
+            })
+        }
+    },
+    methods: {
+        createLine() {
+            this.product = _.mapValues(this.product, () => null);
+            this.line = _.mapValues(this.product, () => null);
+            this.product.weightbaht = true;
+            this.product.sale_with_gold_price = true;
+            this.product.wage_by_pcs = true;
+            this.creatingLine = true;
+        },
+        updateProductWeight(event) {
+            this.product.weight = event[0]
+            this.product.weightbaht = event[1]
+        },
+        checkProduct() {
+
+            this.v$.$touch();
+
+            let w = Weight(
+                this.product.weight,
+                this.product.weightbaht);
+
+            let productId = '';
+            if (this.product.gold_percent)
+                productId += this.product.gold_percent;
+            if (this.product.product_type_id)
+                productId += this.product.product_type_id;
+            if (w.toGram())
+                productId += w.toGram()
+            if (this.product.product_design_id)
+                productId += 'D' + this.product.product_design_id
+
+            if (this.product.size)
+                productId += 'S' + this.product.size;
+
+
+            let query = _.pickBy(this.product)
+
+            this.$inertia.get(route('stock-imports.create'), {
+                checkProduct: true,
+                ...query,
+            }, {
+                preserveState: true,
+                preserveScroll: true,
+                errorBag: 'lineBag',
+                only: ['product', 'errors'],
+                onSuccess: (page) => {
+                    console.log('success');
+                    console.log(page);
+                    if (page.props.product) {
+                        if (page.props.product.id) {
+                            this.product.id = page.props.product.id;
+                        } else {
+                            this.product.id = null;
+                        }
+                        this.product.product_id = page.props.product.product_id;
+                        this.product.name = page.props.product.name;
+                    }
+                    this.$nextTick(() => {
+                        this.productChecked = true
+                    })
+                },
+                onError: (errors) => {
+                    console.log('errors')
+                    console.log(errors);
+                }
+            })
+        },
+        storeLine() {
+            let newline = _.assign({}, this.line, this.product)
+
+            let w = Weight(
+                this.product.weight,
+                this.product.weightbaht);
+
+            newline.cost_wage = this.line.cost_wage;
+            newline.cost_price = this.line.cost_price;
+            newline.product_weight_total = numeral(this.line.qty).multiply(w.toGram()).value();
+            newline.cost_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? this.line.cost_price).value();
+            this.lines.push(newline);
+
+        },
+        updateTotal() {
+            console.log('update total')
+        },
+        store() {
+            this.form.post(route('stock-imports.store'), {
+                errorBag: 'stockImportBag',
+                preserveScroll: true,
+                onSuccess: () => {
+                    this.form.reset()
+                    this.$emit('close');
+                }
+            })
+        },
+        formatNumber(val) {
+            return numeral(val).format('0,0.00');
+        }
     }
+}
 </script>

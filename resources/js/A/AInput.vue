@@ -5,6 +5,7 @@
                    v-bind="$attrs"
                    :disabled="disabled"
                    :readonly="readonly"
+                   class="p-filled"
         ></InputText>
         <label v-if="label">{{ label }}</label>
     </span>

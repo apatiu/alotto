@@ -32,11 +32,14 @@
     "dependencies": {
         "@fortawesome/free-solid-svg-icons": "^5.15.2",
         "@fortawesome/vue-fontawesome": "^3.0.0-3",
+        "@vuelidate/core": "^2.0.0-alpha.14",
+        "@vuelidate/validators": "^2.0.0-alpha.12",
         "numeral": "^2.0.6",
         "popper.js": "^1.16.1",
         "primeflex": "^2.0.0",
         "primeicons": "^4.1.0",
         "primevue": "^3.3.5",
+        "vee-validate": "^4.2.2",
         "vue-next-select": "^1.2.1"
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <span class="p-float-label">
-        <Dropdown class="w-full"
+        <Dropdown class="w-full p-filled"
               :options="$page.props.gold_percents"
               optionLabel="name"
               optionValue="id"

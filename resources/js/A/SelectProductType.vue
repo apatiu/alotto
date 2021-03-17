@@ -8,7 +8,7 @@
                   :dropdown="true"
                   forceSelection
     ></AutoComplete>
-    <label for="">ประเภทสินค้า:</label>
+    <label for="">ประเภทสินค้า</label>
     </span>
 </template>
 

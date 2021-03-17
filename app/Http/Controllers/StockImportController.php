@@ -36,17 +36,21 @@ class StockImportController extends Controller
     public function create()
     {
         $product = null;
-        $data = request()->query();
-        if (request()->has('id')) {
+        if (request()->has('checkProduct')) {
+            $data = request()->query();
             Validator::make($data, [
                 'gold_percent' => ['required'],
                 'product_type_id' => ['required'],
             ])->validateWithBag('lineBag');
 
-            $product = Product::find($data['id']);
+            $product = new Product();
+            $product->fill($data);
+            $product->gen_product_id();
+            $product->gen_product_name();
 
-            if (!$product) {
-                $product = new Product($data);
+            $producted = Product::find($product->product_id);
+            if ($producted) {
+                $product = $producted;
             }
         }
         return Inertia::render('StockImports/Create', [
@@ -59,7 +63,9 @@ class StockImportController extends Controller
             'gold_percents' => GoldPercent::all(),
             'product_types' => ProductType::all(),
             'product_designs' => ProductDesign::all(),
-            'product' => Inertia::lazy(function() use ($product) { return $product; }),
+            'product' => Inertia::lazy(function () use ($product) {
+                return $product;
+            }),
         ]);
     }
 

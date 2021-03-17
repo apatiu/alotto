@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
 
             $table->decimal('gold_percent');
             $table->foreignId('product_type_id');
-            $table->string('product_design_id')->nullable();
+            $table->unsignedInteger('product_design_id')->nullable();
             $table->string('size')->nullable();
             $table->string('name');
 

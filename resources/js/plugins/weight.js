@@ -7,7 +7,7 @@ export default function weight(weight = null, weightbath = null) {
         weight: weight,
         weightbaht: weightbath,
         toGram() {
-            return weightbath ? (weight * 15.2) : weight;
+            return weightbath ? 15.2 / (1/weight) : weight;
         }
     }
 }
