@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use phpDocumentor\Reflection\Types\This;
 use Spatie\Permission\Models\Role;
 
@@ -41,6 +43,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ProductTypeSeeder::class);
 
 
-//        $this->call(TestSeeder::class);
+        $this->call(TestSeeder::class);
     }
 }

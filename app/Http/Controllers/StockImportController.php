@@ -9,8 +9,10 @@ use App\Models\ProductDesign;
 use App\Models\ProductType;
 use App\Models\StockImport;
 use App\Models\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
@@ -36,6 +38,13 @@ class StockImportController extends Controller
      */
     public function create()
     {
+        $bill = new  StockImport();
+        $bill->id = $this->gen_id();
+        $bill->team_id = request()->user()->currentTeam->id;
+        $bill->dt = Carbon::now();
+        $bill->save();
+        return Redirect::route('stock-imports.edit', ['stock_import' => $bill]);
+
         $product = null;
         if (request()->has('checkProduct')) {
             $data = request()->query();
@@ -58,8 +67,7 @@ class StockImportController extends Controller
             'goldprice' => GoldPriceHelper::GoldPrice(),
             'filters' => request()->all('search', 'role', 'trashed'),
             'item' => [
-                'd' => date('d-m-Y'),
-                'rows' => []
+                'lines' => []
             ],
             'suppliers' => Supplier::all(),
             'gold_percents' => GoldPercent::all(),
@@ -79,34 +87,19 @@ class StockImportController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
 
-        $data['id'] = $this->get_id();
-        $data['team_id'] = $request->user()->currentTeam->id;
-
-        Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
-
-        DB::transaction(function () use ($data) {
-            return tap(StockImport::create($data),
-                function (StockImport $stockImport) use ($data) {
-                    $stockImport->lines()->insert($data['lines']);
-                });
-        });
-
-        return redirect()->back();
     }
 
-    private function get_id()
+    private function gen_id()
     {
         $id = 'SI' . request()->user()->currentTeam->id . '-';
         $id .= date('Ym') . '-';
 
         $latest = StockImport::where('id', 'like', $id . '%')->select('id')->orderBy('id', 'desc')->first();
-
         if (!$latest)
             $id .= '0001';
         else
-            $id .= substr('000' + (intval(substr($latest->id, -4)) + 1), -4);
+            $id .= substr('000' . (intval(substr($latest->id, -4)) + 1), -4);
 
         return $id;
 
@@ -131,7 +124,35 @@ class StockImportController extends Controller
      */
     public function edit(StockImport $stockImport)
     {
-        //
+        $product = null;
+        if (request()->has('checkProduct')) {
+            $data = request()->query();
+            Validator::make($data, [
+                'gold_percent' => ['required'],
+                'product_type_id' => ['required'],
+            ])->validateWithBag('lineBag');
+
+            $product = new Product();
+            $product->fill($data);
+            $product->gen_product_id();
+            $product->gen_product_name();
+
+            $producted = Product::find($product->product_id);
+            if ($producted) {
+                $product = $producted;
+            }
+        }
+        return Inertia::render('StockImports/Edit', [
+            'goldprice' => GoldPriceHelper::GoldPrice(),
+            'item' => $stockImport,
+            'suppliers' => Supplier::all(),
+            'gold_percents' => GoldPercent::all(),
+            'product_types' => ProductType::all(),
+            'product_designs' => ProductDesign::all(),
+            'searchproduct' => Inertia::lazy(function () use ($product) {
+                return $product;
+            }),
+        ]);
     }
 
     /**
@@ -143,7 +164,15 @@ class StockImportController extends Controller
      */
     public function update(Request $request, StockImport $stockImport)
     {
-        //
+
+        Validator::make($request->all(), $this->validateRules())->validateWithBag('stockImportBag');
+
+        DB::transaction(function () use ($request,$stockImport) {
+            return $stockImport->update($request->all());
+
+        });
+
+        return redirect()->back();
     }
 
     /**
@@ -160,7 +189,6 @@ class StockImportController extends Controller
     public function validateRules()
     {
         return [
-            'id' => ['required', 'unique:stock_imports'],
             'team_id' => ['required'],
             'dt' => ['required'],
             'real_cost' => ['required']

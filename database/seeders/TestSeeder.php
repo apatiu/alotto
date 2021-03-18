@@ -15,7 +15,7 @@ class TestSeeder extends Seeder
     public function run()
     {
 
-        Supplier::factory()->create();
+        Supplier::factory()->count(20)->create();
     }
 
 }

@@ -2,10 +2,6 @@
     <div class="py-4 px-6">
         <div class="flex justify-between">
             <h1 class="text-2xl mb-6">สร้างใบรับสินค้า</h1>
-            <div>
-                ราคาทอง
-                <InputNumber v-model="bill_goldprice"></InputNumber>
-            </div>
         </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
@@ -18,8 +14,9 @@
             </div>
             <div class="col-start-5">
                 <label>วันที่นำเข้า</label>
-                <Calendar v-model="form.d" dateFormat="dd-mm-yy" class="w-full"></Calendar>
-                <input-error :message="form.errors.d"></input-error>
+                <Calendar v-model="form.dt"
+                          dateFormat="dd-mm-yy" class="w-full"></Calendar>
+                <input-error :message="form.errors.dt"></input-error>
             </div>
             <div class="col-start-6">
                 <select-supplier
@@ -29,65 +26,10 @@
                 </select-supplier>
             </div>
         </div>
-        <div class="flex p-mt-3 justify-end">
-            <Button @click="createLine">เพิ่มสินค้า</Button>
-        </div>
-        <DataTable :value="lines">
-            <Column field="product_id" header="รหัสสินค้า"></Column>
-            <Column field="name" header="ชื่อสินค้า"></Column>
-            <Column field="weight" header="น้ำหนักต่อชิ้น"></Column>
-            <Column field="qty" header="จำนวน">
-                <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
-            </Column>
-            <Column field="cost_wage" header="ค่าแรงทุน"></Column>
-            <Column field="cost_wage_total" header="รวมค่าแรงทุน">
-                <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
-            </Column>
-            <Column field="cost_price" header="ราคาทุน"></Column>
-            <Column field="cost_price_total" header="รวมทุน">
-                <template #footer>{{ formatNumber(form.cost_price_total) }}</template>
-            </Column>
-            <Column field="product_weight_total" header="รวมน้ำหนัก">
-                <template #footer>{{ formatNumber(form.product_weight_total) }}</template>
-            </Column>
-        </DataTable>
 
-        <div class="grid grid-cols-2 gap-6 mt-6">
-            <div></div>
-            <div>
-                <div class="grid grid-cols-4 grid-rows-3 gap-4">
-                    <div class="flex items-center justify-end auto-cols-max">
-                        น้ำหนักชั่งจริง
-                    </div>
-                    <div>
-                        <InputNumber class="w-full"
-                                     v-model="form.real_weight_total"
-                                     mode="decimal"
-                                     :minFractionDigits="2"
-                                     :maxFractionDigits="2"></InputNumber>
-                    </div>
-                    <div class="flex items-center justify-end">
-                        ราคาทอง
-                    </div>
-                    <div>
-                        <InputText v-model="form.cost_gold_total" class="w-full" disabled></InputText>
-                    </div>
-                    <div class="flex items-center justify-end">ยอดจ่ายจริง</div>
-                    <div>
-                        <InputNumber v-model="form.real_cost"
-                                     mode="decimal"
-                                     :minFractionDigits="2"
-                                     :maxFractionDigits="2"
-                                     class="w-full"></InputNumber>
-                    </div>
-                    <div class="flex items-center justify-end">ค่าแรง</div>
-                    <div>
-                        <InputText v-model="form.cost_wage_total" class="w-full" disabled></InputText>
-                    </div>
-                </div>
-            </div>
+        <div class="text-right" v-if="form.errors">
+            <p v-for="item in form.errors" class="p-error">{{ item }}</p>
         </div>
-
         <div class="pt-4 flex justify-end">
             <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
                 บันทึกข้อมูลแล้ว.
@@ -541,7 +483,7 @@ export default {
                 this.form.product_weight_total += line.product_weight_total;
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
-                this.form.product_qty_total += line.qty_total;
+                this.form.product_qty_total += line.qty;
             })
 
             this.form.cost_gold_total = (this.bill_goldprice * .0656) * this.form.product_weight_total;
