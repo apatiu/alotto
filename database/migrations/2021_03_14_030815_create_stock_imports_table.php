@@ -15,23 +15,22 @@ class CreateStockImportsTable extends Migration
     {
         Schema::create('stock_imports', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->date('d')->nullable();
+            $table->dateTime('dt')->nullable();
             $table->foreignId('team_id');
             $table->string('supplier_id')->nullable();
             $table->string('emp_name')->nullable();
             $table->string('status')->nullable();
-            $table->boolean('stock_updated')->nullable();
             $table->dateTime('stock_updated_on')->nullable();
             $table->text('note')->nullable();
-            $table->decimal('product_weight_total');
-            $table->decimal('tag_wage_total');
-            $table->decimal('tag_price_total');
-            $table->bigInteger('product_qty_total');
-            $table->decimal('cost_wage_total');
-            $table->decimal('cost_price_total');
-            $table->decimal('bullion_cost');
-            $table->decimal('real_weight_total');
-            $table->decimal('real_cost');
+            $table->decimal('product_weight_total')->nullable();;
+            $table->decimal('tag_wage_total')->nullable();;
+            $table->decimal('tag_price_total')->nullable();;
+            $table->bigInteger('product_qty_total')->nullable();;
+            $table->decimal('cost_wage_total')->nullable();;
+            $table->decimal('cost_price_total')->nullable();;
+            $table->decimal('cost_gold_total')->nullable();
+            $table->decimal('real_weight_total')->nullable();
+            $table->decimal('real_cost')->default(0);
             $table->timestamps();
         });
 

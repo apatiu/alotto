@@ -81,14 +81,35 @@ class StockImportController extends Controller
     {
         $data = $request->all();
 
-        Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
-        DB::transaction(function () use ($data) {
-            return tap(StockImport::create($data), function (StockImport $stockImport) {
+        $data['id'] = $this->get_id();
+        $data['team_id'] = $request->user()->currentTeam->id;
 
-            });
+        Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
+
+        DB::transaction(function () use ($data) {
+            return tap(StockImport::create($data),
+                function (StockImport $stockImport) use ($data) {
+                    $stockImport->lines()->insert($data['lines']);
+                });
         });
 
         return redirect()->back();
+    }
+
+    private function get_id()
+    {
+        $id = 'SI' . request()->user()->currentTeam->id . '-';
+        $id .= date('Ym') . '-';
+
+        $latest = StockImport::where('id', 'like', $id . '%')->select('id')->orderBy('id', 'desc')->first();
+
+        if (!$latest)
+            $id .= '0001';
+        else
+            $id .= substr('000' + (intval(substr($latest->id, -4)) + 1), -4);
+
+        return $id;
+
     }
 
     /**
@@ -139,7 +160,10 @@ class StockImportController extends Controller
     public function validateRules()
     {
         return [
-            'd' => ['required'],
+            'id' => ['required', 'unique:stock_imports'],
+            'team_id' => ['required'],
+            'dt' => ['required'],
+            'real_cost' => ['required']
         ];
     }
 }
