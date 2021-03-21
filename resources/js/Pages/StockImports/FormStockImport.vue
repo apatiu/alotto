@@ -1,7 +1,7 @@
 <template>
     <div class="py-4 px-6">
         <div class="flex justify-between">
-            <h1 class="text-2xl mb-6">สร้างใบรับสินค้า</h1>
+            <h1 class="text-2xl mb-6">ใบรับสินค้า</h1>
         </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
@@ -47,6 +47,11 @@
             </Column>
             <Column field="product_weight_total" header="รวมน้ำหนัก">
                 <template #footer>{{ formatNumber(form.product_weight_total, 2) }}</template>
+            </Column>
+            <Column>
+                <template #body>
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-text" />
+                </template>
             </Column>
         </DataTable>
 
