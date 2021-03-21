@@ -30,7 +30,7 @@ class CreateStockImportsTable extends Migration
             $table->decimal('cost_price_total')->nullable();;
             $table->decimal('cost_gold_total')->nullable();
             $table->decimal('real_weight_total')->nullable();
-            $table->decimal('real_cost')->default(0);
+            $table->decimal('real_cost',12,2)->default(0);
             $table->timestamps();
         });
 

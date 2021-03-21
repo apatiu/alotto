@@ -407,27 +407,27 @@ export default {
             this.v$.$reset();
             this.v$.$touch();
 
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-
-            let productId = '';
-            if (this.product.gold_percent)
-                productId += this.product.gold_percent;
-            if (this.product.product_type_id)
-                productId += this.product.product_type_id;
-            if (w.toGram())
-                productId += w.toGram()
-            if (this.product.product_design_id)
-                productId += 'D' + this.product.product_design_id
-
-            if (this.product.size)
-                productId += 'S' + this.product.size;
+            // let w = Weight(
+            //     this.product.weight,
+            //     this.product.weightbaht);
+            //
+            // let productId = '';
+            // if (this.product.gold_percent)
+            //     productId += this.product.gold_percent;
+            // if (this.product.product_type_id)
+            //     productId += this.product.product_type_id;
+            // if (w.toGram())
+            //     productId += w.toGram()
+            // if (this.product.product_design_id)
+            //     productId += 'D' + this.product.product_design_id
+            //
+            // if (this.product.size)
+            //     productId += 'S' + this.product.size;
 
 
             let query = _.pickBy(this.product)
 
-            this.$inertia.get(route('stock-imports.create'), {
+            this.$inertia.replace(route('stock-imports.create'), {
                 checkProduct: true,
                 ...query,
             }, {

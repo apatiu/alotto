@@ -98,7 +98,27 @@ const app = createApp({
 })
     .mixin({methods: {route}})
     .use(InertiaPlugin)
-    .use(PrimeVue, {ripple: true})
+    .use(PrimeVue, {
+        ripple: true,
+        locale: {
+            accept: 'ตกลง',
+            reject: 'ยกเลิก',
+            dateFormat: 'dd/mm/yy',
+            dayNamesShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+            dayNamesMin: ['จ.','อ.','พ.','พฤ.','ศ.','ส.','อ.'],
+            monthNames: ["January","February","March","April","May","June","July","August","September","October","November","December"],
+            monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            today: 'Today',
+            weekHeader: 'Wk',
+            firstDayOfWeek: 0,
+            weak: 'Weak',
+            medium: 'Medium',
+            strong: 'Strong',
+            passwordPrompt: 'Enter a password',
+            emptyFilterMessage: 'No results found',
+            emptyMessage: 'No available options'
+        }
+    })
     .use(ToastService);
 
 app.directive('tooltip', Tooltip);

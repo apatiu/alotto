@@ -82,13 +82,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
 
-    Route::resource('suppliers',\App\Http\Controllers\SupplierController::class);
-    Route::resource('gold-percents',GoldPercentController::class);
-    Route::resource('product-types',ProductTypeController::class);
-    Route::resource('product-designs',ProductDesignController::class);
-    Route::resource('products',ProductController::class);
-    Route::resource('customers',CustomerController::class);
-    Route::resource('stock-imports',StockImportController::class);
+    Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
+    Route::resource('gold-percents', GoldPercentController::class);
+    Route::resource('product-types', ProductTypeController::class);
+    Route::resource('product-designs', ProductDesignController::class);
+    Route::resource('products', ProductController::class);
+    Route::resource('customers', CustomerController::class);
+    Route::resource('stock-imports', StockImportController::class);
 
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
