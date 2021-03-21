@@ -27,7 +27,7 @@ class StockImportController extends Controller
     {
         return Inertia::render('StockImports/Index', [
             'filters' => request()->all('search', 'role', 'trashed'),
-            'items' => StockImport::all(),
+            'items' => StockImport::with('team')->get(),
         ]);
     }
 
@@ -56,6 +56,7 @@ class StockImportController extends Controller
                     'cost_gold_total' => null,
                     'real_weight_total' => null,
                     'real_cost' => null,
+                    'lines' => [],
                 ],
                 'suppliers' => Supplier::all(),
                 'gold_percents' => GoldPercent::all(),
@@ -85,10 +86,13 @@ class StockImportController extends Controller
         Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
 
         DB::transaction(function () use ($request, $data) {
-            StockImport::create($data);
+            tap(StockImport::create($data), function (StockImport $stockImport) use ($request) {
+                $stockImport->lines()->createMany($request->input('lines', []));
+            });
+
         });
 
-        return redirect(route('stock-imports.edit', $data['id']));
+        return redirect()->route('stock-imports.index');
     }
 
     private function gen_id()
@@ -125,6 +129,7 @@ class StockImportController extends Controller
      */
     public function edit(StockImport $stockImport)
     {
+        $stockImport->load('lines');
         return Inertia::render('StockImports/FormStockImport', [
             'goldprice' => GoldPriceHelper::GoldPrice(),
             'item' => $stockImport,
@@ -200,7 +205,6 @@ class StockImportController extends Controller
                 $product = $producted;
             }
         }
-
         return $product;
     }
 }

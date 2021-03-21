@@ -18,6 +18,9 @@ class StockImport extends Model
         'product_weight_total', 'tag_wage_total', 'tag_price_total',
         'product_qty_total', 'cost_wage_total', 'cost_price_total', 'cost_gold_total', 'real_weight_total', 'real_cost'];
 
+    public function team() {
+        return $this->belongsTo(Team::class);
+    }
     public function lines() {
         return $this->hasMany(StockImportLine::class,'stock_import_id','id');
     }

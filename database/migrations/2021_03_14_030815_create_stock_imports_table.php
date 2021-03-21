@@ -28,7 +28,7 @@ class CreateStockImportsTable extends Migration
             $table->bigInteger('product_qty_total')->nullable();;
             $table->decimal('cost_wage_total')->nullable();;
             $table->decimal('cost_price_total')->nullable();;
-            $table->decimal('cost_gold_total')->nullable();
+            $table->decimal('cost_gold_total',12,2)->nullable();
             $table->decimal('real_weight_total')->nullable();
             $table->decimal('real_cost',12,2)->default(0);
             $table->timestamps();
@@ -40,20 +40,21 @@ class CreateStockImportsTable extends Migration
             $table->string('product_id');
             $table->string('gold_percent');
             $table->string('product_type_id');
-            $table->string('product_design');
-            $table->string('product_size');
+            $table->string('product_design_id')->nullable();
+            $table->string('product_size')->nullable();;
             $table->string('product_name');
-            $table->decimal('product_weight');
-            $table->decimal('product_min');
-            $table->decimal('cost_wage');
-            $table->decimal('tag_wage');
-            $table->decimal('cost_price');
-            $table->decimal('tag_price');
+            $table->decimal('product_weight')->nullable();
+            $table->decimal('product_min')->nullable();;
+            $table->decimal('cost_wage')->nullable();;
+            $table->decimal('tag_wage')->nullable();;
+            $table->decimal('cost_price')->nullable();;
+            $table->decimal('tag_price')->nullable();;
             $table->boolean('sale_with_gold_price')->default(true);
             $table->decimal('product_qty');
-            $table->decimal('product_weight_total');
-            $table->decimal('avg_cost_per_baht');
-            $table->text('descriptions');
+            $table->decimal('product_weight_total')->nullable();;
+            $table->decimal('avg_cost_per_baht')->nullable();;
+            $table->text('descriptions')->nullable();;
+            $table->timestamps();
 
 
         });

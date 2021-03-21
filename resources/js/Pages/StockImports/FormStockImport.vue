@@ -32,9 +32,9 @@
         </div>
         <DataTable :value="lines">
             <Column field="product_id" header="รหัสสินค้า"></Column>
-            <Column field="name" header="ชื่อสินค้า"></Column>
-            <Column field="weight" header="น้ำหนักต่อชิ้น"></Column>
-            <Column field="qty" header="จำนวน">
+            <Column field="product_name" header="ชื่อสินค้า"></Column>
+            <Column field="product_weight" header="น้ำหนักต่อชิ้น"></Column>
+            <Column field="product_qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
             </Column>
             <Column field="cost_wage" header="ค่าแรงทุน"></Column>
@@ -315,6 +315,9 @@ export default {
     created() {
         this.form.dt = moment(this.form.dt).toDate();
     },
+    mounted() {
+        if (this.form.id) this.updateTotal();
+    },
     components: {
         SelectProductDesign,
         AInputCurrency,
@@ -361,7 +364,7 @@ export default {
                 wage_by_pcs: null,
 
             },
-            lines: [],
+            lines: this.item.lines ?? [],
             line: {
                 product_id: null,
                 gold_percent: null,
@@ -466,7 +469,6 @@ export default {
             this.v$.$touch();
 
             let query = _.pickBy(this.product)
-            console.log(query);
             this.$inertia.get(route(route().current()), {
                 ...query,
                 checkProduct: true
@@ -485,6 +487,9 @@ export default {
                         }
                         this.product.product_id = page.props.searchproduct.product_id;
                         this.product.name = page.props.searchproduct.name;
+                        this.product.created_at = null;
+                        this.product.updated_at = null;
+
                     }
                     this.$nextTick(() => {
                         this.productChecked = true
@@ -497,19 +502,35 @@ export default {
             })
         },
         storeLine() {
-            let newline = _.assign({}, this.line, this.product)
-
             let w = Weight(
                 this.product.weight,
                 this.product.weightbaht);
 
+            let newline = _.assign({}, this.line, this.product)
+
+            newline.id = null;
+            newline.product_name = newline.name;
+            newline.product_qty = newline.qty;
+            newline.product_weight = w.toGram();
+
             newline.cost_wage = this.line.cost_wage;
             newline.cost_price = this.line.cost_price;
-            newline.product_weight_total = numeral(this.line.qty).multiply(w.toGram()).value();
-            newline.cost_wage_total = numeral(this.line.qty).multiply(this.line.cost_wage ?? 0).value();
-            newline.cost_price_total = numeral(this.line.qty).multiply(this.line.cost_price ?? 0).value();
-            this.lines.push(newline);
 
+            newline.name = null;
+            newline.qty = null;
+            newline.weight = null;
+            newline.updated_at = null;
+            newline.created_at = null;
+
+            this.updateLineTotal(newline);
+
+            this.lines.push(_.pickBy(newline));
+
+        },
+        updateLineTotal(newline) {
+            newline.cost_wage_total = numeral(newline.product_qty).multiply(newline.cost_wage ?? 0).value();
+            newline.product_weight_total = numeral(newline.product_qty).multiply(newline.product_weight).value();
+            newline.cost_price_total = numeral(newline.product_qty).multiply(newline.cost_price ?? 0).value();
         },
         updateTotal() {
             this.form.product_weight_total = 0;
@@ -519,7 +540,7 @@ export default {
             this.form.cost_gold_total = 0;
 
             _.each(this.lines, (line) => {
-                console.log(line);
+                this.updateLineTotal(line);
                 this.form.product_weight_total += line.product_weight_total;
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
@@ -529,8 +550,6 @@ export default {
                         .multiply(0.0656)
                         .multiply(this.form.product_weight_total)
                         .value();
-                console.log(line);
-                console.log(this.form.cost_gold_total)
 
                 this.form.product_qty_total += line.qty;
             })
