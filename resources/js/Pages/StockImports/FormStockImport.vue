@@ -50,7 +50,7 @@
             </Column>
             <Column>
                 <template #body>
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-text" />
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-text"/>
                 </template>
             </Column>
         </DataTable>
@@ -138,13 +138,15 @@
                         <select-product-type v-model="product.product_type"></select-product-type>
                         <small class="p-error"
                                v-if="errors.lineBag && errors.lineBag.product_type_id">{{
-                            errors.lineBag.product_type_id
+                                errors.lineBag.product_type_id
                             }}
                         </small>
                     </div>
                     <div class="p-field p-col-4">
-                        <input-weight :model-value="[product.weight,product.weightbaht]"
+                        <input-weight :model-value="[v$.product.weight.$model,product.weightbaht]"
                                       @update:model-value="updateProductWeight"></input-weight>
+                        <input-error class="p-error"
+                                     :errors="v$.product.weight.$errors"></input-error>
                     </div>
                     <div class="p-field p-col-9">
                         <select-product-design
@@ -393,6 +395,13 @@ export default {
     },
     validations() {
         return {
+            product: {
+                weight: {
+                    required: requiredIf(() => {
+                        return this.product.sale_with_gold_price
+                    })
+                }
+            },
             line: {
                 qty: {required},
                 avg_cost_per_baht: {required},
@@ -508,7 +517,7 @@ export default {
         },
         storeLine() {
             let w = Weight(
-                this.product.weight,
+                this.product.weight ?? 0,
                 this.product.weightbaht);
 
             let newline = _.assign({}, this.line, this.product)
@@ -545,7 +554,7 @@ export default {
             this.form.cost_gold_total = 0;
 
             _.each(this.lines, (line) => {
-                this.updateLineTotal(line);
+                // this.updateLineTotal(line);
                 this.form.product_weight_total += line.product_weight_total;
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
@@ -562,17 +571,25 @@ export default {
         update() {
             this.form.lines = this.lines;
             console.log(this.form.data());
-            let url = route('stock-imports.store')
+
             if (this.form.id) {
-                url = route('stock-imports.update', this.form.id)
+                this.form.put(route('stock-imports.update', this.form.id), {
+                    errorBag: 'stockImportBag',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.form.data(this.item);
+                    }
+                })
+            } else {
+                this.form.post(route('stock-imports.store'), {
+                    method: method,
+                    errorBag: 'stockImportBag',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.form.data(this.item);
+                    }
+                })
             }
-            this.form.post(url, {
-                errorBag: 'stockImportBag',
-                preserveScroll: true,
-                onSuccess: () => {
-                    this.form.data(this.item);
-                }
-            })
         },
         formatNumber(val, pre = 0) {
             let format = '';

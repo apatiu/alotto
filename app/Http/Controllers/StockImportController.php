@@ -156,7 +156,7 @@ class StockImportController extends Controller
         Validator::make($request->all(), $this->validateRules())->validateWithBag('stockImportBag');
 
         DB::transaction(function () use ($request, $stockImport) {
-            return $stockImport->update($request->all());
+
 
         });
 
