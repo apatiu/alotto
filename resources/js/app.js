@@ -24,6 +24,7 @@ import Chip from 'primevue/chip';
 import Chips from 'primevue/chips';
 import ColorPicker from 'primevue/colorpicker';
 import Column from 'primevue/column';
+import ConfirmationService from 'primevue/confirmationservice';
 import ConfirmDialog from 'primevue/confirmdialog';
 import ConfirmPopup from 'primevue/confirmpopup';
 import ContextMenu from 'primevue/contextmenu';
@@ -119,6 +120,7 @@ const app = createApp({
             emptyMessage: 'No available options'
         }
     })
+    .use(ConfirmationService)
     .use(ToastService);
 
 app.directive('tooltip', Tooltip);

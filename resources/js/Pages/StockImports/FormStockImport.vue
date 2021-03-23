@@ -1,7 +1,7 @@
 <template>
     <div class="py-4 px-6">
         <div class="flex justify-between">
-            <h1 class="text-2xl mb-6">ใบรับสินค้า</h1>
+            <h1 class="text-2xl mb-6">ใบรับสินค้า {{ form.status }}</h1>
         </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
@@ -33,10 +33,10 @@
         <DataTable :value="lines">
             <Column field="product_id" header="รหัสสินค้า"></Column>
             <Column field="product_name" header="ชื่อสินค้า"></Column>
-            <Column field="product_weight" header="น้ำหนักต่อชิ้น"></Column>
             <Column field="product_qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
             </Column>
+            <Column field="product_weight" header="น้ำหนักต่อชิ้น"></Column>
             <Column field="cost_wage" header="ค่าแรงทุน"></Column>
             <Column field="cost_wage_total" header="รวมค่าแรงทุน">
                 <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
@@ -49,8 +49,9 @@
                 <template #footer>{{ formatNumber(form.product_weight_total, 2) }}</template>
             </Column>
             <Column>
-                <template #body>
-                    <Button icon="pi pi-trash" class="p-button-rounded p-button-text"/>
+                <template #body="slotProps">
+                    <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
+                            @click="removeLine(slotProps)"/>
                 </template>
             </Column>
         </DataTable>
@@ -109,6 +110,12 @@
                     :disabled="form.processing"
                     @click="update">
                 บันทึกร่าง
+            </Button>
+            <Button class="p-ml-2"
+                    :class="{ 'opacity-25': form.processing }"
+                    :disabled="form.processing || this.form.status==='approved'"
+                    @click="approveClick">
+                อนุมัติ
             </Button>
         </div>
     </div>
@@ -347,6 +354,7 @@ export default {
     data() {
         return {
             form: this.$inertia.form(this.item),
+            approve: false,
             bill_goldprice: this.goldprice,
             creatingLine: false,
             formProduct: this.$inertia.form(),
@@ -483,7 +491,14 @@ export default {
             this.v$.$touch();
 
             let query = _.pickBy(this.product)
-            this.$inertia.get(route(route().current()), {
+            let url = null;
+            if (this.form.id) {
+                url = route(route().current(), this.form.id)
+            } else {
+                url = route(route().current())
+            }
+
+            this.$inertia.get(url, {
                 ...query,
                 checkProduct: true
             }, {
@@ -541,6 +556,9 @@ export default {
             this.lines.push(_.pickBy(newline));
 
         },
+        removeLine(props) {
+            this.lines.splice(props.index, 1)
+        },
         updateLineTotal(newline) {
             newline.cost_wage_total = numeral(newline.product_qty).multiply(newline.cost_wage ?? 0).value();
             newline.product_weight_total = numeral(newline.product_qty).multiply(newline.product_weight).value();
@@ -555,11 +573,12 @@ export default {
 
             _.each(this.lines, (line) => {
                 // this.updateLineTotal(line);
-                this.form.product_weight_total += line.product_weight_total;
+                this.form.product_weight_total = numeral(line.product_weight_total).add(this.form.product_weight_total).value();
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
 
-                this.form.cost_gold_total +=
+                this.form.cost_gold_total =
+                    numeral(this.form.cost_gold_total).value() +
                     numeral(line.avg_cost_per_baht)
                         .multiply(0.0656)
                         .multiply(this.form.product_weight_total)
@@ -570,7 +589,6 @@ export default {
         },
         update() {
             this.form.lines = this.lines;
-            console.log(this.form.data());
 
             if (this.form.id) {
                 this.form.put(route('stock-imports.update', this.form.id), {
@@ -582,7 +600,6 @@ export default {
                 })
             } else {
                 this.form.post(route('stock-imports.store'), {
-                    method: method,
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                     onSuccess: () => {
@@ -590,6 +607,22 @@ export default {
                     }
                 })
             }
+        },
+        approveClick() {
+            console.log('test');
+            this.$confirm.require({
+                message: 'อนุมัติใบรับสินค้า และตัดสต้อก หรือไม่?',
+                header: 'กรุณายืนยัน',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.form.status = 'approve-request'
+                    this.update();
+                },
+                reject: () => {
+                }
+            });
+
+
         },
         formatNumber(val, pre = 0) {
             let format = '';

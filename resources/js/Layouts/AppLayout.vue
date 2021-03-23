@@ -1,11 +1,12 @@
 <template>
-    <Toast />
-   <div class="layout-wrapper">
-       <AppTopBar></AppTopBar>
-       <div class="p-col-12">
-           <slot></slot>
-       </div>
-   </div>
+    <Toast/>
+    <ConfirmDialog></ConfirmDialog>
+    <div class="layout-wrapper">
+        <AppTopBar></AppTopBar>
+        <div class="p-col-12">
+            <slot></slot>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -30,13 +31,13 @@ export default {
         containerClass() {
             return [
                 'layout-wrapper', {
-                'layout-overlay': this.layoutMode === 'overlay',
-                'layout-static': this.layoutMode === 'static',
-                'layout-static-sidebar-inactive': this.staticMenuInactive && this.layoutMode === 'static',
-                'layout-overlay-sidebar-active': this.overlayMenuActive && this.layoutMode === 'overlay',
-                'layout-mobile-sidebar-active': this.mobileMenuActive,
-                'p-ripple-disabled': this.$primevue.config.ripple === false
-            }];
+                    'layout-overlay': this.layoutMode === 'overlay',
+                    'layout-static': this.layoutMode === 'static',
+                    'layout-static-sidebar-inactive': this.staticMenuInactive && this.layoutMode === 'static',
+                    'layout-overlay-sidebar-active': this.overlayMenuActive && this.layoutMode === 'overlay',
+                    'layout-mobile-sidebar-active': this.mobileMenuActive,
+                    'p-ripple-disabled': this.$primevue.config.ripple === false
+                }];
         },
     },
     methods: {

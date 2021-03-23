@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\ProductDesign;
 use App\Models\ProductType;
 use App\Models\StockImport;
+use App\Models\StockImportLine;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +45,7 @@ class StockImportController extends Controller
                     'team_id' => null,
                     'supplier_id' => null,
                     'emp_name' => null,
-                    'status' => 'blank',
+                    'status' => 'draft',
                     'stock_updated_on' => null,
                     'note' => null,
                     'product_weight_total' => null,
@@ -92,7 +93,7 @@ class StockImportController extends Controller
 
         });
 
-        return redirect()->route('stock-imports.index');
+        return redirect()->route('stock-imports.edit', $data['id']);
     }
 
     private function gen_id()
@@ -153,14 +154,41 @@ class StockImportController extends Controller
     public function update(Request $request, StockImport $stockImport)
     {
 
-        Validator::make($request->all(), $this->validateRules())->validateWithBag('stockImportBag');
+        Validator::make($request->all(), $this->validateRules())
+            ->validateWithBag('stockImportBag');
 
-        DB::transaction(function () use ($request, $stockImport) {
+        $data = $request->all();
 
+        DB::transaction(function () use ($data, $stockImport) {
+            $data['dt'] = Carbon::create($data['dt'])->toDateTimeString();
+            $approve_request = false;
 
+            $stockImport->fill($data)->save();
+            $stockImport->lines()->delete();
+            $stockImport->lines()->createMany($data['lines']);
+
+            if ($data['status'] == 'approve-request') {
+
+                $stockImport->refresh();
+                foreach ($stockImport->lines as $line) {
+                    $this->line_product_processing($line);
+                }
+
+//                $stockImport->status = 'approved';
+                $stockImport->save();
+            };
         });
 
         return redirect()->back();
+    }
+
+    public function line_product_processing(StockImportLine  $line) {
+        $product = Product::firstOrNew(
+            ['product_id' => $line->product_id]
+        );
+        $product->fill($line->toArray());
+        $product->save();
+//        $product->save();
     }
 
     /**

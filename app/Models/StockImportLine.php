@@ -14,4 +14,14 @@ class StockImportLine extends Model
         'product_min','cost_wage','tag_wage','cost_price','tag_price',
         'sale_with_gold_price','product_qty','product_weight_total',
         'avg_cost_per_baht','descriptions'];
+
+    protected $appends= ['cost_wage_total','cost_price_total'];
+
+    public function getCostWageTotalAttribute() {
+        return $this->attributes['cost_wage'] * $this->attributes['product_qty'];
+    }
+
+    public function getCostPriceTotalAttribute() {
+        return $this->attributes['cost_price'] * $this->attributes['product_qty'];
+    }
 }
