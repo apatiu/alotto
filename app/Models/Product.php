@@ -10,26 +10,27 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'product_id',
+        "team_id",
         "product_id",
+        "team_id",
         "gold_percent",
         "product_type_id",
         "product_design_id",
         "size",
         "name",
+        "min_qty",
         "weight",
         "weightbaht",
         "cost_wage",
-        "tag_wage",
         "cost_price",
+        "tag_wage",
         "tag_price",
+        "avr_cost_per_baht",
         "sale_with_gold_price",
         "wage_by_pcs",
-        "line_qty",
-        "line_product_weight_total",
-        "line_avg_cost_per_baht",
-        "line_description",
-        "is_new"];
+        "qty",
+        "description"
+    ];
 
     public function type()
     {

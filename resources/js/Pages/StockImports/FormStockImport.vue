@@ -36,7 +36,13 @@
             <Column field="product_qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
             </Column>
-            <Column field="product_weight" header="น้ำหนักต่อชิ้น"></Column>
+            <Column field="product_weight" header="น้ำหนักต่อชิ้น">
+                <template #body="slotProps">
+                    {{
+                        slotProps.data.product_weightbaht ? slotProps.data.product_weight * 15.2 : slotProps.data.product_weight
+                    }}
+                </template>
+            </Column>
             <Column field="cost_wage" header="ค่าแรงทุน"></Column>
             <Column field="cost_wage_total" header="รวมค่าแรงทุน">
                 <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
@@ -388,6 +394,7 @@ export default {
                 product_size: null,
                 product_name: null,
                 product_weight: null,
+                product_weightbaht: null,
                 product_min: null,
                 qty: null,
                 product_weight_total: null,
@@ -540,7 +547,8 @@ export default {
             newline.id = null;
             newline.product_name = newline.name;
             newline.product_qty = newline.qty;
-            newline.product_weight = w.toGram();
+            newline.product_weight = newline.weight;
+            newline.product_weightbaht = newline.weightbaht;
 
             newline.cost_wage = this.line.cost_wage;
             newline.cost_price = this.line.cost_price;
@@ -560,8 +568,11 @@ export default {
             this.lines.splice(props.index, 1)
         },
         updateLineTotal(newline) {
+            let w = Weight(
+                newline.product_weight ?? 0,
+                newline.product_weightbaht);
             newline.cost_wage_total = numeral(newline.product_qty).multiply(newline.cost_wage ?? 0).value();
-            newline.product_weight_total = numeral(newline.product_qty).multiply(newline.product_weight).value();
+            newline.product_weight_total = numeral(newline.product_qty).multiply(w.toGram()).value();
             newline.cost_price_total = numeral(newline.product_qty).multiply(newline.cost_price ?? 0).value();
         },
         updateTotal() {
@@ -580,7 +591,7 @@ export default {
                 this.form.cost_gold_total =
                     numeral(this.form.cost_gold_total).value() +
                     numeral(line.avg_cost_per_baht)
-                        .multiply(0.0656)
+                        .divide(15.2)
                         .multiply(this.form.product_weight_total)
                         .value();
 
@@ -603,13 +614,12 @@ export default {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                     onSuccess: () => {
-                        this.form.data(this.item);
+                        _.assign(this.form, this.item);
                     }
                 })
             }
         },
         approveClick() {
-            console.log('test');
             this.$confirm.require({
                 message: 'อนุมัติใบรับสินค้า และตัดสต้อก หรือไม่?',
                 header: 'กรุณายืนยัน',

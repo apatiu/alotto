@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Helpers\GoldPriceHelper;
 use App\Models\GoldPercent;
 use App\Models\Product;
 use App\Models\ProductDesign;
 use App\Models\ProductType;
+use App\Models\StockCard;
 use App\Models\StockImport;
 use App\Models\StockImportLine;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -41,6 +42,7 @@ class StockImportController extends Controller
     {
         return Inertia::render('StockImports/FormStockImport', [
                 'item' => [
+                    'id' => null,
                     'dt' => now(),
                     'team_id' => null,
                     'supplier_id' => null,
@@ -132,7 +134,6 @@ class StockImportController extends Controller
     {
         $stockImport->load('lines');
         return Inertia::render('StockImports/FormStockImport', [
-            'goldprice' => GoldPriceHelper::GoldPrice(),
             'item' => $stockImport,
             'suppliers' => Supplier::all(),
             'gold_percents' => GoldPercent::all(),
@@ -158,7 +159,6 @@ class StockImportController extends Controller
             ->validateWithBag('stockImportBag');
 
         $data = $request->all();
-
         DB::transaction(function () use ($data, $stockImport) {
             $data['dt'] = Carbon::create($data['dt'])->toDateTimeString();
             $approve_request = false;
@@ -173,9 +173,9 @@ class StockImportController extends Controller
                 foreach ($stockImport->lines as $line) {
                     $this->line_product_processing($line);
                 }
-
-//                $stockImport->status = 'approved';
+                $stockImport->status = 'approved';
                 $stockImport->save();
+                $this->updateStockCard($stockImport);
             };
         });
 
@@ -184,9 +184,11 @@ class StockImportController extends Controller
 
     public function line_product_processing(StockImportLine $line)
     {
-        $product = Product::firstOrNew(
-            ['product_id' => $line->product_id],
-            [
+        $product = Product::whereProductId($line->product_id)->first();
+        if (!$product) {
+            $product = new Product();
+            $product->fill([
+                'product_id' => $line->product_id,
                 'name' => $line->product_name,
                 'team_id' => $line->stock_import->team_id,
                 'gold_percent' => $line->gold_percent,
@@ -196,18 +198,43 @@ class StockImportController extends Controller
                 'min_qty' => $line->product_min,
                 'weight' => $line->product_weight,
                 'weightbaht' => $line->product_weightbaht,
-                'cost_wage' => null,
-                'cost_price' => null,
-                'tag_wage' => null,
-                'tag_price' => null,
-                'avg_cost_per_baht' => null,
-                'sale_with_gold_price' => null,
-                'wage_by_pcs' => null,
-                'qty' => null,
-                'description' => null,
-            ]
-        );
+                'cost_wage' => $line->cost_wage,
+                'cost_price' => $line->cost_price,
+                'tag_wage' => $line->tag_wage,
+                'tag_price' => $line->tag_price,
+                'avg_cost_per_baht' => $line->avg_cost_per_baht,
+                'sale_with_gold_price' => $line->sale_with_gold_price,
+                'wage_by_pcs' => $line->wage_by_pcs,
+                'qty' => $line->product_qty,
+                'description' => $line->description,
+            ]);
+            $product->save();
+        } else {
+            $product_weight = $product->qty * weightgram($product->weight, $product->weightbaht);
+            $product_cost_per_gram = $product->avg_cost_per_baht / 15.2;
+            $line_weight = $line->qty * weightgram($line->weight, $line->weightbaht);
+            $line_cost_per_gram = $line->avg_cost_per_baht / 15.2;
+            $old_qty = $product->qty;
+            $new_qty = $old_qty + $line->qty;
 
+            $product->avg_cost_per_baht =
+                (
+                    (
+                        ($product_weight * $product_cost_per_gram) +
+                        ($line_weight * $line_cost_per_gram)
+                    ) / $new_qty
+                ) * 15.2;
+            $product->qty = $new_qty;
+            $product->cost_wage =
+                (
+                    ($old_qty * $product->cost_wage) + ($line->qty * $line->cost_wage)
+                ) / $new_qty;
+            $product->cost_price =
+                (
+                    ($old_qty * $product->cost_price) + ($line->qty * $line->cost_price)
+                ) / $new_qty;
+
+        }
 
     }
 
@@ -254,5 +281,39 @@ class StockImportController extends Controller
             }
         }
         return $product;
+    }
+
+    private function updateStockCard(StockImport $bill)
+    {
+        foreach ($bill->lines as $line) {
+            $data = [
+                'product_id' => $line->product_id,
+                'cost_wage' => $line->cost_wage,
+                'tag_wage' => $line->tag_wage,
+                'cost_price' => $line->cost_price,
+                'tag_price' => $line->tag_price,
+                'qty_begin' => 0,
+                'qty_in' => $line->product_qty,
+                'qty_out' => 0,
+                'qty_end' => $line->product_qty,
+                'weight_begin' => 0,
+                'weight_in' => weightgram($line->product_weight, $line->product_weightbaht),
+                'weight_out' => 0,
+                'weight_end' => weightgram($line->product_weight, $line->product_weightbaht),
+                'description' => $line->description,
+                'dt' => $bill->dt,
+                'ref_no' => $bill->id,
+                'user_id' => Auth::user()->id
+            ];
+            $last = StockCard::whereProductId($line->product_id)->latest('dt')->first();
+            if ($last) {
+                $data['qty_begin'] = $last->qty_end;
+                $data['weight_begin'] = $last->qty_end;
+            }
+            $data['qty_end'] += ($data['qty_in'] - $data['qty_out']);
+            $data['weight_end'] += ($data['weight_in'] - $data['weight_out']);
+
+            StockCard::create($data);
+        }
     }
 }

@@ -41,19 +41,21 @@ class CreateStockImportsTable extends Migration
             $table->string('gold_percent');
             $table->string('product_type_id');
             $table->string('product_design_id')->nullable();
-            $table->string('product_size')->nullable();;
+            $table->string('product_size')->nullable();
             $table->string('product_name');
             $table->decimal('product_weight')->nullable();
-            $table->decimal('product_min')->nullable();;
-            $table->decimal('cost_wage')->nullable();;
-            $table->decimal('tag_wage')->nullable();;
-            $table->decimal('cost_price')->nullable();;
-            $table->decimal('tag_price')->nullable();;
+            $table->decimal('product_weightbaht')->nullable();
+            $table->decimal('product_min')->nullable();
+            $table->boolean('wage_by_pcs')->default(false);
+            $table->decimal('cost_wage')->nullable();
+            $table->decimal('tag_wage')->nullable();
+            $table->decimal('cost_price')->nullable();
+            $table->decimal('tag_price')->nullable();
             $table->boolean('sale_with_gold_price')->default(true);
             $table->decimal('product_qty');
-            $table->decimal('product_weight_total')->nullable();;
-            $table->decimal('avg_cost_per_baht')->nullable();;
-            $table->text('descriptions')->nullable();;
+            $table->decimal('product_weight_total')->nullable();
+            $table->decimal('avg_cost_per_baht')->nullable();
+            $table->text('descriptions')->nullable();
             $table->timestamps();
 
 

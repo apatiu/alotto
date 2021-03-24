@@ -1,14 +1,7 @@
 <?php
-
-
-namespace App\Http\Helpers;
-
-
-use Illuminate\Support\Arr;
-
-class GoldPriceHelper
-{
-    static public function GoldPrice() {
+if (!function_exists('goldprice')) {
+    function goldprice()
+    {
         try {
 
             header('Access-Control-Allow-Origin: *');
@@ -26,5 +19,12 @@ class GoldPriceHelper
         } catch (\Exception $exception) {
             return 0;
         }
+    }
+}
+
+if (!function_exists('weightgram')) {
+    function weightgram($w, $wb)
+    {
+        return $wb ? ($w * 15.2) : $w;
     }
 }

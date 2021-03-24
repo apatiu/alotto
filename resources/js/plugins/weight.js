@@ -1,17 +1,13 @@
 import {ref} from 'vue'
 import {Inertia} from '@inertiajs/inertia'
 
-export default function weight(weight = null, weightbath = null) {
+export default function weight(weight = null, weightbaht = null) {
 
     return {
         weight: weight,
-        weightbaht: weightbath,
+        weightbaht: weightbaht,
         toGram() {
-            return weightbath ? 15.2 / (1/weight) : weight;
+            return weightbaht ? weight * 15.2 : weight;
         }
     }
-}
-
-export function useForm(data) {
-    return ref(form(data))
 }

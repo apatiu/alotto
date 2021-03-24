@@ -232,6 +232,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Meta' => \App\Http\Helpers\MetaHelper::class,
+        'GP' => \App\Http\Helpers\GoldPriceHelper::class,
     ],
 
 ];
