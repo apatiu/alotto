@@ -182,13 +182,33 @@ class StockImportController extends Controller
         return redirect()->back();
     }
 
-    public function line_product_processing(StockImportLine  $line) {
+    public function line_product_processing(StockImportLine $line)
+    {
         $product = Product::firstOrNew(
-            ['product_id' => $line->product_id]
+            ['product_id' => $line->product_id],
+            [
+                'name' => $line->product_name,
+                'team_id' => $line->stock_import->team_id,
+                'gold_percent' => $line->gold_percent,
+                'product_type_id' => $line->product_type_id,
+                'product_design_id' => $line->product_design_id,
+                'size' => $line->product_size,
+                'min_qty' => $line->product_min,
+                'weight' => $line->product_weight,
+                'weightbaht' => $line->product_weightbaht,
+                'cost_wage' => null,
+                'cost_price' => null,
+                'tag_wage' => null,
+                'tag_price' => null,
+                'avg_cost_per_baht' => null,
+                'sale_with_gold_price' => null,
+                'wage_by_pcs' => null,
+                'qty' => null,
+                'description' => null,
+            ]
         );
-        $product->fill($line->toArray());
-        $product->save();
-//        $product->save();
+
+
     }
 
     /**
