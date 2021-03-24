@@ -215,9 +215,9 @@ class StockImportController extends Controller
             $line_weight = $line->qty * weightgram($line->weight, $line->weightbaht);
             $line_cost_per_gram = $line->avg_cost_per_baht / 15.2;
             $old_qty = $product->qty;
-            $new_qty = $old_qty + $line->qty;
+            $new_qty = $old_qty + $line->product_qty;
 
-            $product->avg_cost_per_baht =
+            $product->avg_cost_per_baht = ($new_qty === 0) ? 0 :
                 (
                     (
                         ($product_weight * $product_cost_per_gram) +
