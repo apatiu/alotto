@@ -10,6 +10,8 @@
                     <inertia-link :href="route('dashboard')">
                         <jet-application-mark class="block h-9 w-auto"/>
                     </inertia-link>
+                    <Button class="p-button-text p-ml-4"
+                            @click="$inertia.get(route('customers.index'))">ลูกค้า</Button>
                 </div>
             </template>
             <template #end>
@@ -168,6 +170,12 @@ export default {
                 {
                     label: 'สินค้า',
                     items: [
+                        {
+                            label: 'รายการสินค้า',
+                            url: route('products.index')
+                        }, {
+                            separator: true
+                        },
                         {
                             label: 'นำเข้าสินค้า',
                             url: route('stock-imports.index')

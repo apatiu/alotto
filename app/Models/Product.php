@@ -32,6 +32,9 @@ class Product extends Model
         "description"
     ];
 
+    public function team() {
+        return $this->belongsTo(Team::class);
+    }
     public function type()
     {
         return $this->belongsTo(ProductType::class);

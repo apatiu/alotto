@@ -55,7 +55,6 @@ import JetBanner from '@/Jetstream/Banner'
 
 export default {
   components: {
-    Dropdown,
     JetBanner,
     Icon,
     Logo,

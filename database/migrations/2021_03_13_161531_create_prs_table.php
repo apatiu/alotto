@@ -38,8 +38,9 @@ class CreatePrsTable extends Migration
             $table->text('cancel_reason')->nullable();
             $table->string('cancel_emp_name')->nullable();
 
-            $table->foreignId('paymentable_id')->nullable();;
-            $table->string('paymentable_type')->nullable();;
+            $table->string('payment_type_id')->nullable();
+            $table->foreignId('paymentable_id')->nullable();
+            $table->string('paymentable_type')->nullable();
 
             $table->timestamps();
         });

@@ -1,5 +1,5 @@
 <template>
-    <Toast/>
+    <Toast position="top-center"/>
     <ConfirmDialog></ConfirmDialog>
     <div class="layout-wrapper">
         <AppTopBar></AppTopBar>

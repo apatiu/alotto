@@ -26,7 +26,7 @@ class CreateProductsTable extends Migration
             $table->string('name');
 
             $table->decimal('min_qty')->nullable();
-            $table->decimal('weight')->nullable();
+            $table->decimal('weight',12,3)->nullable();
             $table->boolean('weightbaht')->default(true)->nullable();
 
             $table->decimal('cost_wage')->nullable();

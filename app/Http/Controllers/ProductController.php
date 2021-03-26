@@ -23,8 +23,13 @@ class ProductController extends Controller
                 ->transform(function ($item) {
                     return [
                         'id' => $item->id,
+                        'team_name' => $item->team->name,
+                        'product_id'=> $item->product_id,
                         'name' => $item->name,
-                        'deleted_at' => $item->deleted_at,
+                        'weight_gram' => $item->weightgram,
+                        'cost_wage'=> $item->cost_wage,
+                        'tag_wage'=> $item->cost_wage,
+                        'qty' => $item->qty,
                     ];
                 }),
         ]);

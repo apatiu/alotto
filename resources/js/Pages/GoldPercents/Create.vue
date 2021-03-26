@@ -58,7 +58,6 @@ export default {
         JetFormSection,
         JetActionMessage,
         JetButton,
-        Dropdown,
         LoadingButton,
         SelectInput,
         TextInput,

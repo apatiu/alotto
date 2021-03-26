@@ -1,7 +1,8 @@
 <template>
     <div class="py-4 px-6">
-        <div class="flex justify-between">
-            <h1 class="text-2xl mb-6">ใบรับสินค้า {{ form.status }}</h1>
+        <div class="p-grid">
+            <div class="p-col"><h1 class="text-2xl mb-6">ใบรับสินค้า</h1></div>
+            <div class="p-col p-text-right"><stock-import-status v-model:value="form.status"></stock-import-status></div>
         </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
@@ -39,7 +40,8 @@
             <Column field="product_weight" header="น้ำหนักต่อชิ้น">
                 <template #body="slotProps">
                     {{
-                        slotProps.data.product_weightbaht ? slotProps.data.product_weight * 15.2 : slotProps.data.product_weight
+                        slotProps.data.product_weightbaht ? slotProps.data.product_weight * 15.2 :
+                            slotProps.data.product_weight
                     }}
                 </template>
             </Column>
@@ -108,9 +110,6 @@
             <p v-for="item in form.errors" class="p-error">{{ item }}</p>
         </div>
         <div class="pt-4 flex justify-end">
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
-                บันทึกข้อมูลแล้ว.
-            </jet-action-message>
             <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
             <Button :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
@@ -326,6 +325,7 @@ import SelectProductDesign from "@/A/SelectProductDesign";
 
 import useVuelidate from '@vuelidate/core';
 import {required, requiredIf} from '@vuelidate/validators'
+import StockImportStatus from "@/A/StockImportStatus";
 
 export default {
     setup() {
@@ -339,6 +339,7 @@ export default {
         if (this.form.id) this.updateTotal();
     },
     components: {
+        StockImportStatus,
         SelectProductDesign,
         AInputCurrency,
         InputWeight,
@@ -477,6 +478,9 @@ export default {
                 this.product.weightbaht);
             return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
         },
+        isApproved() {
+            return this.form.status;
+        }
     },
     methods: {
         createLine() {
@@ -606,6 +610,7 @@ export default {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                     onSuccess: () => {
+                        this.$toast.add({severity: 'success', summary: 'บันทึกข้อมูลแล้ว', life: 3000})
                         this.form.data(this.item);
                     }
                 })

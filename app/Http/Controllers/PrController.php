@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pr;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PrController extends Controller
@@ -41,10 +41,10 @@ class PrController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Pr  $pr
+     * @param  \App\Models\Payment  $pr
      * @return \Illuminate\Http\Response
      */
-    public function show(Pr $pr)
+    public function show(Payment $pr)
     {
         //
     }
@@ -52,10 +52,10 @@ class PrController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Pr  $pr
+     * @param  \App\Models\Payment  $pr
      * @return \Illuminate\Http\Response
      */
-    public function edit(Pr $pr)
+    public function edit(Payment $pr)
     {
         //
     }
@@ -64,10 +64,10 @@ class PrController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Pr  $pr
+     * @param  \App\Models\Payment  $pr
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pr $pr)
+    public function update(Request $request, Payment $pr)
     {
         //
     }
@@ -75,10 +75,10 @@ class PrController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Pr  $pr
+     * @param  \App\Models\Payment  $pr
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pr $pr)
+    public function destroy(Payment $pr)
     {
         //
     }

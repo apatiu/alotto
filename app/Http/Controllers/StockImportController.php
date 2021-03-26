@@ -184,8 +184,8 @@ class StockImportController extends Controller
 
     public function line_product_processing(StockImportLine $line)
     {
-        $product = Product::whereProductId($line->product_id)->first();
-        if (!$product) {
+        $found = Product::whereProductId($line->product_id)->exists();
+        if (!$found) {
             $product = new Product();
             $product->fill([
                 'product_id' => $line->product_id,
@@ -210,6 +210,7 @@ class StockImportController extends Controller
             ]);
             $product->save();
         } else {
+            $product = Product::whereProductId($line->product_id)->first();
             $product_weight = $product->qty * weightgram($product->weight, $product->weightbaht);
             $product_cost_per_gram = $product->avg_cost_per_baht / 15.2;
             $line_weight = $line->qty * weightgram($line->weight, $line->weightbaht);
@@ -233,7 +234,7 @@ class StockImportController extends Controller
                 (
                     ($old_qty * $product->cost_price) + ($line->qty * $line->cost_price)
                 ) / $new_qty;
-
+            $product->save();
         }
 
     }
