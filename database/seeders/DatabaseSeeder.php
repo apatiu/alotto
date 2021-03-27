@@ -41,6 +41,9 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('admin');
 
         $this->call(ProductTypeSeeder::class);
+//        $this->call(IntRangeRateSeeder::class);
+//        $this->call(IntDiscountRateSeeder::class);
+
 
 
         $this->call(TestSeeder::class);

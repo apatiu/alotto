@@ -20,7 +20,10 @@ class CreatePawnsTable extends Migration
             $table->dateTime('dt_end');
             $table->foreignId('customer_id');
             $table->decimal('price');
+            $table->decimal('int_rate');
             $table->enum('status',['new','int','chg','red','cut']);
+            $table->foreignId('prev_id');
+            $table->foreignId('next_id');
             $table->timestamps();
         });
     }

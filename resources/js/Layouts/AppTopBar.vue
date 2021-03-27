@@ -1,7 +1,4 @@
 <template>
-    <div class="p-d-flex">
-
-    </div>
     <div>
         <Menubar :model="items">
             <template #start>
@@ -10,6 +7,8 @@
                     <inertia-link :href="route('dashboard')">
                         <jet-application-mark class="block h-9 w-auto"/>
                     </inertia-link>
+                    <Button class="p-button-text p-ml-4"
+                            @click="$inertia.get(route('pawns.index'))">ขายฝาก</Button>
                     <Button class="p-button-text p-ml-4"
                             @click="$inertia.get(route('customers.index'))">ลูกค้า</Button>
                 </div>

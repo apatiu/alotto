@@ -89,6 +89,8 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('stock-imports', StockImportController::class);
+    Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class,'storeConfig'])->name('pawns-config.store');
+    Route::resource('pawns', \App\Http\Controllers\PawnController::class);
 
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {

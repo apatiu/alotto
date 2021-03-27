@@ -20,7 +20,7 @@
                 </div>
 
                 <div v-if="$page.props.jetstream.canUpdatePassword">
-                    <pawn-settings :data="company_config" class="mt-10 sm:mt-0" />
+                    <pawn-settings :data="pawn_config" class="mt-10 sm:mt-0" />
 
                     <jet-section-border />
                 </div>
@@ -51,7 +51,7 @@ import UpdateCompanyConfig from "@/Pages/Settings/UpdateCompanyConfig";
 import PawnSettings from './PawnSettings'
 
 export default {
-    props: ['company','company_config'],
+    props: ['company','company_config','pawn_config'],
 
     components: {
         AppLayout,

@@ -1,36 +1,102 @@
 <template>
     <jet-form-section @submitted="updateData">
         <template #title>
-            ตั้งค่าโปรแกรม
+            งานขายฝาก
         </template>
 
         <template #description>
-            อัพเดทการตั้งค่าระบบ ใช้กับทุกสาขา
+            การตั้งค่าระบบงานขายฝาก ใช้กับทุกสาขา
         </template>
 
         <template #form>
-            <!-- Profile Photo -->
+            <div class="p-field">
+                <label for="">อายุตั๋ว (เดือน)</label>
+                <inputNumber v-model="formData.pawn_life"></inputNumber>
+            </div>
+            <div class="p-formgroup-inline">
+                <div class="p-field">
+                    <label for="intDefaultRate">ดอกเบี้ย/เดือน</label>
+                    <InputNumber v-model="formData.int_default_rate"></InputNumber>
+                </div>
+                <div class="p-field">
+                    <label for="intDefaultRate">ดอกเบี้ยขั้นต่ำ</label>
+                    <InputNumber v-model="formData.int_min"></InputNumber>
+                </div>
+            </div>
+            <div class="p-field-checkbox">
+                <Checkbox value="true" v-model="formData.int_range_rates_enable" :binary="true"></Checkbox>
+                <label for="">อัตราดอกเบี้ยไม่คงที่</label>
+            </div>
+            <div class="p-field" v-show="formData.int_range_rates_enable">
 
-            <div class="col-span-6 sm:col-span-8">
-                <jet-label for="bullionPriceDiff" value="ส่วนต่างซื้อ-ขายราคาทองแท่ง"/>
-                <jet-input id="bullionPriceDiff" type="number" step="0.01" class="mt-1 block w-full"
-                           v-model="form.bullion_price_diff"/>
-                <jet-input-error :message="form.errors.bullionPriceDiff" class="mt-2"/>
+                <DataTable :value="formData.int_range_rates"
+                           dataKey="id"
+                           editMode="cell"
+                           v-model:editingRows="editingIntRangeRateRows">
+                    <template #header>
+                        <Button @click="createIntRangeRate" class="p-button-sm p-button-outlined" style="width: 60px;">+
+                            เพิ่ม
+                        </Button>
+                    </template>
+                    <Column field="min" header="ขั้นต่ำ">
+                        <template #editor="slotProps">
+                            <InputNumber v-model="slotProps.data[slotProps.column.props.field]"/>
+                        </template>
+                    </Column>
+                    <Column field="max" header="สูงสุด">
+                        <template #editor="slotProps">
+                            <InputNumber v-model="slotProps.data[slotProps.column.props.field]"/>
+                        </template>
+                    </Column>
+                    <Column field="rate" header="อัตราดอกเบี้ย (%)">
+                        <template #editor="slotProps">
+                            <InputNumber v-model="slotProps.data[slotProps.column.props.field]"/>
+                        </template>
+                    </Column>
+                    <Column>
+                        <template #body="slotProps">
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
+                                    @click="removeIntRangeRate(slotProps.index)"></Button>
+                        </template>
+                    </Column>
+                </DataTable>
             </div>
-            <div class="col-span-2">
-                <jet-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
-                <jet-input id="goldbahtWeight" type="number" step="0.01" class="mt-1 block w-full"
-                           v-model="form.gold_baht_weight"/>
-                <jet-input-error :message="form.errors.goldbahtWeight" class="mt-2"/>
+
+            <div class="p-field-checkbox">
+                <Checkbox value="true"
+                          v-model="formData.int_discount_rates_enable"
+                          :binary="true"></Checkbox>
+                <label for="">ส่วนลดตามวัน</label>
             </div>
-            <div class="col-span-4 pt-5">
-                <jet-checkbox id="goldBuyPriceDevideByGoldByWeight"
-                              :value="data.gold_buy_price_devide_by_gold_baht_weight"
-                              v-model:checked="form.gold_buy_price_devide_by_gold_baht_weight"
-                              class="mt-1"
-                              autocomplete="addr"/>
-                <label for="goldBuyPriceDevideByGoldByWeight" class="ml-2">คำนวนราคารับซื้อด้วยการหารน้ำหนักต่อบาท<br/>(ปกติใช้ *.0656)</label>
-                <jet-input-error :message="form.errors.goldBuyPriceDevideByGoldbahtWeight" class="mt-2"/>
+            <div class="p-field" v-if="formData.int_discount_rates_enable">
+                <DataTable :value="formData.int_discount_rates"
+                           dataKey="id"
+                           editMode="cell">
+                    <template #header>
+                        <Button @click="createIntDiscountRate" class="p-button-sm p-button-outlined"
+                                style="width: 60px;">+
+                            เพิ่ม
+                        </Button>
+                    </template>
+                    <Column field="days" header="จำนวนวัน">
+                        <template #editor="slotProps">
+                            <InputNumber v-model="slotProps.data[slotProps.column.props.field]"
+                                         suffix=" วัน"/>
+                        </template>
+                    </Column>
+                    <Column field="rate" header="ส่วนลด">
+                        <template #editor="slotProps">
+                            <InputNumber v-model="slotProps.data[slotProps.column.props.field]"
+                                         suffix=" %"/>
+                        </template>
+                    </Column>
+                    <Column>
+                        <template #body="slotProps">
+                            <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
+                                    @click="removeIntDiscountRate(slotProps.index)"></Button>
+                        </template>
+                    </Column>
+                </DataTable>
             </div>
 
 
@@ -41,7 +107,10 @@
                 Saved.
             </jet-action-message>
 
-            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <Button :class="{ 'opacity-25': form.processing }"
+                    class="p-button-sm"
+                    :disabled="form.processing"
+                    @click="save">
                 Save
             </Button>
         </template>
@@ -70,25 +139,39 @@ export default {
     props: ['data'],
     data() {
         return {
-            form: this.$inertia.form({
-                _method: 'POST',
-                gold_baht_weight: this.data.gold_baht_weight,
-                bullion_price_diff: this.data.bullion_price_diff,
-                gold_buy_price_devide_by_gold_baht_weight: this.data.gold_buy_price_devide_by_gold_baht_weight,
-            }),
-
-            photoPreview: null,
+            formData: this.data,
+            editingIntRangeRateRows: null,
+            form: this.$inertia.form(this.data),
         }
     },
     methods: {
-        updateData() {
-            if (this.$refs.photo) {
-                this.form.photo = this.$refs.photo.files[0]
-            }
-
-            this.form.post(route('company-config.store'), {
-                errorBag: 'company_config',
-                preserveScroll: true
+        createIntRangeRate() {
+            this.formData.int_range_rates.push({
+                min: 0,
+                max: 0,
+                rate: null
+            })
+        },
+        removeIntRangeRate(i) {
+            this.formData.int_range_rates.splice(i, 1);
+        },
+        createIntDiscountRate() {
+            this.formData.int_discount_rates.push({
+                days: 1,
+                rate: 0,
+            })
+        },
+        removeIntDiscountRate(i) {
+            this.formData.int_discount_rates.splice(i, 1);
+        },
+        save() {
+            this.form = _.assign(this.form, this.formData);
+            this.form.post(route('pawns-config.store'), {
+                errorBag: 'pawns_config',
+                preserveScroll: true,
+                onSuccess: (e) => {
+                    this.$toast.add({severity:'success', summary: 'บันทึกข้อมูลแล้ว', detail:'การตั้งค่าระบบขายฝาก', life: 3000})
+                }
             });
         },
     }
