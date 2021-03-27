@@ -10,7 +10,7 @@
                 <div class="flex space-x-2">
                     <div class="">
                         <label for="">รหัส</label>
-                        <InputText v-model="item.id" ></InputText>
+                        <InputText v-model="item.id"></InputText>
                     </div>
                     <div v-show="item.prev_id">
                         <label for="">ใบเก่า</label>
@@ -106,7 +106,12 @@ export default {
     data() {
         return {
             item: this.pawnData,
-            customer: null,
+            customer: {
+                name: '',
+                phone: null,
+                addr: null,
+                tax_id: null
+            },
             pawnItem: {
                 gold_percent: null,
                 product_type: null,

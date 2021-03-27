@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Helpers\MetaHelper;
+use App\Models\Customer;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Pawn;
@@ -19,8 +20,13 @@ class PawnController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Pawns/Index',[
-            'items'=> Pawn::all(),
+        $customers = Customer::latest()->take(10);
+        if (request()->has('filterCustomers')) {
+            $customers = Customer::where('name', 'like', '%' . request('filterCustomers') . '%');
+        }
+        return Inertia::render('Pawns/Index', [
+            'items' => Pawn::all(),
+            'customers' => $customers->get()
 
         ]);
     }

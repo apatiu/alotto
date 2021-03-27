@@ -1,5 +1,5 @@
 <template>
-    <div class="p-field space-y-1">
+    <div class="space-y-1 mt-6">
         <label for="">ลูกค้า:</label>
         <AutoComplete :modelValue="modelValue"
                       @update:modelValue="$emit('update:modelValue',$event)"
@@ -9,8 +9,8 @@
                       :dropdown="true"
                       forceSelection
         ></AutoComplete>
-        <InputText placeholder="เบอร์โทร"></InputText>
-        <InputText placeholder="เลขบัตร"></InputText>
+        <InputText placeholder="เบอร์โทร" :value="modelValue.phone ?? ''"></InputText>
+        <InputText placeholder="เลขบัตร" :value="modelValue.tax_id"></InputText>
     </div>
 </template>
 
@@ -23,23 +23,25 @@ export default {
     },
     data() {
         return {
-            items: this.$page.props.product_designs,
+            items: this.$page.props.customers,
             filteredItems: null
         }
     },
     methods: {
         search(event) {
-            console.log('search');
             setTimeout(() => {
                 if (!event.query.trim().length) {
-                    this.filteredItems = this.items.filter((item) => {
-                        return item.product_type_id === this.productTypeId;
-                    });
+                    this.filteredItems = this.items
                 } else {
-                    this.filteredItems = this.items.filter((item) => {
-                        return item.name.toLowerCase().startsWith(event.query.toLowerCase()) &&
-                            item.product_type_id === this.productTypeId;
-                    });
+                    this.$inertia.reload({
+                        data: {
+                            filterCustomers: event.query,
+                        },
+                        only: ['customers'],
+                        onSuccess: (e) => {
+                            this.filteredItems = this.$page.props.customers
+                        }
+                    })
                 }
             }, 250);
         }
