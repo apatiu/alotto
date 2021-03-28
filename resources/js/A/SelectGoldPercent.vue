@@ -1,11 +1,11 @@
 <template>
     <span class="p-float-label">
         <Dropdown class="w-full p-filled"
-              :options="$page.props.gold_percents"
-              optionLabel="name"
-              optionValue="id"
-              :modelValue="modelValue"
-              @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
+                  :options="items"
+                  optionLabel="name"
+                  optionValue="id"
+                  :modelValue="modelValue"
+                  @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
         <label for="">เปอร์เซ็นทอง</label>
     </span>
 </template>
@@ -15,7 +15,15 @@ export default {
     name: "SelectGoldPercent",
     props: ['modelValue'],
     data() {
-        return {}
+        return {
+            items: []
+        }
+    },
+    mounted() {
+        axios.get('/api-gold_percents')
+            .then(e => {
+                this.items = e.data
+            });
     }
 }
 </script>

@@ -78,10 +78,6 @@ Route::middleware(['role:admin'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
-});
-
-Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
-
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);
@@ -92,6 +88,13 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
     Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class,'storeConfig'])->name('pawns-config.store');
     Route::resource('pawns', \App\Http\Controllers\PawnController::class);
 
+    Route::get('api-gold_percents', function() {
+        return \App\Models\GoldPercent::all();
+    });
+    
+});
+
+Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {
 
     if (Jetstream::hasTermsAndPrivacyPolicyFeature()) {
         Route::get('/terms-of-service', [TermsOfServiceController::class, 'show'])->name('terms.show');
