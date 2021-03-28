@@ -38,7 +38,7 @@
     import mapValues from 'lodash/mapValues'
     import AppLayout from "@/Layouts/AppLayout";
     import DialogModal from "@/Jetstream/DialogModal";
-    import JetButton from "@/Jetstream/Button";
+
     import JetActionMessage from "@/Jetstream/ActionMessage";
     import Create from "@/Pages/Suppliers/Create";
     import AButton from "@/A/AButton";
@@ -48,7 +48,7 @@
         components: {
             AButton,
             Create,
-            JetButton,
+
             JetActionMessage,
             DialogModal,
             Icon,

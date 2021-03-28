@@ -1,49 +1,67 @@
 <template>
-    <div class="space-y-1 mt-6">
+    <div class="flex-col mt-6">
         <label for="">ลูกค้า:</label>
-        <AutoComplete :modelValue="modelValue"
-                      @update:modelValue="$emit('update:modelValue',$event)"
-                      :suggestions="filteredItems"
-                      @complete="search($event)"
-                      field="name"
-                      :dropdown="true"
-                      forceSelection
-        ></AutoComplete>
-        <InputText placeholder="เบอร์โทร" :value="modelValue.phone ?? ''"></InputText>
-        <InputText placeholder="เลขบัตร" :value="modelValue.tax_id"></InputText>
+        <div class="flex space-x-2">
+            <AutoComplete :modelValue="modelValue"
+                          @update:modelValue="$emit('update:modelValue',$event)"
+                          :suggestions="filteredItems"
+                          @complete="search($event)"
+                          field="name"
+                          dropdown
+                          class="flex-1"
+            ></AutoComplete>
+            <Button icon="pi pi-plus" class="p-button-icon" @click="creating=true"></Button>
+
+        </div>
+        <div class="flex space-x-2">
+            <small>เบอร์โทร: {{ modelValue.phone }}</small>
+            <small>ที่อยุ่: {{ modelValue.tax_id }}</small>
+        </div>
+
+        <form-customer v-model:visible="creating"
+                       @created="select"></form-customer>
     </div>
+
 </template>
 
 <script>
+import FormCustomer from "@/Pages/Customers/FormCustomer";
+
 export default {
     name: "SelectCustomer",
+    components: {FormCustomer},
     props: {
         modelValue: Object,
-        productTypeId: {default: null}
+        forceSelection: {
+            type: Boolean,
+            default: false
+        }
     },
     data() {
         return {
-            items: this.$page.props.customers,
-            filteredItems: null
+            filteredItems: null,
+            creating: false
         }
     },
     methods: {
         search(event) {
             setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredItems = this.items
-                } else {
-                    this.$inertia.reload({
-                        data: {
-                            filterCustomers: event.query,
-                        },
-                        only: ['customers'],
-                        onSuccess: (e) => {
-                            this.filteredItems = this.$page.props.customers
-                        }
-                    })
-                }
+
+                this.$inertia.reload({
+                    data: {
+                        filterCustomers: event.query,
+                    },
+                    only: ['customers'],
+                    onSuccess: (e) => {
+                        this.filteredItems = this.$page.props.customers
+                    }
+                })
+
             }, 250);
+        },
+        select(e) {
+            this.filteredItems = [e]
+            this.$emit('update:modelValue', e);
         }
     }
 }

@@ -30,15 +30,15 @@
         </template>
 
         <template #actions>
-            <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                 Create
-            </jet-button>
+            </Button>
         </template>
     </jet-form-section>
 </template>
 
 <script>
-    import JetButton from '@/Jetstream/Button'
+
     import JetFormSection from '@/Jetstream/FormSection'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
@@ -46,7 +46,7 @@
 
     export default {
         components: {
-            JetButton,
+
             JetFormSection,
             JetInput,
             JetInputError,

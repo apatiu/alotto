@@ -23,9 +23,9 @@
             </div>
 
             <div class="flex items-center justify-end mt-4">
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Reset Password
-                </jet-button>
+                </Button>
             </div>
         </form>
     </jet-authentication-card>
@@ -34,7 +34,7 @@
 <script>
     import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
-    import JetButton from '@/Jetstream/Button'
+
     import JetInput from '@/Jetstream/Input'
     import JetLabel from '@/Jetstream/Label'
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
@@ -43,7 +43,7 @@
         components: {
             JetAuthenticationCard,
             JetAuthenticationCardLogo,
-            JetButton,
+
             JetInput,
             JetLabel,
             JetValidationErrors

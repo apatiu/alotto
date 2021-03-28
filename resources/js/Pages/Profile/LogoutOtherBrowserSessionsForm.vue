@@ -44,9 +44,9 @@
             </div>
 
             <div class="flex items-center mt-5">
-                <jet-button @click="confirmLogout">
+                <Button @click="confirmLogout">
                     Log Out Other Browser Sessions
-                </jet-button>
+                </Button>
 
                 <jet-action-message :on="form.recentlySuccessful" class="ml-3">
                     Done.
@@ -77,9 +77,9 @@
                         Cancel
                     </jet-secondary-button>
 
-                    <jet-button class="ml-2" @click="logoutOtherBrowserSessions" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                    <Button class="ml-2" @click="logoutOtherBrowserSessions" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                         Log Out Other Browser Sessions
-                    </jet-button>
+                    </Button>
                 </template>
             </jet-dialog-modal>
         </template>
@@ -89,7 +89,7 @@
 <script>
     import JetActionMessage from '@/Jetstream/ActionMessage'
     import JetActionSection from '@/Jetstream/ActionSection'
-    import JetButton from '@/Jetstream/Button'
+
     import JetDialogModal from '@/Jetstream/DialogModal'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
@@ -101,7 +101,7 @@
         components: {
             JetActionMessage,
             JetActionSection,
-            JetButton,
+
             JetDialogModal,
             JetInput,
             JetInputError,

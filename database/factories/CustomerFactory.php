@@ -23,8 +23,9 @@ class CustomerFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
-            'addr' => $this->faker->address,
-            'phone' => $this->faker->phoneNumber
+            'address' => $this->faker->address,
+            'phone' => $this->faker->phoneNumber,
+            'tax_id' =>$this->faker->randomNumber(13)
         ];
     }
 }

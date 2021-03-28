@@ -4,7 +4,7 @@
             modal
             :closable="false"
             :closeOnEscape="false"
-            class="w-11/12">
+            class="max-w-7xl">
         <div class="grid grid-cols-2 p-fluid gap-4">
             <div>
                 <div class="flex space-x-2">
@@ -14,15 +14,15 @@
                     </div>
                     <div v-show="item.prev_id">
                         <label for="">ใบเก่า</label>
-                        <InputText v-model="item.id" class="w-60"></InputText>
+                        <InputText v-model="item.prev_id" class="w-60"></InputText>
                     </div>
                     <div v-show="item.next_id">
                         <label for="">ใบใหม่</label>
-                        <InputText v-model="item.id" class="w-60"></InputText>
+                        <InputText v-model="item.next_id" class="w-60"></InputText>
                     </div>
                 </div>
                 <div class="p-field">
-                    <select-customer v-model="customer"></select-customer>
+                    <select-customer v-model="customer" force-selection></select-customer>
                 </div>
                 <div class="p-field">
                     <label for="">จำนวนเงิน</label>
@@ -31,11 +31,11 @@
                 <div class="flex space-x-2">
                     <div class="p-field">
                         <label for="">อัตราดอกเบี้ย</label>
-                        <InputNumber v-model="item.price"></InputNumber>
+                        <InputNumber v-model="item.int_rate"></InputNumber>
                     </div>
                     <div class="p-field">
                         <label for="">ดอกเบี้ย/เดือน</label>
-                        <InputNumber v-model="item.price"></InputNumber>
+                        <InputNumber v-model="item.int_per_month"></InputNumber>
                     </div>
                 </div>
                 <div class="flex space-x-2">
@@ -102,10 +102,10 @@ import SelectGoldPercent from "@/A/SelectGoldPercent";
 export default {
     name: "FormPawn",
     components: {SelectGoldPercent, SelectCustomer},
-    props: ['visible', 'pawnData'],
+    props: ['visible', 'record'],
     data() {
         return {
-            item: this.pawnData,
+            item: this.record,
             customer: {
                 name: '',
                 phone: null,
@@ -120,7 +120,10 @@ export default {
             }
         }
     },
-    mounted() {
+    watch: {
+        record(val) {
+            this.item = val;
+        }
     }
 }
 </script>

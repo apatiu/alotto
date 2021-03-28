@@ -36,8 +36,8 @@
             </div>
         </template>
         <template #footer>
-            <jet-button type="button" color="secondary" @click="$emit('close')">Cancel</jet-button>
-            <jet-button color="primary" class="ml-2" @click="save">Save</jet-button>
+            <Button type="button" color="secondary" @click="$emit('close')">Cancel</Button>
+            <Button color="primary" class="ml-2" @click="save">Save</Button>
         </template>
     </dialog-modal>
 </template>
@@ -47,11 +47,11 @@ import DialogModal from "@/Jetstream/DialogModal";
 import JetLabel from "@/Jetstream/Label";
 import JetInput from "@/Jetstream/Input";
 import JetInputError from "@/Jetstream/InputError"
-import JetButton from "@/Jetstream/Button";
+
 
 export default {
     name: "CreateUser",
-    components: {JetLabel, JetInput, JetInputError, JetButton, DialogModal},
+    components: {JetLabel, JetInput, JetInputError,  DialogModal},
     props: {
         value: Object,
         show: {type: Boolean, default: false}

@@ -20,7 +20,7 @@ class PawnController extends Controller
      */
     public function index()
     {
-        $customers = Customer::latest()->take(10);
+        $customers = Customer::latest()->take(15);
         if (request()->has('filterCustomers')) {
             $customers = Customer::where('name', 'like', '%' . request('filterCustomers') . '%');
         }

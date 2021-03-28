@@ -26,12 +26,12 @@
             <jet-action-message :on="form.recentlySuccessful" class="mr-3 inline-flex">
                 บันทึกข้อมูลแล้ว.
             </jet-action-message>
-            <jet-button color="secondary" @click="$emit('close')">ยกเลิก</jet-button>
-            <jet-button color="primary" :class="{ 'opacity-25': form.processing }"
+            <Button color="secondary" @click="$emit('close')">ยกเลิก</Button>
+            <Button color="primary" :class="{ 'opacity-25': form.processing }"
                         :disabled="form.processing"
                         @click="store">
                 Save
-            </jet-button>
+            </Button>
         </template>
     </dialog-modal>
 
@@ -44,7 +44,7 @@ import LoadingButton from '@/Shared/LoadingButton'
 
 import JetFormSection from "@/Jetstream/FormSection";
 import JetActionMessage from "@/Jetstream/ActionMessage";
-import JetButton from "@/Jetstream/Button";
+
 import Input from "@/Jetstream/Input";
 import AInput from "@/A/AInput";
 import DialogModal from "@/Jetstream/DialogModal";
@@ -57,7 +57,7 @@ export default {
         Input,
         JetFormSection,
         JetActionMessage,
-        JetButton,
+
         LoadingButton,
         SelectInput,
         TextInput,

@@ -74,7 +74,7 @@ import Icon from '@/Shared/Icon'
 import mapValues from 'lodash/mapValues'
 import AppLayout from "@/Layouts/AppLayout";
 import DialogModal from "@/Jetstream/DialogModal";
-import JetButton from "@/Jetstream/Button";
+
 import JetActionMessage from "@/Jetstream/ActionMessage";
 import AButton from "@/A/AButton";
 
@@ -82,7 +82,7 @@ export default {
     metaInfo: {title: 'Customers'},
     components: {
         AButton,
-        JetButton,
+
         JetActionMessage,
         DialogModal,
         Icon,

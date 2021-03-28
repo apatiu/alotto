@@ -49,9 +49,9 @@
                     Saved.
                 </jet-action-message>
 
-                <jet-button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Save
-                </jet-button>
+                </Button>
             </template>
         </jet-form-section>
     </div>
@@ -65,7 +65,7 @@ import LoadingButton from '@/Shared/LoadingButton'
 
 import JetFormSection from "@/Jetstream/FormSection";
 import JetActionMessage from "@/Jetstream/ActionMessage";
-import JetButton from "@/Jetstream/Button";
+
 import Input from "@/Jetstream/Input";
 import AInput from "@/A/AInput";
 
@@ -76,7 +76,7 @@ export default {
         Input,
         JetFormSection,
         JetActionMessage,
-        JetButton,
+
         LoadingButton,
         SelectInput,
         TextInput,

@@ -30,7 +30,7 @@
     import Icon from '@/Shared/Icon'
     import mapValues from 'lodash/mapValues'
     import AppLayout from "@/Layouts/AppLayout";
-    import JetButton from "@/Jetstream/Button";
+
     import JetActionMessage from "@/Jetstream/ActionMessage";
     import TextInput from "@/Shared/TextInput";
 
@@ -42,7 +42,7 @@
             AButton,
 
             TextInput,
-            JetButton,
+
             JetActionMessage,
             Icon,
         },

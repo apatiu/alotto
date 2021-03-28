@@ -72,7 +72,7 @@
     import SearchFilter from '@/Shared/SearchFilter'
     import AppLayout from "@/Layouts/AppLayout";
     import DialogModal from "@/Jetstream/DialogModal";
-    import JetButton from "@/Jetstream/Button";
+
     import CreateUser from "@/Shared/CreateUser";
     import ALink from "@/A/ALink";
 
@@ -81,7 +81,7 @@
         components: {
             ALink,
             CreateUser,
-            JetButton,
+
             DialogModal,
             Icon,
             SearchFilter,

@@ -9,7 +9,7 @@
         </template>
         <Column field="id" header="รหัส"></Column>
     </DataTable>
-    <form-pawn v-model:pawn-data="pawn" v-model:visible="showForm"></form-pawn>
+    <form-pawn v-model:record="pawn" v-model:visible="showForm"></form-pawn>
 </template>
 
 <script>
@@ -27,7 +27,7 @@ export default {
         return {
             pawn: {
                 id: null,
-
+                dt: null
             },
             showForm: false
         }
@@ -35,6 +35,7 @@ export default {
     methods: {
         create() {
             this.pawn = _.mapValues(this.pawn, () => null);
+            this.pawn.dt = new Date();
             this.showForm = true
         }
     },

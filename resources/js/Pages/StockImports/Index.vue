@@ -39,7 +39,7 @@ import Icon from '@/Shared/Icon'
 import mapValues from 'lodash/mapValues'
 import AppLayout from "@/Layouts/AppLayout";
 import DialogModal from "@/Jetstream/DialogModal";
-import JetButton from "@/Jetstream/Button";
+
 import JetActionMessage from "@/Jetstream/ActionMessage";
 import Create from "@/Pages/StockImports/Create";
 import AButton from "@/A/AButton";
@@ -51,7 +51,7 @@ export default {
         ALink,
         AButton,
         Create,
-        JetButton,
+
         JetActionMessage,
         DialogModal,
         Icon,
