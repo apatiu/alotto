@@ -22,10 +22,10 @@ class CreatePrsTable extends Migration
             $table->string('payment_no');
             $table->dateTime('dt');
 
-            $table->string('detail');
+            $table->string('detail')->nullable();
             $table->string('bill_id')->nullable();
-            $table->decimal('pay')->default(0);
-            $table->decimal('receive')->default(0);
+            $table->decimal('pay')->nullable();
+            $table->decimal('receive')->nullable();
 
             $table->string('method');
             $table->string('transfer_bank')->nullable();

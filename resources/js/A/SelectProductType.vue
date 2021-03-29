@@ -1,33 +1,43 @@
 <template>
-    <span class="p-float-label">
+    <label for="">ประเภทสินค้า</label>
     <AutoComplete :modelValue="modelValue"
-                  @update:modelValue="$emit('update:modelValue',$event)"
+                  @update:modelValue="$event.name ? $emit('update:modelValue',$event.name) : $emit('update:modelValue',$event)"
                   :suggestions="filteredTypes"
-                  @complete="searchType($event)"
+                  @complete="search($event)"
                   field="name"
                   :dropdown="true"
-                  forceSelection
+                  :forceSelection="forceSelection"
+                  class="w-full"
     ></AutoComplete>
-    <label for="">ประเภทสินค้า</label>
-    </span>
+
+
 </template>
 
 <script>
 export default {
     name: "SelectProductType",
-    props: ['modelValue'],
+    props: {
+        modelValue: {default: {}},
+        forceSelection: {default: false}
+    },
     data() {
         return {
-            types: this.$page.props.product_types,
-            filteredTypes: null
+            types: null,
+            filteredTypes: null,
         }
     },
-    methods: {
-        searchType(event) {
+    created() {
+        axios.get('api/product_types').then(response => {
+            this.types = response.data
+        })
+    },
+    methods:{
+        search(event) {
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.filteredTypes = [...this.types];
-                } else {
+                }
+                else {
                     this.filteredTypes = this.types.filter((type) => {
                         return type.name.toLowerCase().startsWith(event.query.toLowerCase());
                     });

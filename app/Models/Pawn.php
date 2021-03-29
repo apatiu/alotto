@@ -9,11 +9,17 @@ class Pawn extends Model
 {
     use HasFactory;
 
-    public function items() {
+    public function items()
+    {
         return $this->hasMany(PawnItem::class);
     }
 
-    public function payments() {
-        return $this->morphMany(Payment::class,'paymentable');
+    public function payments()
+    {
+        return $this->morphMany(Payment::class, 'paymentable');
+    }
+
+    public function customer() {
+        return $this->belongsTo(Customer::class);
     }
 }

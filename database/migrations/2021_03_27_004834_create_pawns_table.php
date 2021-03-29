@@ -21,6 +21,7 @@ class CreatePawnsTable extends Migration
             $table->foreignId('customer_id');
             $table->decimal('price');
             $table->decimal('int_rate');
+            $table->unsignedInteger('life');
             $table->enum('status',['new','int','chg','red','cut']);
             $table->foreignId('prev_id');
             $table->foreignId('next_id');

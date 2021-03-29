@@ -7,6 +7,8 @@ use App\Models\Customer;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Pawn;
+use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -20,14 +22,8 @@ class PawnController extends Controller
      */
     public function index()
     {
-        $customers = Customer::latest()->take(15);
-        if (request()->has('filterCustomers')) {
-            $customers = Customer::where('name', 'like', '%' . request('filterCustomers') . '%');
-        }
         return Inertia::render('Pawns/Index', [
             'items' => Pawn::all(),
-            'customers' => $customers->get()
-
         ]);
     }
 
@@ -49,7 +45,30 @@ class PawnController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $pawn = new Pawn();
+        DB::transaction(function () use ($request,$pawn) {
+            $pawn->team_id = $request->user()->currentTeam->id;
+            $pawn->dt = Carbon::create(request('dt'))->toDateTimeString();
+            $pawn->dt_end = Carbon::create(request('dt_end'))->toDateTimeString();
+            $pawn->customer_id = request('customer_id');
+            $pawn->price = request('price');
+            $pawn->status = 'new';
+            $pawn->save();
+
+            $pawn->items()->createMany($request->input('items'));
+            $payment = new Payment([
+                'team_id' => $pawn->team_id,
+                'payment_no' => '',
+                'dt' => $pawn->dt,
+                'payment_type_id' => 'paw',
+                'method' => 'cash'
+            ]);
+            $payment->id = $payment->gen_id($pawn->dt);
+//            $payment->save();
+
+            $pawn->payments()->save($payment);
+        });
+        return $pawn->load(['items','payments','customer']);
     }
 
     /**

@@ -1,13 +1,13 @@
 <template>
-    <span class="p-float-label">
-        <Dropdown class="w-full p-filled"
-                  :options="items"
-                  optionLabel="name"
-                  optionValue="id"
-                  :modelValue="modelValue"
-                  @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
-        <label for="">เปอร์เซ็นทอง</label>
-    </span>
+    <label for="">เปอร์เซ็นทอง</label>
+    <Dropdown class="w-full p-filled"
+              :options="items"
+              optionLabel="name"
+              optionValue="id"
+              :modelValue="modelValue"
+              @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
+
+
 </template>
 
 <script>

@@ -1,10 +1,10 @@
 <template>
     <jet-authentication-card>
         <template #logo>
-            <jet-authentication-card-logo />
+            <jet-authentication-card-logo/>
         </template>
 
-        <jet-validation-errors class="mb-4" />
+        <jet-validation-errors class="mb-4"/>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
@@ -12,18 +12,20 @@
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="username" value="Username" />
-                <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required autofocus />
+                <jet-label for="username" value="Username"/>
+                <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required
+                           autofocus/>
             </div>
 
             <div class="mt-4">
-                <jet-label for="password" value="Password" />
-                <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
+                <jet-label for="password" value="Password"/>
+                <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
+                           autocomplete="current-password"/>
             </div>
 
             <div class="block mt-4">
                 <div class="flex items-center">
-                    <Checkbox v-model="form.remember" :binary="true" ></Checkbox>
+                    <Checkbox v-model="form.remember" :binary="true"></Checkbox>
                     <span class="ml-2 text-sm text-gray-600">Remember me</span>
                 </div>
             </div>
@@ -35,7 +37,8 @@
                     Forgot your password?
                 </inertia-link>
 
-                <Button type="submit" class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <Button type="submit" class="ml-4" :class="{ 'opacity-25': form.processing }"
+                        :disabled="form.processing">
                     เข้าสู่ระบบ
                 </Button>
             </div>
@@ -44,50 +47,54 @@
 </template>
 
 <script>
-    import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
-    import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
+import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
+import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
 
-    import JetInput from '@/Jetstream/Input'
-    import JetLabel from '@/Jetstream/Label'
-    import JetValidationErrors from '@/Jetstream/ValidationErrors'
+import JetInput from '@/Jetstream/Input'
+import JetLabel from '@/Jetstream/Label'
+import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
-    export default {
-        components: {
-            JetAuthenticationCard,
-            JetAuthenticationCardLogo,
+export default {
+    components: {
+        JetAuthenticationCard,
+        JetAuthenticationCardLogo,
 
-            JetInput,
-            JetLabel,
-            JetValidationErrors
-        },
+        JetInput,
+        JetLabel,
+        JetValidationErrors
+    },
 
-        props: {
-            canResetPassword: Boolean,
-            status: String
-        },
+    props: {
+        canResetPassword: Boolean,
+        status: String
+    },
 
-        data() {
-            return {
-                checked: false,
-                form: this.$inertia.form({
-                    username: '',
-                    password: '',
-                    remember: false
-                })
-            }
-        },
+    data() {
+        return {
+            checked: false,
 
-        methods: {
-            submit() {
+            form: this.$inertia.form({
+                username: '',
+                password: '',
+                remember: false
+            })
+
+        }
+    },
+
+    methods: {
+        submit() {
+            axios.get('/sanctum/csrf-cookie').then(response => {
                 this.form
                     .transform(data => ({
-                        ... data,
+                        ...data,
                         remember: this.form.remember ? 'on' : ''
                     }))
                     .post(this.route('login'), {
                         onFinish: () => this.form.reset('password'),
                     })
-            }
+            });
         }
     }
+}
 </script>

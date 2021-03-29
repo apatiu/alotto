@@ -160,7 +160,7 @@ class StockImportController extends Controller
 
         $data = $request->all();
         DB::transaction(function () use ($data, $stockImport) {
-            $data['dt'] = Carbon::create($data['dt'])->toDateTimeString();
+            $data['dt'] =
             $approve_request = false;
 
             $stockImport->fill($data)->save();

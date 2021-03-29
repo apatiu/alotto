@@ -14,9 +14,10 @@
 
         </div>
         <div class="flex space-x-2">
-            <small>เบอร์โทร: {{ modelValue.phone }}</small>
-            <small>ที่อยุ่: {{ modelValue.tax_id }}</small>
+            <small>เบอร์โทร: {{ selected.phone }}</small>
+            <small>ที่อยุ่: {{ selected.tax_id }}</small>
         </div>
+        <small class="p-error" v-if="errors.length">กรุณาเลือกลูกค้า</small>
 
         <form-customer v-model:visible="creating"
                        @created="select"></form-customer>
@@ -35,10 +36,15 @@ export default {
         forceSelection: {
             type: Boolean,
             default: false
+        },
+        errors: {
+            type: Array,
+            default: []
         }
     },
     data() {
         return {
+            selected: {},
             filteredItems: null,
             creating: false
         }
@@ -46,17 +52,10 @@ export default {
     methods: {
         search(event) {
             setTimeout(() => {
-
-                this.$inertia.reload({
-                    data: {
-                        filterCustomers: event.query,
-                    },
-                    only: ['customers'],
-                    onSuccess: (e) => {
-                        this.filteredItems = this.$page.props.customers
-                    }
-                })
-
+                axios.post('/api/customers/search', {q: event.query})
+                    .then(response => {
+                        this.filteredItems = response.data
+                    });
             }, 250);
         },
         select(e) {

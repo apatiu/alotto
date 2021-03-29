@@ -1,17 +1,14 @@
 <template>
+    <label for="">น้ำหนัก</label>
     <div class="p-inputgroup">
-        <span class="p-float-label">
         <Dropdown :options="options"
-                  v-model="value.weight"
+                  :modelValue="value.weight"
+                  @input="emit"
                   :editable="true"></Dropdown>
-            <label for="">น้ำหนัก</label>
-        </span>
         <Button :label="value.weightbaht ? 'บาท' : 'กรัม'"
                 @click="value.weightbaht=!value.weightbaht"
                 v-bind:class="classObject"></Button>
     </div>
-
-
 </template>
 
 <script>
@@ -19,9 +16,10 @@ export default {
     name: "InputWeight",
     props: {
         'modelValue': {
-            type: Array,
+            type: [Array, Number],
             default: [null, true]
-        }
+        },
+        returnGram: {type: Boolean, default: false}
     },
     data() {
         return {
@@ -33,12 +31,23 @@ export default {
         }
     },
     watch: {
-        value: {
-            handler(val) {
-                this.emit()
-            },
-            deep: true
+        modelValue(val) {
+            if (_.isArray(val)) {
+                this.value = {
+                    weight: val[0],
+                    weightbaht: val[1]
+                }
+            } else {
+                this.value = {
+                    weight: val,
+                    weightbaht: false
+                }
+            }
+        },
+        value(val) {
+            this.emit()
         }
+
     },
     computed: {
         classObject: function () {
@@ -49,7 +58,16 @@ export default {
     },
     methods: {
         emit() {
-            this.$emit('update:modelValue', [this.value.weight, this.value.weightbaht])
+            if (this.returnGram) {
+                if (this.value.weightbaht) {
+                    this.$emit('update:modelValue', this.value.weight * 15.2)
+                } else {
+                    console.log(this.value.weight);
+                    this.$emit('update:modelValue', this.value.weight)
+                }
+            } else {
+                this.$emit('update:modelValue', [this.value.weight, this.value.weightbaht])
+            }
         }
     }
 }

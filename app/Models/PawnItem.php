@@ -9,7 +9,10 @@ class PawnItem extends Model
 {
     use HasFactory;
 
-    public function pawn() {
+    protected $fillable = ['pawn_id', 'gold_percent', 'product_type', 'weight', 'price'];
+
+    public function pawn()
+    {
         return $this->belongsTo(Pawn::class);
     }
 }

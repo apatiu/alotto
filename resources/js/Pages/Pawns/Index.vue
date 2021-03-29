@@ -1,5 +1,4 @@
 <template>
-
     <DataTable :value="items">
         <template #header>
             <div class="flex items-center justify-between">
@@ -9,33 +8,30 @@
         </template>
         <Column field="id" header="รหัส"></Column>
     </DataTable>
-    <form-pawn v-model:record="pawn" v-model:visible="showForm"></form-pawn>
+    <form-pawn v-model:pawn-id="pawnId" v-model:visible="showForm"></form-pawn>
 </template>
 
 <script>
 import AppLayout from "@/Layouts/AppLayout";
 import FormPawn from "./FormPawn";
+import SelectCustomer from "@/A/SelectCustomer";
 
 export default {
     metaInfo: {title: 'Customers'},
-    components: {FormPawn},
+    components: {SelectCustomer, FormPawn},
     layout: AppLayout,
     props: {
         items: Array,
     },
     data() {
         return {
-            pawn: {
-                id: null,
-                dt: null
-            },
-            showForm: false
+            pawnId: 0,
+            showForm: false,
         }
     },
     methods: {
         create() {
-            this.pawn = _.mapValues(this.pawn, () => null);
-            this.pawn.dt = new Date();
+            this.pawnId = 0
             this.showForm = true
         }
     },
