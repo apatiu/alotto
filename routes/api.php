@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::post('/pawns', [\App\Http\Controllers\PawnController::class, 'store'])->name('api.pawns.store');
+    Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\PawnController::class, 'storeAction'])->name('api.pawns.storeAction');
+    Route::get('/pawns/{pawn}', [\App\Http\Controllers\PawnController::class, 'show'])->name('api.pawns.show');
 
     Route::get('/goldprice', function () {
         return goldprice();

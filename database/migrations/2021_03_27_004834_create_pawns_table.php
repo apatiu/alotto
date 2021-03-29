@@ -23,8 +23,8 @@ class CreatePawnsTable extends Migration
             $table->decimal('int_rate');
             $table->unsignedInteger('life');
             $table->enum('status',['new','int','chg','red','cut']);
-            $table->foreignId('prev_id');
-            $table->foreignId('next_id');
+            $table->foreignId('prev_id')->nullable();
+            $table->foreignId('next_id')->nullable();
             $table->timestamps();
         });
     }

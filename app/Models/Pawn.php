@@ -14,12 +14,18 @@ class Pawn extends Model
         return $this->hasMany(PawnItem::class);
     }
 
+    public function int_receives()
+    {
+        return $this->hasMany(PawnIntReceives::class);
+    }
+
     public function payments()
     {
         return $this->morphMany(Payment::class, 'paymentable');
     }
 
-    public function customer() {
+    public function customer()
+    {
         return $this->belongsTo(Customer::class);
     }
 }

@@ -23,7 +23,7 @@ class PawnController extends Controller
     public function index()
     {
         return Inertia::render('Pawns/Index', [
-            'items' => Pawn::all(),
+            'items' => Pawn::with(['customer'])->get()
         ]);
     }
 
@@ -46,13 +46,16 @@ class PawnController extends Controller
     public function store(Request $request)
     {
         $pawn = new Pawn();
-        DB::transaction(function () use ($request,$pawn) {
+        DB::transaction(function () use ($request, $pawn) {
             $pawn->team_id = $request->user()->currentTeam->id;
             $pawn->dt = Carbon::create(request('dt'))->toDateTimeString();
             $pawn->dt_end = Carbon::create(request('dt_end'))->toDateTimeString();
             $pawn->customer_id = request('customer_id');
             $pawn->price = request('price');
             $pawn->status = 'new';
+            $pawn->int_rate = request('int_rate');
+            $pawn->life = request('life');
+
             $pawn->save();
 
             $pawn->items()->createMany($request->input('items'));
@@ -68,18 +71,18 @@ class PawnController extends Controller
 
             $pawn->payments()->save($payment);
         });
-        return $pawn->load(['items','payments','customer']);
+        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
     }
 
     /**
      * Display the specified resource.
      *
      * @param \App\Models\Pawn $pawn
-     * @return \Illuminate\Http\Response
+     * @return Pawn
      */
     public function show(Pawn $pawn)
     {
-        //
+        return $pawn->load(['items', 'customer', 'int_receives']);
     }
 
     /**
@@ -131,5 +134,30 @@ class PawnController extends Controller
         });
 
         return redirect()->back();
+    }
+
+    public function storeAction(Request $request, Pawn $pawn)
+    {
+        if ($request->input('type') == 'int') {
+            DB::transaction(function () use ($pawn, $request) {
+                $pawn->dt_end = jsDateToSql($request->input('dt_end'));
+                $pawn->save();
+
+                $pawn->int_receives()->create([
+                    'dt' => jsDateToSql(request('dt')),
+                    'dt_end' => jsDateToSql(request('dt_end')),
+                    'amount' => request('amount')
+                ]);
+                $payment = new Payment([
+                    'team_id' => request()->user()->currentTeam->id,
+                    'payment_no' => 0,
+                    'dt' => jsDateToSql(request('dt')),
+                    'receive' => request('amount'),
+                    'method' => 'cash'
+                ]);
+                $payment->id = $payment->gen_id(jsDateToSql(request('dt')));
+                $pawn->payments()->save($payment);
+            });
+        }
     }
 }

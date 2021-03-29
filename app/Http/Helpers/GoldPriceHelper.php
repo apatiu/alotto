@@ -28,3 +28,10 @@ if (!function_exists('weightgram')) {
         return $wb ? ($w * 15.2) : $w;
     }
 }
+
+if (!function_exists('jsDateToSql')) {
+    function jsDateToSql($dt)
+    {
+        return \Carbon\Carbon::create($dt)->toDateTimeString();
+    }
+}

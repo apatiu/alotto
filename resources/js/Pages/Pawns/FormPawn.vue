@@ -1,9 +1,10 @@
 <template>
-    <Dialog v-model:visible="visible"
+    <Dialog :visible="visible"
+            @update:visible="$emit('update:visible',$event)"
             header="ข้อมูลใบขายฝาก"
             modal
-            :closable="false"
             :closeOnEscape="false"
+            :closable="false"
             class="max-w-7xl">
         <div class="grid grid-cols-2 p-fluid gap-4">
             <div class="p-pt-3">
@@ -62,8 +63,10 @@
             </div>
             <div class="p-pt-3">
                 <label for="">ความเคลื่อนไหว</label>
-                <DataTable :value="item.payments">
-                    <Column field="dt"></Column>
+                <DataTable :value="item.int_receives">
+                    <Column field="dt" header="วันที่"></Column>
+                    <Column field="dt_end" header="วันที่"></Column>
+                    <Column field="amount" header="จำนวนเงิน"></Column>
                 </DataTable>
             </div>
         </div>
@@ -108,7 +111,8 @@
         <template #footer>
             <div class="flex items-center justify-between pt-2">
                 <div v-show="!creating">
-                    <Button label="ต่อดอก" class="p-button-info"></Button>
+                    <Button label="ต่อดอก" class="p-button-info"
+                            @click="actionInt"></Button>
                     <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
                     <Button label="ไถ่ถอน" class="p-button-success"></Button>
                     <Button label="คัดออก" class="p-button-danger"></Button>
@@ -119,6 +123,50 @@
                     <Button label="บันทึก" icon="pi pi-check" @click="save"></Button>
                 </div>
             </div>
+        </template>
+    </Dialog>
+    <Dialog v-model:visible="actioning"
+            modal :show-header="false" :closable="false" class="max-w-5xl w-full">
+        <TabView ref="tabview2" v-model:activeIndex="actionActive" class="pt-6">
+            <TabPanel header="รับดอกเบี้ย">
+                <div class="p-fluid">
+                    <div class="p-field p-grid">
+                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
+                        <div class="p-col-12 p-md-9">
+                            <InputNumber v-model="action.life" showButtons/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเงิน</label>
+                        <div class="p-col-12 p-md-9">
+                            <InputNumber v-model="action.amount" mode="currency"
+                                         currency="THB" locale="th-TH"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันครบกำหนด</label>
+                        <div class="p-col-12 p-md-9">
+                            <Calendar v-model="action.dt_end"/>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid mt-10">
+                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันที่ทำรายการ</label>
+                        <div class="p-col-12 p-md-9">
+                            <Calendar v-model="action.dt" />
+                        </div>
+                    </div>
+                </div>
+            </TabPanel>
+            <TabPanel header="เปลี่ยนใบ">
+
+            </TabPanel>
+            <TabPanel header="ไถ่ถอน">
+
+            </TabPanel>
+        </TabView>
+        <template #footer>
+            <Button class="p-button-text" @click="actioning=false">ยกเลิก</Button>
+            <Button @click="saveAction">บันทึก</Button>
         </template>
     </Dialog>
 </template>
@@ -156,7 +204,16 @@ export default {
                 price: 0
             },
             config: {},
-            creating: true
+            creating: true,
+            actioning: false,
+            actionActive: 0,
+            action: {
+                dt: new Date(),
+                type: 'int',
+                life: 0,
+                amount: 0,
+                dt_end: null
+            }
         }
     },
     validations() {
@@ -179,6 +236,11 @@ export default {
                 if (this.pawnId) {
                     this.item = {}
                     this.creating = false;
+                    console.log('get')
+                    axios.get(route('api.pawns.show', this.pawnId))
+                        .then(response => {
+                            this.item = response.data
+                        })
                 } else {
                     this.creating = true;
                     this.item = {
@@ -192,6 +254,13 @@ export default {
                 }
             }
         },
+        'action.life': function (val) {
+            if (this.action.type === 'int') {
+                this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
+                this.action.dt_end = moment(this.item.dt_end).add(val, 'months').toDate();
+            }
+
+        }
     },
     methods: {
         pawnmax(w) {
@@ -251,6 +320,18 @@ export default {
                     this.creating = false;
                 })
             }
+        },
+        actionInt() {
+            this.action.type = 'int';
+            this.action.life = 1;
+            this.actionActive = 0;
+            this.actioning = true;
+        },
+        saveAction() {
+            axios.post(route('api.pawns.storeAction', this.item.id), this.action)
+                .then(response => {
+                    console.log(response.data)
+                });
         }
     }
 }

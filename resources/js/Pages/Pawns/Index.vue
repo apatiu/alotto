@@ -1,5 +1,6 @@
 <template>
-    <DataTable :value="items">
+    <DataTable :value="items" @row-click="open($event)"
+               row-hover>
         <template #header>
             <div class="flex items-center justify-between">
                 <h1 class="text-lg">รายการขายฝาก</h1>
@@ -7,6 +8,10 @@
             </div>
         </template>
         <Column field="id" header="รหัส"></Column>
+        <Column field="customer.name" header="ลูกค้า"></Column>
+        <Column field="dt" header="วันที่เริ่ม"></Column>
+        <Column field="dt_end" header="วันครบกำหนด"></Column>
+        <Column field="price" header="เงินต้น"></Column>
     </DataTable>
     <form-pawn v-model:pawn-id="pawnId" v-model:visible="showForm"></form-pawn>
 </template>
@@ -33,6 +38,10 @@ export default {
         create() {
             this.pawnId = 0
             this.showForm = true
+        },
+        open(e) {
+            this.pawnId = e.data.id;
+            this.showForm = true;
         }
     },
 }

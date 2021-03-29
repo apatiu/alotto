@@ -25,7 +25,7 @@ class CustomerFactory extends Factory
             'name' => $this->faker->name,
             'address' => $this->faker->address,
             'phone' => $this->faker->phoneNumber,
-            'tax_id' =>$this->faker->randomNumber(13)
+            'tax_id' =>$this->faker->regexify('[0-9]{13}')
         ];
     }
 }
