@@ -88,6 +88,8 @@ import Tree from 'primevue/tree';
 import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 
+import VueHtmlToPaper from "@/plugins/VueHtmlToPaper";
+
 const el = document.getElementById('app');
 
 const app = createApp({
@@ -121,7 +123,8 @@ const app = createApp({
         }
     })
     .use(ConfirmationService)
-    .use(ToastService);
+    .use(ToastService)
+    .use(VueHtmlToPaper);
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

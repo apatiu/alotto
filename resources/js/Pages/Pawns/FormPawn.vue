@@ -116,6 +116,9 @@
                     <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
                     <Button label="ไถ่ถอน" class="p-button-success"></Button>
                     <Button label="คัดออก" class="p-button-danger"></Button>
+                    <Button label="พิมพ์" icon="pi pi-print"
+                            class="p-button-secondary ml-6"
+                            @click="print"></Button>
                 </div>
                 <div v-show="creating"></div>
                 <div>
@@ -152,7 +155,7 @@
                     <div class="p-field p-grid mt-10">
                         <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันที่ทำรายการ</label>
                         <div class="p-col-12 p-md-9">
-                            <Calendar v-model="action.dt" />
+                            <Calendar v-model="action.dt"/>
                         </div>
                     </div>
                 </div>
@@ -169,6 +172,7 @@
             <Button @click="saveAction">บันทึก</Button>
         </template>
     </Dialog>
+    <div id="printable" v-html="printHtml"></div>
 </template>
 
 <script>
@@ -190,6 +194,7 @@ export default {
     props: ['visible', 'pawnId'],
     data() {
         return {
+            printHtml: null,
             item: {},
             customer: {
                 name: '',
@@ -236,10 +241,11 @@ export default {
                 if (this.pawnId) {
                     this.item = {}
                     this.creating = false;
-                    console.log('get')
                     axios.get(route('api.pawns.show', this.pawnId))
                         .then(response => {
                             this.item = response.data
+                            this.item.dt = moment(this.item.dt).toDate()
+                            this.item.dt_end = moment(this.item.dt_end).toDate()
                         })
                 } else {
                     this.creating = true;
@@ -259,7 +265,6 @@ export default {
                 this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
                 this.action.dt_end = moment(this.item.dt_end).add(val, 'months').toDate();
             }
-
         }
     },
     methods: {
@@ -310,14 +315,19 @@ export default {
 
             this.v$.$touch();
             if (this.v$.$error) return;
-
+            let form = this.$inertia.form(_.assign({}, this.item))
             if (!this.item.id) {
-                let form = this.$inertia.form(_.assign({}, this.item, this.items));
                 axios.post(route('api.pawns.store'), form.data()).then(res => {
                     this.item = res.data
                     this.item.dt = moment(this.item.dt).toDate();
                     this.item.dt_end = moment(this.item.dt_end).toDate();
                     this.creating = false;
+                })
+                this.$inertia.reload();
+            } else {
+                form.put(route('pawns.update', form.id), {
+                    preserveState: true,
+                    preserveScroll: true,
                 })
             }
         },
@@ -330,8 +340,23 @@ export default {
         saveAction() {
             axios.post(route('api.pawns.storeAction', this.item.id), this.action)
                 .then(response => {
-                    console.log(response.data)
+                    this.actioning = false;
+                    this.item = response.data
                 });
+        },
+        print() {
+            axios.get(route('api.pawns.print', this.item.id))
+                .then(response => {
+                    this.printHtml = response.data;
+                    this.$nextTick(function() {
+                        this.$htmlToPaper('printable',{
+                            styles: [
+                                '../css/app.css' // <- inject here
+                            ]
+                        });
+                    })
+
+                })
         }
     }
 }

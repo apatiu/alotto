@@ -6,10 +6,7 @@
     border-style: initial;
 }
 
-
 .p-dialog .p-dialog-footer,
 .p-dialog .p-dialog-header {
     @apply bg-blue-50 pt-3 !important;
-
-
 }

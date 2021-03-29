@@ -8,7 +8,6 @@ use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Pawn;
 use App\Models\Payment;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -48,8 +47,8 @@ class PawnController extends Controller
         $pawn = new Pawn();
         DB::transaction(function () use ($request, $pawn) {
             $pawn->team_id = $request->user()->currentTeam->id;
-            $pawn->dt = Carbon::create(request('dt'))->toDateTimeString();
-            $pawn->dt_end = Carbon::create(request('dt_end'))->toDateTimeString();
+            $pawn->dt = request('dt');
+            $pawn->dt_end = request('dt_end');
             $pawn->customer_id = request('customer_id');
             $pawn->price = request('price');
             $pawn->status = 'new';
@@ -105,7 +104,9 @@ class PawnController extends Controller
      */
     public function update(Request $request, Pawn $pawn)
     {
-        //
+        $pawn->update($request->except([
+            'id', 'items', 'int_receives', 'prev_id', 'next_id', 'team_id']));
+        return redirect()->back();
     }
 
     /**
@@ -159,5 +160,13 @@ class PawnController extends Controller
                 $pawn->payments()->save($payment);
             });
         }
+
+        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
+    }
+
+    public function print_ticket(Pawn $pawn)
+    {
+        return view('pawns.ticket', compact('pawn'));
+
     }
 }
