@@ -6,7 +6,7 @@
             :closeOnEscape="false"
             class="max-w-7xl">
         <div class="grid grid-cols-2 p-fluid gap-4">
-            <div>
+            <div class="p-pt-3">
                 <div class="flex space-x-2">
                     <div class="">
                         <label for="">รหัส</label>
@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="p-pt-3">
                 <label for="">ความเคลื่อนไหว</label>
                 <DataTable :value="item.payments">
                     <Column field="dt"></Column>
@@ -100,19 +100,20 @@
                 <Column>
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
-                                @click="removeItemItems"></Button>
+                                @click="removeItemItems(slotProps.index)"></Button>
                     </template>
                 </Column>
             </DataTable>
         </div>
         <template #footer>
             <div class="flex items-center justify-between pt-2">
-                <div>
+                <div v-show="!creating">
                     <Button label="ต่อดอก" class="p-button-info"></Button>
                     <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
                     <Button label="ไถ่ถอน" class="p-button-success"></Button>
                     <Button label="คัดออก" class="p-button-danger"></Button>
                 </div>
+                <div v-show="creating"></div>
                 <div>
                     <Button label="ยกเลิก" class="p-button-text" @click="$emit('update:visible',false)"></Button>
                     <Button label="บันทึก" icon="pi pi-check" @click="save"></Button>
@@ -154,7 +155,8 @@ export default {
                 weight: 0,
                 price: 0
             },
-            config: {}
+            config: {},
+            creating: true
         }
     },
     validations() {
@@ -176,7 +178,9 @@ export default {
             if (val) {
                 if (this.pawnId) {
                     this.item = {}
-                } else { //create mode
+                    this.creating = false;
+                } else {
+                    this.creating = true;
                     this.item = {
                         life: this.config.pawn_life,
                         int_rate: this.config.pawn_int_default_rate,
@@ -215,8 +219,8 @@ export default {
             this.clearDetailItem();
             this.calcPrice();
         },
-        removeItemItems(e) {
-            this.item.items.splice(e.index,1)
+        removeItemItems(i) {
+            this.item.items.splice(i, 1)
             this.calcPrice();
         },
         calcPrice() {
@@ -242,6 +246,9 @@ export default {
                 let form = this.$inertia.form(_.assign({}, this.item, this.items));
                 axios.post(route('api.pawns.store'), form.data()).then(res => {
                     this.item = res.data
+                    this.item.dt = moment(this.item.dt).toDate();
+                    this.item.dt_end = moment(this.item.dt_end).toDate();
+                    this.creating = false;
                 })
             }
         }
