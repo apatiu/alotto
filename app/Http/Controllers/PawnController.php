@@ -22,7 +22,8 @@ class PawnController extends Controller
     public function index()
     {
         return Inertia::render('Pawns/Index', [
-            'items' => Pawn::with(['customer'])->get()
+            'items' => Pawn::with(['customer'])->get(),
+            'new_id' => session('new', 0)
         ]);
     }
 
@@ -63,14 +64,15 @@ class PawnController extends Controller
                 'payment_no' => '',
                 'dt' => $pawn->dt,
                 'payment_type_id' => 'paw',
-                'method' => 'cash'
+                'method' => 'cash',
+                'pay' => $pawn->price
             ]);
             $payment->id = $payment->gen_id($pawn->dt);
 //            $payment->save();
 
             $pawn->payments()->save($payment);
         });
-        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
+        return redirect()->back()->with('new', $pawn->id);
     }
 
     /**
@@ -149,15 +151,18 @@ class PawnController extends Controller
                     'dt_end' => jsDateToSql(request('dt_end')),
                     'amount' => request('amount')
                 ]);
-                $payment = new Payment([
-                    'team_id' => request()->user()->currentTeam->id,
-                    'payment_no' => 0,
-                    'dt' => jsDateToSql(request('dt')),
-                    'receive' => request('amount'),
-                    'method' => 'cash'
-                ]);
-                $payment->id = $payment->gen_id(jsDateToSql(request('dt')));
-                $pawn->payments()->save($payment);
+                foreach ($request->payments as $payment) {
+                    $p = new Payment([
+                        'team_id' => request()->user()->currentTeam->id,
+                        'payment_no' => 0,
+                        'dt' => $payment['dt'],
+                        'receive' => $payment['amount'],
+                        'method' => $payment['method'],
+                        'payment_type_id' => 'int'
+                    ]);
+                    $pawn->payments()->save($p);
+                }
+
             });
         }
 

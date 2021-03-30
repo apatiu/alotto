@@ -32,6 +32,8 @@ if (!function_exists('weightgram')) {
 if (!function_exists('jsDateToSql')) {
     function jsDateToSql($dt)
     {
-        return \Carbon\Carbon::create($dt)->toDateTimeString();
+        return \Carbon\Carbon::create($dt)
+            ->timezone('Asia/Bangkok')
+            ->toDateTimeString();
     }
 }

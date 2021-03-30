@@ -62,10 +62,10 @@
                 </div>
             </div>
             <div class="p-pt-3">
-                <label for="">ความเคลื่อนไหว</label>
+                <label for="">รายการดอกเบี้ย</label>
                 <DataTable :value="item.int_receives">
-                    <Column field="dt" header="วันที่"></Column>
                     <Column field="dt_end" header="วันที่ครบกำหนด"></Column>
+                    <Column field="dt" header="วันที่"></Column>
                     <Column field="amount" header="จำนวนเงิน"></Column>
                 </DataTable>
             </div>
@@ -130,7 +130,9 @@
         </template>
     </Dialog>
     <Dialog v-model:visible="actioning"
-            modal :show-header="false" :closable="false" class="max-w-5xl w-full">
+            modal :show-header="false"
+            :closeOnEscape="false"
+            :closable="false" class="max-w-5xl w-full">
         <div class="flex flex-wrap">
             <div class="w-full md:w-7/12 ">
                 <TabView ref="tabview2" v-model:activeIndex="actionActive" class="pt-6">
@@ -177,12 +179,14 @@
             </div>
         </div>
 
-        <input-payment v-model="action.payments" :balance="action.amount"></input-payment>
+        <input-payment v-model:visible="paymentDialog"
+                       :target="action.amount"
+                       @update:payments="saveAction($event)"></input-payment>
 
         <template #footer>
 
             <Button class="p-button-text" @click="actioning=false">ยกเลิก</Button>
-            <Button @click="saveAction">บันทึก</Button>
+            <Button @click="getPayments">บันทึก</Button>
         </template>
         <!--        end action dialog-->
     </Dialog>
@@ -210,6 +214,7 @@ export default {
     props: ['visible', 'pawnId'],
     data() {
         return {
+            paymentDialog: false,
             saved: false,
             printHtml: null,
             form: this.$inertia.form({
@@ -271,14 +276,7 @@ export default {
         visible(val) {
             if (val) {
                 if (this.pawnId) {
-                    this.item = {}
-                    this.creating = false;
-                    axios.get(route('api.pawns.show', this.pawnId))
-                        .then(response => {
-                            this.item = response.data
-                            this.item.dt = moment(this.item.dt).toDate()
-                            this.item.dt_end = moment(this.item.dt_end).toDate()
-                        })
+                   this.load(this.pawnId);
                 } else {
                     this.creating = true;
                     this.item = {
@@ -308,6 +306,20 @@ export default {
         }
     },
     methods: {
+        load(id) {
+            this.item = {}
+            this.creating = false;
+            axios.get(route('api.pawns.show', id))
+                .then(response => {
+                    console.log(response.data)
+                    this.item = this.transformItem(response.data)
+                })
+        },
+        transformItem(data) {
+            data.dt = moment(data.dt).toDate()
+            data.dt_end = moment(data.dt_end).toDate()
+            return data;
+        },
         pawnmax(w) {
             let max = (this.config.goldprice - 100) * .96;
 
@@ -356,20 +368,18 @@ export default {
             this.v$.$touch();
             if (this.v$.$error) return;
 
-            if (!this.item.id) {
-                // axios.post(route('api.pawns.store'), this.form.data())
-                //     .then(res => {
-                //         this.item = res.data
-                //         this.item.dt = moment(this.item.dt).toDate();
-                //         this.item.dt_end = moment(this.item.dt_end).toDate();
-                //         this.creating = false;
-                //         this.saved = true;
-                //     })
-                // this.$inertia.reload();
-            } else {
 
-                _.assign(this.form, this.item);
-                console.log(this.form);
+            _.assign(this.form, this.item);
+            if (!this.item.id) {
+                this.form.post(route('pawns.store'),{
+                    preserveState: true,
+                    preserveScroll: true,
+                    onSuccess: (res) => {
+                        console.log(res);
+                        this.load(res.props.new_id)
+                    }
+                })
+            } else {
                 this.form.put(route('pawns.update', this.form.id), {
                     preserveState: true,
                     preserveScroll: true,
@@ -379,16 +389,22 @@ export default {
         actionInt() {
             this.action.type = 'int';
             this.action.life = 1;
+            this.action.dt_end = moment(this.item.dt_end).add(1, 'months').toDate();
             this.action.amount = this.intPerMonth;
             this.actionActive = 0;
             this.payments = [];
             this.actioning = true;
         },
-        saveAction() {
+        getPayments() {
+            this.action.payments = [];
+            this.paymentDialog = true;
+        },
+        saveAction(event) {
+            this.action.payments = event;
             axios.post(route('api.pawns.storeAction', this.item.id), this.action)
                 .then(response => {
                     this.actioning = false;
-                    this.item = response.data
+                    this.item = this.transformItem(response.data)
                 });
         },
         print() {

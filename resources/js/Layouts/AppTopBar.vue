@@ -11,6 +11,9 @@
                             @click="$inertia.get(route('pawns.index'))">ขายฝาก</Button>
                     <Button class="p-button-text p-ml-4"
                             @click="$inertia.get(route('customers.index'))">ลูกค้า</Button>
+                    <Button class="p-button-text p-ml-4"
+                            @click="$inertia.get(route('payments.index'))">รับจ่าย
+                    </Button>
                 </div>
             </template>
             <template #end>

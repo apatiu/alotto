@@ -88,6 +88,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class,'storeConfig'])->name('pawns-config.store');
     Route::resource('pawns', \App\Http\Controllers\PawnController::class);
     Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
+    Route::resource('payments', \App\Http\Controllers\PaymentController::class);
 
     Route::get('api-gold_percents', function() {
         return \App\Models\GoldPercent::all();
