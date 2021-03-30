@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BankAccount;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BankAccountController extends Controller
 {
@@ -30,18 +31,21 @@ class BankAccountController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        //
+        DB::transaction(function () use ($request) {
+            BankAccount::create($request->all());
+        });
+        return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\BankAccount  $bankAccount
+     * @param \App\Models\BankAccount $bankAccount
      * @return \Illuminate\Http\Response
      */
     public function show(BankAccount $bankAccount)
@@ -52,7 +56,7 @@ class BankAccountController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\BankAccount  $bankAccount
+     * @param \App\Models\BankAccount $bankAccount
      * @return \Illuminate\Http\Response
      */
     public function edit(BankAccount $bankAccount)
@@ -63,23 +67,27 @@ class BankAccountController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\BankAccount  $bankAccount
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\BankAccount $bankAccount
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, BankAccount $bankAccount)
     {
-        //
+        DB::transaction(function () use ($request, $bankAccount) {
+            $bankAccount->update($request->all());
+        });
+        return redirect()->back();
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\BankAccount  $bankAccount
+     * @param \App\Models\BankAccount $bankAccount
      * @return \Illuminate\Http\Response
      */
     public function destroy(BankAccount $bankAccount)
     {
-        //
+        $bankAccount->delete();
+        return redirect()->back();
     }
 }

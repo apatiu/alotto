@@ -11,7 +11,7 @@
         <template #form>
             <Toolbar>
                 <template #left>
-                    <Button label="New" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
+                    <Button label="เพิ่ม" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
                 </template>
 
             </Toolbar>
@@ -39,17 +39,22 @@
                     <label for="bankName">ชื่อเรียก</label>
                     <InputText id="bankName" v-model.trim="item.name" required="true" autofocus
                                :class="{'p-invalid': v.item.name.$error}"/>
-                    <small class="p-error" v-if="v.item.name.$error">Name is required.</small>
+                    <jet-input-error :errors="v.item.name.$errors"/>
                 </div>
                 <div class="p-field">
                     <label for="bank">ธนาคาร</label>
                     <select-bank id="bank" v-model="item.bank" required="true"/>
-                    <small class="p-error" v-if="v.item.bank.$error">Name is required.</small>
+                    <jet-input-error :errors="v.item.bank.$errors"/>
                 </div>
                 <div class="p-field">
                     <label for="acc_no">เลขบัญชี</label>
                     <InputText id="acc_no" v-model="item.acc_no" required="true"/>
-                    <small class="p-error" v-if="v.item.acc_no.$error">Name is required.</small>
+                    <jet-input-error :errors="v.item.acc_no.$errors"/>
+                </div>
+                <div class="p-field">
+                    <label for="acc_name">ชื่อบัญชี</label>
+                    <InputText id="acc_name" v-model="item.acc_name" required="true"/>
+                    <jet-input-error :errors="v.item.acc_name.$errors"/>
                 </div>
                 <template #footer>
                     <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
@@ -57,26 +62,16 @@
                 </template>
             </Dialog>
 
-            <Dialog v-model:visible="deleteProductDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+            <Dialog v-model:visible="deleteItemDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
                 <div class="confirmation-content">
                     <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem"/>
-                    <span v-if="product">Are you sure you want to delete <b>{{ product.name }}</b>?</span>
+                    <span v-if="item">Are you sure you want to delete <b>{{ item.name }}</b>?</span>
                 </div>
                 <template #footer>
-                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteProductDialog = false"/>
-                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteProduct"/>
+                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteItemDialog = false"/>
+                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteItem"/>
                 </template>
             </Dialog>
-        </template>
-
-        <template #actions>
-            <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                บันทึกแล้ว.
-            </jet-action-message>
-
-            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                บันทึก
-            </Button>
         </template>
     </jet-form-section>
 
@@ -129,8 +124,9 @@ export default {
     validations: {
         item: {
             name: {required, $autoDirty: true},
-            bank: {required},
-            acc_no: {required},
+            bank: {required, $autoDirty: true},
+            acc_no: {required, $autoDirty: true},
+            acc_name: {required, $autoDirty: true},
         }
     },
     methods: {
@@ -140,7 +136,7 @@ export default {
             this.itemDialog = true;
         },
         hideDialog() {
-            this.productDialog = false;
+            this.itemDialog = false;
             this.submitted = false;
         },
         saveItem() {
@@ -153,11 +149,21 @@ export default {
                 if (this.item.id) {
                     this.form.reset();
                     _.assign(this.form, this.item);
-                    this.$toast.add({severity: 'success', summary: 'Successful', detail: 'item Updated', life: 3000});
+                    this.form.put(route('bank-accounts.update', this.item.id), {
+                        onSuccess: () => {
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: 'Item Updated',
+                                life: 3000
+                            });
+                        }
+                    })
+
                 } else {
                     this.form.reset();
                     _.assign(this.form, this.item);
-                    this.form.post(route('bank-accounts'), {
+                    this.form.post(route('bank-accounts.store'), {
                         onSuccess: () => {
                             this.$toast.add({
                                 severity: 'success',
@@ -177,9 +183,19 @@ export default {
             this.item = {...item};
             this.itemDialog = true;
         },
-        remove(data) {
-            console.log(data)
-        }
+        confirmDeleteItem(item) {
+            this.item = item;
+            this.deleteItemDialog = true;
+        },
+        deleteItem() {
+            this.$inertia.delete(route('bank-accounts.destroy', this.item.id), {
+                onSuccess: () => {
+                    this.deleteItemDialog = false;
+                    this.$toast.add({severity: 'success', summary: 'Successful', detail: 'ลบข้อมูลแล้ว', life: 3000});
+                }
+            })
+
+        },
     },
 }
 </script>
