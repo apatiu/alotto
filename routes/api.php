@@ -43,6 +43,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
         ];
     });
+    Route::namespace('\App\Http\Controllers\Api')
+        ->name('api.')
+        ->group(function () {
+
+            Route::resource('banks', 'BankController');
+
+        });
 
     Route::post('/pawns', [\App\Http\Controllers\PawnController::class, 'store'])->name('api.pawns.store');
     Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\PawnController::class, 'storeAction'])->name('api.pawns.storeAction');
@@ -52,4 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/goldprice', function () {
         return goldprice();
     });
+
+    Route::resource('payment-methods', \App\Http\Controllers\PaymentMethodController::class);
+
+
 });

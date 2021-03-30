@@ -3,10 +3,7 @@
 namespace Database\Seeders;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use phpDocumentor\Reflection\Types\This;
 use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
@@ -41,6 +38,8 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('admin');
 
         $this->call(ProductTypeSeeder::class);
+        $this->call(BankSeeder::class);
+        $this->call(BankAccountSeeder::class);
 //        $this->call(IntRangeRateSeeder::class);
 //        $this->call(IntDiscountRateSeeder::class);
 

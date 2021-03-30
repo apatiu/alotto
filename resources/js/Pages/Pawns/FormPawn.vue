@@ -65,7 +65,7 @@
                 <label for="">ความเคลื่อนไหว</label>
                 <DataTable :value="item.int_receives">
                     <Column field="dt" header="วันที่"></Column>
-                    <Column field="dt_end" header="วันที่"></Column>
+                    <Column field="dt_end" header="วันที่ครบกำหนด"></Column>
                     <Column field="amount" header="จำนวนเงิน"></Column>
                 </DataTable>
             </div>
@@ -121,7 +121,8 @@
                             @click="print"></Button>
                 </div>
                 <div v-show="creating"></div>
-                <div>
+                <div class="flex items-center">
+                    <action-message :on="form.recentlySuccessful">บันทึกข้อมูลแล้ว</action-message>
                     <Button label="ยกเลิก" class="p-button-text" @click="$emit('update:visible',false)"></Button>
                     <Button label="บันทึก" icon="pi pi-check" @click="save"></Button>
                 </div>
@@ -130,47 +131,60 @@
     </Dialog>
     <Dialog v-model:visible="actioning"
             modal :show-header="false" :closable="false" class="max-w-5xl w-full">
-        <TabView ref="tabview2" v-model:activeIndex="actionActive" class="pt-6">
-            <TabPanel header="รับดอกเบี้ย">
-                <div class="p-fluid">
-                    <div class="p-field p-grid">
-                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
-                        <div class="p-col-12 p-md-9">
-                            <InputNumber v-model="action.life" showButtons/>
+        <div class="flex flex-wrap">
+            <div class="w-full md:w-7/12 ">
+                <TabView ref="tabview2" v-model:activeIndex="actionActive" class="pt-6">
+                    <TabPanel header="รับดอกเบี้ย">
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
+                                <div class="p-col-12 p-md-3">
+                                    <InputNumber v-model="action.life" showButtons/>
+                                </div>
+                            </div>
+
+                            <div class="p-field p-grid">
+                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันครบกำหนด</label>
+                                <div class="p-col-12 p-md-9">
+                                    <Calendar v-model="action.dt_end"/>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเงิน</label>
-                        <div class="p-col-12 p-md-9">
-                            <InputNumber v-model="action.amount" mode="currency"
-                                         currency="THB" locale="th-TH"/>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid">
-                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันครบกำหนด</label>
-                        <div class="p-col-12 p-md-9">
-                            <Calendar v-model="action.dt_end"/>
-                        </div>
-                    </div>
-                    <div class="p-field p-grid mt-10">
-                        <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันที่ทำรายการ</label>
-                        <div class="p-col-12 p-md-9">
-                            <Calendar v-model="action.dt"/>
-                        </div>
+                    </TabPanel>
+                    <TabPanel header="เปลี่ยนใบ">
+
+                    </TabPanel>
+                    <TabPanel header="ไถ่ถอน">
+
+                    </TabPanel>
+                </TabView>
+            </div>
+            <div class="w-full md:w-5/12 pl-4">
+                <div class="p-field p-grid mt-10">
+                    <label for="" class="p-col-12 p-mb-2 p-md-4 p-mb-md-0">วันที่ทำรายการ</label>
+                    <div class="p-col-12 p-md-8">
+                        <Calendar v-model="action.dt"/>
                     </div>
                 </div>
-            </TabPanel>
-            <TabPanel header="เปลี่ยนใบ">
+                <div class="p-field p-grid">
+                    <label for="" class="p-col-12 p-mb-2 p-md-4 p-mb-md-0">จำนวนเงิน</label>
+                    <div class="p-col-12 p-md-8">
+                        <InputNumber v-model="action.amount" mode="currency"
+                                     currency="THB" locale="th-TH"/>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            </TabPanel>
-            <TabPanel header="ไถ่ถอน">
+        <input-payment v-model="action.payments" :balance="action.amount"></input-payment>
 
-            </TabPanel>
-        </TabView>
         <template #footer>
+
             <Button class="p-button-text" @click="actioning=false">ยกเลิก</Button>
             <Button @click="saveAction">บันทึก</Button>
         </template>
+        <!--        end action dialog-->
     </Dialog>
     <div id="printable" v-html="printHtml"></div>
 </template>
@@ -182,6 +196,8 @@ import SelectProductType from "@/A/SelectProductType";
 import useVuelidate from '@vuelidate/core';
 import {required} from '@vuelidate/validators'
 import InputWeight from "@/A/InputWeight";
+import ActionMessage from "@/Jetstream/ActionMessage";
+import InputPayment from "@/A/InputPayment";
 
 export default {
     name: "FormPawn",
@@ -190,11 +206,26 @@ export default {
             v$: useVuelidate()
         }
     },
-    components: {InputWeight, SelectProductType, SelectGoldPercent, SelectCustomer},
+    components: {InputPayment, ActionMessage, InputWeight, SelectProductType, SelectGoldPercent, SelectCustomer},
     props: ['visible', 'pawnId'],
     data() {
         return {
+            saved: false,
             printHtml: null,
+            form: this.$inertia.form({
+                    id: null,
+                    dt: new Date(),
+                    dt_end: new Date(),
+                    customer_id: 0,
+                    customer: {},
+                    price: 0,
+                    status: null,
+                    life: 0,
+                    int_rate: 0,
+                    items: [],
+                    int_receives: []
+                }
+            ),
             item: {},
             customer: {
                 name: '',
@@ -217,7 +248,8 @@ export default {
                 type: 'int',
                 life: 0,
                 amount: 0,
-                dt_end: null
+                dt_end: null,
+                payments: []
             }
         }
     },
@@ -260,11 +292,19 @@ export default {
                 }
             }
         },
+        'item.int_rate': function (val) {
+            this.item.int_per_month = (this.item.price * this.item.int_rate) / 100;
+        },
         'action.life': function (val) {
             if (this.action.type === 'int') {
                 this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
                 this.action.dt_end = moment(this.item.dt_end).add(val, 'months').toDate();
             }
+        }
+    },
+    computed: {
+        intPerMonth() {
+            return (this.item.price * this.item.int_rate) / 100;
         }
     },
     methods: {
@@ -315,17 +355,22 @@ export default {
 
             this.v$.$touch();
             if (this.v$.$error) return;
-            let form = this.$inertia.form(_.assign({}, this.item))
+
             if (!this.item.id) {
-                axios.post(route('api.pawns.store'), form.data()).then(res => {
-                    this.item = res.data
-                    this.item.dt = moment(this.item.dt).toDate();
-                    this.item.dt_end = moment(this.item.dt_end).toDate();
-                    this.creating = false;
-                })
-                this.$inertia.reload();
+                // axios.post(route('api.pawns.store'), this.form.data())
+                //     .then(res => {
+                //         this.item = res.data
+                //         this.item.dt = moment(this.item.dt).toDate();
+                //         this.item.dt_end = moment(this.item.dt_end).toDate();
+                //         this.creating = false;
+                //         this.saved = true;
+                //     })
+                // this.$inertia.reload();
             } else {
-                form.put(route('pawns.update', form.id), {
+
+                _.assign(this.form, this.item);
+                console.log(this.form);
+                this.form.put(route('pawns.update', this.form.id), {
                     preserveState: true,
                     preserveScroll: true,
                 })
@@ -334,7 +379,9 @@ export default {
         actionInt() {
             this.action.type = 'int';
             this.action.life = 1;
+            this.action.amount = this.intPerMonth;
             this.actionActive = 0;
+            this.payments = [];
             this.actioning = true;
         },
         saveAction() {
@@ -348,8 +395,8 @@ export default {
             axios.get(route('api.pawns.print', this.item.id))
                 .then(response => {
                     this.printHtml = response.data;
-                    this.$nextTick(function() {
-                        this.$htmlToPaper('printable',{
+                    this.$nextTick(function () {
+                        this.$htmlToPaper('printable', {
                             styles: [
                                 '../css/app.css' // <- inject here
                             ]

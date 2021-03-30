@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BankAccount;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use Illuminate\Http\Request;
@@ -34,7 +35,8 @@ class SettingController extends Controller
                 'int_discount_rates' => IntDiscountRate::all() ?? [],
                 'int_range_rates_enable' => Meta::get('pawn_int_range_rates_enable', false),
                 'int_discount_rates_enable' => Meta::get('pawn_int_discount_rates_enable', false),
-            ]
+            ],
+            'bank_accounts' => BankAccount::all()
         ]);
     }
 }

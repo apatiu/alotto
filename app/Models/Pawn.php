@@ -41,6 +41,8 @@ class Pawn extends Model
 
     public function setDtEndAttribute($value)
     {
-        $this->attributes['dt_end'] = Carbon::create($value)->timezone('Asia/Bangkok')->toDateTimeString();
+        $this->attributes['dt_end'] = Carbon::create($value)
+            ->timezone('Asia/Bangkok')
+            ->toDateTimeString();
     }
 }
