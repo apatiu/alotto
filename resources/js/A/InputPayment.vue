@@ -22,6 +22,13 @@
                             class="p-button-text"
                             @click="singleMethod=true"></Button>
                     <TabView>
+                        <TabPanel header="โอนเงิน">
+                            <div class="flex">
+                                <label for="บัญชี"></label>
+                                <select-bank-accounts v-model="payment.bank_account_id"></select-bank-accounts>
+                                <InputNumber v-model="payment.amount"></InputNumber>
+                            </div>
+                        </TabPanel>
                         <TabPanel header="เงินสด">
                             <div class="flex">
                                 <InputNumber v-model="payment.amount"></InputNumber>
@@ -40,9 +47,11 @@
 <script>
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
+import SelectBankAccounts from "@/A/SelectBankAccounts";
 
 export default {
     name: "InputPayment",
+    components: {SelectBankAccounts},
     setup() {
         return {
             v$: useVuelidate()
