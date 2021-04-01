@@ -1,13 +1,14 @@
 <template>
     <Dropdown
-        :value="modelValue"
+        :modelValue="modelValue"
         @update:modelValue="$emit('update:modelValue',$event)"
+        v-model="selected"
         :options="options"
         optionValue="id"
         optionLabel="name">
         <template #option="slotProps">
             <div class="p-dropdown-car-option">
-                <span>{{slotProps.option.acc_no}} {{slotProps.options.acc_name}}</span>
+                <span>{{ slotProps.option.name }} {{ slotProps.option.acc_no }}</span>
             </div>
         </template>
     </Dropdown>
@@ -20,7 +21,8 @@ export default {
     props: ['modelValue'],
     data() {
         return {
-            options: []
+            options: [],
+            selected: null
         }
     },
     mounted() {

@@ -6,39 +6,41 @@
             :closeOnEscape="false"
             :closable="true"
             class="min-w">
-        <div class="flex-col space-y-5">
-            <div class="text-7xl text-center">{{ target }}</div>
-            <div class="flex items-center items-stretch space-x-6 h-20" v-if="singleMethod">
-                <Button class="text-center text-2xl"
-                        label="เงินสด"
-                        @click="allCash"></Button>
-                <Button class="p-button-warning text-2xl"
-                        label="ช่องทางอื่น"
-                        @click="singleMethod=false"></Button>
-            </div>
-            <div v-else>
-                <div class="flex space-x-4">
-                    <Button icon="pi pi-arrow-circle-left" label="กลับ"
-                            class="p-button-text"
-                            @click="singleMethod=true"></Button>
-                    <TabView>
-                        <TabPanel header="โอนเงิน">
-                            <div class="flex">
-                                <label for="บัญชี"></label>
-                                <select-bank-accounts v-model="payment.bank_account_id"></select-bank-accounts>
-                                <InputNumber v-model="payment.amount"></InputNumber>
-                            </div>
-                        </TabPanel>
-                        <TabPanel header="เงินสด">
-                            <div class="flex">
-                                <InputNumber v-model="payment.amount"></InputNumber>
-                            </div>
-                        </TabPanel>
-                    </TabView>
+        <div class="p-d-flex">
+            <div class="p-mr-5 w-80">
+                <SelectButton v-model="payment.method"
+                              :options="methods"
+                              dataKey="id"
+                              optionLabel="name"
+                              class="w-full"></SelectButton>
+                <div class="grid grid-cols-2 gap-2">
+                    <label for="บัญชี">บัญชีธนาคาร</label>
+                    <select-bank-accounts v-model="payment.bank_account_id"></select-bank-accounts>
+                    <label for="">จำนวนเงิน</label>
+                    <InputNumber v-model="payment.amount" input-class="w-full"></InputNumber>
                 </div>
                 <div class="flex items-center justify-end">
                     <Button label="ลงรายการ" @click="savePayment"></Button>
                 </div>
+            </div>
+            <div class="flex-col w-80">
+                <div class="flex justify-between w-full">
+                    <div>ยอดเรียกเก็บ</div>
+                    <div class="text-right border-b">{{ target }}</div>
+                </div>
+                <div class="flex justify-between w-full">
+                    <div>คงเหลือ</div>
+                    <div class="text-right border-b">{{ remain }}</div>
+                </div>
+                <div class="col-span-2">ยอดจ่าย</div>
+                <div class="flex justify-between w-full">
+                    <template v-for="payment in payments">
+                        <div>{{ payment.method }}</div>
+                        <div>{{ payment.amount }}</div>
+                    </template>
+
+                </div>
+
             </div>
         </div>
     </Dialog>
@@ -46,7 +48,7 @@
 
 <script>
 import useVuelidate from "@vuelidate/core";
-import {required} from "@vuelidate/validators";
+import {required, requiredIf} from "@vuelidate/validators";
 import SelectBankAccounts from "@/A/SelectBankAccounts";
 
 export default {
@@ -54,7 +56,7 @@ export default {
     components: {SelectBankAccounts},
     setup() {
         return {
-            v$: useVuelidate()
+            v: useVuelidate()
         }
     },
     props: {
@@ -66,8 +68,8 @@ export default {
         return {
             payments: {},
             methods: null,
-            singleMethod: true,
-            payment: {}
+            payment: {},
+            methodId: 0,
         }
     },
     watch: {
@@ -78,6 +80,11 @@ export default {
             }
         }
     },
+    computed: {
+        remain() {
+            return this.target - _.sumBy(this.payments, 'amount')
+        }
+    },
     created() {
         axios.get(route('payment-methods.index'))
             .then(res => {
@@ -85,18 +92,26 @@ export default {
             })
     },
     validations() {
-        return {}
+        return {
+            payment: {
+                amount: {required},
+                bank_account_id: {
+                    required: requiredIf(this.payment.methodId === 1)
+                }
+            }
+        }
     },
     methods: {
-        allCash() {
-            this.payments = [{
-                method: 'cash',
-                amount: this.target,
-                dt: new Date()
-            }]
-            this.$emit('update:payments', this.payments)
+        savePayment() {
+            if (methodId === 0) { //cash
+                if (this.v.$error) return
+            }
+
+            this.payments.push(this.payment);
+            this.payment = {};
+            this.$emit('update:done', this.payments)
             this.$emit('update:visible', false)
-        }
+        },
 
     }
 }

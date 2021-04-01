@@ -48,7 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->group(function () {
 
             Route::resource('banks', 'BankController');
-            Route::resource('bank-accounts', 'BankController');
+            Route::resource('bank-accounts', 'BankAccountController');
 
         });
 
