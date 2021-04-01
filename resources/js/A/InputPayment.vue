@@ -14,14 +14,16 @@
                               optionValue="id"
                               optionLabel="name"
                               class="w-full"></SelectButton>
-                <div class="grid grid-cols-2 grid-rows-3 gap-2 grid-flow-row auto-cols-min mt-4">
+                <div class="grid grid-cols-2 grid-rows-3 gap-2 grid-flow-row auto-cols-max mt-4">
                     <label for="บัญชี" v-if="row.method==='bank'">บัญชีธนาคาร</label>
-                    <select-bank-account v-model="row.bank_account_id"  v-if="row.method==='bank'"></select-bank-account>
+                    <select-bank-account v-model="row.bank_account_id" v-if="row.method==='bank'"></select-bank-account>
                     <label for="">วันที่ทำรายการ</label>
                     <Calendar v-model="row.dt"></Calendar>
                     <label for="">จำนวนเงิน</label>
-                    <InputNumber v-model="row.amount" input-class="w-full" autofocus></InputNumber>
-                    <input-error :errors="v.row.amount.$errors"></input-error>
+                    <div>
+                        <InputNumber v-model="row.amount" input-class="w-full" autofocus></InputNumber>
+                        <input-error :errors="v.row.amount.$errors"></input-error>
+                    </div>
                 </div>
                 <div class="flex items-center justify-end mt-2">
                     <Button label="ลงรายการ" @click="savePayment"></Button>
@@ -38,7 +40,7 @@
                 </div>
                 <div class="col-span-2">ยอดจ่าย</div>
                 <div class="flex justify-between w-full">
-                    <template v-for="payment in payments">
+                    <template v-for="row in rows">
                         <div>{{ row.method }}</div>
                         <div>{{ row.amount }}</div>
                     </template>
@@ -88,7 +90,7 @@ export default {
     },
     computed: {
         remain() {
-            return this.target - _.sumBy(this.payments, 'amount')
+            return this.target - _.sumBy(this.rows, 'amount')
         }
     },
     created() {
@@ -100,7 +102,7 @@ export default {
     validations() {
         return {
             row: {
-                amount: {required, $autoDirty: true },
+                amount: {required, $autoDirty: true},
                 bank_account_id: {
                     required: requiredIf(this.row.method === 'bank')
                 }
@@ -115,8 +117,15 @@ export default {
 
             this.rows.push(this.row);
             this.row = {};
-            this.$emit('done', this.rows)
-            this.$emit('update:visible', false)
+
+            if (this.remain > 0) {
+                this.row.method = 'cash';
+                this.row.amount = this.remain
+                this.row.dt = new Date()
+            } else {
+                this.$emit('done', this.rows)
+                this.$emit('update:visible', false)
+            }
         },
 
     }
