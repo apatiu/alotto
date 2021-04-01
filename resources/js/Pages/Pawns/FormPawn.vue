@@ -181,7 +181,7 @@
 
         <input-payment v-model:visible="paymentDialog"
                        :target="action.amount"
-                       @update:payments="saveAction($event)"></input-payment>
+                       @done="saveAction($event)"></input-payment>
 
         <template #footer>
 
@@ -276,7 +276,7 @@ export default {
         visible(val) {
             if (val) {
                 if (this.pawnId) {
-                   this.load(this.pawnId);
+                    this.load(this.pawnId);
                 } else {
                     this.creating = true;
                     this.item = {
@@ -321,10 +321,11 @@ export default {
             return data;
         },
         pawnmax(w) {
-            let max = (this.config.goldprice - 100) * .96;
-
-            max -= (max * (this.item.life * this.item.int_rate) / 100)
-            max = max * .0656 * w;
+            let max = (this.config.goldprice - 100) * .96; //24336
+            console.log(this.config.goldprice);
+            max -= (max * ((this.item.life * this.item.int_rate) / 100)) //2190.24  22145.76
+            console.log(max)
+            max = max * .0656 * w; //22081.98
             max = Math.floor(max / 100) * 100;
             return max
         },
@@ -371,7 +372,7 @@ export default {
 
             _.assign(this.form, this.item);
             if (!this.item.id) {
-                this.form.post(route('pawns.store'),{
+                this.form.post(route('pawns.store'), {
                     preserveState: true,
                     preserveScroll: true,
                     onSuccess: (res) => {

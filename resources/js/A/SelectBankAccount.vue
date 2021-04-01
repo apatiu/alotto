@@ -7,7 +7,7 @@
         optionValue="id"
         optionLabel="name">
         <template #option="slotProps">
-            <div class="p-dropdown-car-option">
+            <div>
                 <span>{{ slotProps.option.name }} {{ slotProps.option.acc_no }}</span>
             </div>
         </template>
@@ -17,7 +17,7 @@
 <script>
 export default {
 
-    name: "SelectBankAccounts",
+    name: "SelectBankAccount",
     props: ['modelValue'],
     data() {
         return {
