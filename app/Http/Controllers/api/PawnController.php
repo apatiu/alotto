@@ -1,13 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Helpers\MetaHelper;
-use App\Models\Customer;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Pawn;
+use App\Models\PawnIntReceives;
 use App\Models\Payment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -21,10 +23,6 @@ class PawnController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Pawns/Index', [
-            'items' => Pawn::with(['customer'])->get(),
-            'new_id' => session('new', 0)
-        ]);
     }
 
     /**
@@ -45,35 +43,7 @@ class PawnController extends Controller
      */
     public function store(Request $request)
     {
-        $pawn = new Pawn();
-        DB::transaction(function () use ($request, $pawn) {
-            $pawn->team_id = $request->user()->currentTeam->id;
-            $pawn->dt = request('dt');
-            $pawn->dt_end = request('dt_end');
-            $pawn->customer_id = request('customer_id');
-            $pawn->price = request('price');
-            $pawn->status = 'new';
-            $pawn->int_rate = request('int_rate');
-            $pawn->int_permonth = $pawn->price * $pawn->int_rate / 100;
-            $pawn->life = request('life');
 
-            $pawn->save();
-
-            $pawn->items()->createMany($request->input('items'));
-            $payment = new Payment([
-                'team_id' => $pawn->team_id,
-                'payment_no' => '',
-                'dt' => $pawn->dt,
-                'payment_type_id' => 'paw',
-                'method' => 'cash',
-                'pay' => $pawn->price
-            ]);
-            $payment->id = $payment->gen_id($pawn->dt);
-//            $payment->save();
-
-            $pawn->payments()->save($payment);
-        });
-        return redirect()->back()->with('new', $pawn->id);
     }
 
     /**
@@ -96,6 +66,32 @@ class PawnController extends Controller
     public function edit(Pawn $pawn)
     {
         //
+    }
+
+    public function getTodayInt(Pawn $pawn)
+    {
+        $latestInt= PawnIntReceives::wherePawnId($pawn->id)->latest('dt_end')->first();
+        $dt = new Carbon( $latestInt ? $latestInt->dt_end : $pawn->dt);
+
+        $diff = $dt->diff(now());
+        $months = ($diff->y * 12) + $diff->m;
+        $days = $diff->d + 1;
+        $intPerMonth = $pawn->price * $pawn->int_rate / 100;
+        $discounts = IntDiscountRate::orderBy('days')->where('days', '>=', $days)->first();
+        if ($discounts) {
+            $int_days = ceil($intPerMonth * $discounts->rate / 100);
+        } else {
+            $months++;
+            $int_days = 0;
+        }
+
+        $output = [
+            'dt_start' => $dt->toDateTimeString(),
+            'months' => $months,
+            'days' => $days,
+            'int' => ($intPerMonth * $months) + $int_days
+        ];
+        return $output;
     }
 
     /**

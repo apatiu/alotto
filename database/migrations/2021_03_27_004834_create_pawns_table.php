@@ -18,13 +18,21 @@ class CreatePawnsTable extends Migration
             $table->foreignId('team_id');
             $table->dateTime('dt');
             $table->dateTime('dt_end');
+
+            $table->dateTime('dt_out')->nullable();
+
             $table->foreignId('customer_id');
             $table->decimal('price');
+
             $table->decimal('int_rate');
+            $table->decimal('int_per_month');
+            $table->decimal('int_paid')->default(0);
+
             $table->unsignedInteger('life');
             $table->enum('status',['new','int','chg','red','cut']);
             $table->foreignId('prev_id')->nullable();
             $table->foreignId('next_id')->nullable();
+            $table->foreignId('user_id')->nullable();
             $table->timestamps();
         });
     }

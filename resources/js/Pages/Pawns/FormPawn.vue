@@ -113,8 +113,8 @@
                 <div v-show="!creating">
                     <Button label="ต่อดอก" class="p-button-info"
                             @click="actionInt"></Button>
-                    <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
-                    <Button label="ไถ่ถอน" class="p-button-success"></Button>
+                    <Button label="เปลี่ยนใบ" class="p-button-warning" @click="actionChg"></Button>
+                    <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
                     <Button label="คัดออก" class="p-button-danger"></Button>
                     <Button label="พิมพ์" icon="pi pi-print"
                             class="p-button-secondary ml-6"
@@ -129,6 +129,8 @@
             </div>
         </template>
     </Dialog>
+
+    <!--    begin action dialog -->
     <Dialog v-model:visible="actioning"
             modal :show-header="false"
             :closeOnEscape="false"
@@ -146,9 +148,12 @@
                             </div>
 
                             <div class="p-field p-grid">
-                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">วันครบกำหนด</label>
-                                <div class="p-col-12 p-md-9">
-                                    <Calendar v-model="action.dt_end"/>
+                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">สำหรับช่วงเวลา</label>
+                                <div class="p-col-12 p-md-4">
+                                    <Calendar v-model="action.dt_start" disabled/>
+                                </div>
+                                <div class="p-col-12 p-md-4">
+                                    <Calendar v-model="action.dt_end" disabled/>
                                 </div>
                             </div>
 
@@ -158,7 +163,23 @@
 
                     </TabPanel>
                     <TabPanel header="ไถ่ถอน">
-
+                        <div class="p-fluid">
+                            <div class="p-field p-grid">
+                                <lable class="p-fixed" style="width: 100px;">ระยะเวลา</lable>
+                                <div class="p-col">
+                                    <InputNumber suffix=" เดือน" v-model="action.months" disabled class="text-right"></InputNumber>
+                                    </div>
+                                <div class="p-col">
+                                    <InputNumber suffix=" วัน" v-model="action.days" disabled class="text-right"></InputNumber>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <div class="p-col-fixed" style="width: 100px;">ดอกเบี้ย</div>
+                                <div class="p-col">
+                                    <InputNumber v-model="action.int" disabled class="text-right"></InputNumber>
+                                </div>
+                            </div>
+                        </div>
                     </TabPanel>
                 </TabView>
             </div>
@@ -172,8 +193,11 @@
                 <div class="p-field p-grid">
                     <label for="" class="p-col-12 p-mb-2 p-md-4 p-mb-md-0">จำนวนเงิน</label>
                     <div class="p-col-12 p-md-8">
-                        <InputNumber v-model="action.amount" mode="currency"
-                                     currency="THB" locale="th-TH"/>
+                        <div class="p-inputgroup">
+                            <InputNumber v-model="action.amount" mode="decimal"/>
+                            <span class="p-inputgroup-addon">บาท</span>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -296,7 +320,7 @@ export default {
         'action.life': function (val) {
             if (this.action.type === 'int') {
                 this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
-                this.action.dt_end = moment(this.item.dt_end).add(val, 'months').toDate();
+                this.action.dt_end = moment(this.action.dt_start).add(val, 'months').toDate();
             }
         }
     },
@@ -390,11 +414,32 @@ export default {
         actionInt() {
             this.action.type = 'int';
             this.action.life = 1;
-            this.action.dt_end = moment(this.item.dt_end).add(1, 'months').toDate();
+
+            let dt_end = this.item.dt;
+            if (this.item.int_receives.length) {
+                dt_end = this.item.int_receives[this.item.int_receives.length - 1].dt_end;
+            }
+            this.action.dt_start = moment(dt_end).toDate()
+            this.action.dt_end = moment(dt_end).add(1, 'months').toDate();
             this.action.amount = this.intPerMonth;
             this.actionActive = 0;
             this.payments = [];
             this.actioning = true;
+        },
+        actionRed() {
+            axios.get(route('api.pawns.todayInt', this.item.id))
+                .then((res) => {
+                    this.action.type = 'red';
+                    this.action.dt = new Date();
+                    this.action.months = res.data.months;
+                    this.action.days = res.data.days;
+                    this.action.int = res.data.int;
+                    this.action.amount = numeral(res.data.int).add(this.item.price).value();
+                    this.actionActive = 2;
+                    this.payments = [];
+                    this.actioning = true;
+                })
+
         },
         getPayments() {
             this.action.payments = [];
@@ -405,6 +450,7 @@ export default {
             axios.post(route('api.pawns.storeAction', this.item.id), this.action)
                 .then(response => {
                     this.actioning = false;
+                    this.$toast.add({severity: 'success', summary: 'สำเร็จ', detail: 'บันทึกรายการแล้ว', life: 3000})
                     this.item = this.transformItem(response.data)
                 });
         },

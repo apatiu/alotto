@@ -7,22 +7,33 @@
             :closable="true"
             class="min-w">
         <div class="p-d-flex">
-            <div class="p-mr-5 w-96">
+            <div class="p-mr-5 w-96 p-pt-3">
                 <SelectButton v-model="row.method"
                               :options="methods"
                               dataKey="id"
                               optionValue="id"
                               optionLabel="name"
                               class="w-full"></SelectButton>
-                <div class="grid grid-cols-2 grid-rows-3 gap-2 grid-flow-row auto-cols-max mt-4">
-                    <label for="บัญชี" v-if="row.method==='bank'">บัญชีธนาคาร</label>
-                    <select-bank-account v-model="row.bank_account_id" v-if="row.method==='bank'"></select-bank-account>
-                    <label for="">วันที่ทำรายการ</label>
-                    <Calendar v-model="row.dt"></Calendar>
-                    <label for="">จำนวนเงิน</label>
-                    <div>
-                        <InputNumber v-model="row.amount" input-class="w-full" autofocus></InputNumber>
-                        <input-error :errors="v.row.amount.$errors"></input-error>
+                <div class="p-fluid p-mt-2">
+                    <div class="p-field p-grid" v-if="row.method==='bank'">
+                        <label for="บัญชี" class="p-col-fixed" style="width:100px;">บัญชีธนาคาร</label>
+                        <div class="p-col">
+                            <select-bank-account v-model="row.bank_account_id"></select-bank-account>
+                            <input-error :errors="v.row.bank_account_id.$errors"></input-error>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <label for="" class="p-col-fixed" style="width:100px;">วันที่ทำรายการ</label>
+                        <div class="p-col">
+                            <Calendar v-model="row.dt"></Calendar>
+                        </div>
+                    </div>
+                    <div class="p-field p-grid">
+                        <label for="" class="p-col-fixed" style="width:100px;">จำนวนเงิน</label>
+                        <div class="p-col">
+                            <InputNumber v-model="row.amount" input-class="w-full" autofocus></InputNumber>
+                            <input-error :errors="v.row.amount.$errors"></input-error>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center justify-end mt-2">
@@ -75,7 +86,12 @@ export default {
         return {
             methods: null,
             rows: [],
-            row: {},
+            row: {
+                method: 'cash',
+                bank_account_id: null,
+                amount: null,
+                dt: null
+            },
         }
     },
     watch: {
@@ -102,18 +118,21 @@ export default {
     validations() {
         return {
             row: {
+                method: {required},
                 amount: {required, $autoDirty: true},
                 bank_account_id: {
-                    required: requiredIf(this.row.method === 'bank')
+                    required: requiredIf(() => {
+                        return this.row.method === 'bank'
+                    }),
+                    $autoDirty: true
                 }
             }
         }
     },
     methods: {
         savePayment() {
-            if (this.row.method === 'cash') {
-                if (this.v.$error) return
-            }
+            this.v.$touch()
+            if (this.v.$error) return;
 
             this.rows.push(this.row);
             this.row = {};

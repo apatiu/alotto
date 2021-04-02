@@ -50,12 +50,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
 
-        });
+            Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class,'storeAction'])->name('pawns.storeAction');
+            Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
+            Route::get('/pawns/today-int/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'getTodayInt'])->name('pawns.todayInt');
+            Route::resource('pawns', 'PawnController');
 
-    Route::post('/pawns', [\App\Http\Controllers\PawnController::class, 'store'])->name('api.pawns.store');
-    Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\PawnController::class, 'storeAction'])->name('api.pawns.storeAction');
-    Route::get('/pawns/{pawn}', [\App\Http\Controllers\PawnController::class, 'show'])->name('api.pawns.show');
-    Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\PawnController::class, 'print_ticket'])->name('api.pawns.print');
+        });
 
     Route::get('/goldprice', function () {
         return goldprice();

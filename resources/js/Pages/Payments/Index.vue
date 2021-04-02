@@ -17,14 +17,6 @@
                 <Column field="payment_type.name" header="ประเภท"></Column>
                 <Column field="receive" header="รับ"></Column>
                 <Column field="pay" header="จ่าย"></Column>
-                <Column :exportable="false" bodyClass="p-0">
-                    <template #body="slotProps" >
-                        <Button icon="pi pi-pencil" class="p-button-rounded p-button-success p-mr-2"
-                                @click="editItem(slotProps.data)"/>
-                        <Button icon="pi pi-trash" class="p-button-rounded p-button-warning"
-                                @click="confirmDeleteItem(slotProps.data)"/>
-                    </template>
-                </Column>
             </DataTable>
 
             <Dialog v-model:visible="itemDialog" :style="{width: '450px'}" :modal="true"

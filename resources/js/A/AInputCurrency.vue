@@ -1,13 +1,13 @@
 <template>
-    <span class="p-float-label p-filled">
+    <div class="p-field"></div>
         <InputNumber :modelValue="modelValue"
                    @update:modelValue="$emit('update:modelValue', $event)"
                    v-bind="$attrs"
+                     mode="decimal"
                    :disabled="disabled"
                    :readonly="readonly"
         ></InputNumber>
         <label v-if="label">{{ label }}</label>
-    </span>
     <small class="p-error">{{ error }}</small>
 </template>
 
