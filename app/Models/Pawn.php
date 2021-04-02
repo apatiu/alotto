@@ -19,7 +19,7 @@ class Pawn extends Model
 
     public function int_receives()
     {
-        return $this->hasMany(PawnIntReceives::class);
+        return $this->hasMany(PawnIntReceive::class);
     }
 
     public function payments()
@@ -32,17 +32,4 @@ class Pawn extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function setDtAttribute($value)
-    {
-        $this->attributes['dt'] = Carbon::create($value)
-            ->timezone('Asia/Bangkok')
-            ->toDateTimeString();
-    }
-
-    public function setDtEndAttribute($value)
-    {
-        $this->attributes['dt_end'] = Carbon::create($value)
-            ->timezone('Asia/Bangkok')
-            ->toDateTimeString();
-    }
 }

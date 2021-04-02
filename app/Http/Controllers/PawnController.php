@@ -48,13 +48,13 @@ class PawnController extends Controller
         $pawn = new Pawn();
         DB::transaction(function () use ($request, $pawn) {
             $pawn->team_id = $request->user()->currentTeam->id;
-            $pawn->dt = request('dt');
-            $pawn->dt_end = request('dt_end');
+            $pawn->dt = jsDateToDateString( request('dt') );
+            $pawn->dt_end = jsDateToDateString( request('dt_end') );
             $pawn->customer_id = request('customer_id');
             $pawn->price = request('price');
             $pawn->status = 'new';
             $pawn->int_rate = request('int_rate');
-            $pawn->int_permonth = $pawn->price * $pawn->int_rate / 100;
+            $pawn->int_per_month = $pawn->price * $pawn->int_rate / 100;
             $pawn->life = request('life');
 
             $pawn->save();
@@ -107,8 +107,11 @@ class PawnController extends Controller
      */
     public function update(Request $request, Pawn $pawn)
     {
-        $pawn->update($request->except([
-            'id', 'items', 'int_receives', 'prev_id', 'next_id', 'team_id']));
+        $data = $request->except([
+            'id', 'items', 'int_receives', 'prev_id', 'next_id', 'team_id']);
+        $data['dt'] = jsDateToDateString($data['dt']);
+        $data['dt_end'] = jsDateToDateString($data['dt_end']);
+        $pawn->update($data);
         return redirect()->back();
     }
 
@@ -138,41 +141,5 @@ class PawnController extends Controller
         });
 
         return redirect()->back();
-    }
-
-    public function storeAction(Request $request, Pawn $pawn)
-    {
-        if ($request->input('type') == 'int') {
-            DB::transaction(function () use ($pawn, $request) {
-                $pawn->dt_end = jsDateToSql($request->input('dt_end'));
-                $pawn->save();
-
-                $pawn->int_receives()->create([
-                    'dt' => jsDateToSql(request('dt')),
-                    'dt_end' => jsDateToSql(request('dt_end')),
-                    'amount' => request('amount')
-                ]);
-                foreach ($request->payments as $payment) {
-                    $p = new Payment([
-                        'team_id' => request()->user()->currentTeam->id,
-                        'payment_no' => 0,
-                        'dt' => $payment['dt'],
-                        'receive' => $payment['amount'],
-                        'method' => $payment['method'],
-                        'payment_type_id' => 'int'
-                    ]);
-                    $pawn->payments()->save($p);
-                }
-
-            });
-        }
-
-        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
-    }
-
-    public function print_ticket(Pawn $pawn)
-    {
-        return view('pawns.ticket', compact('pawn'));
-
     }
 }

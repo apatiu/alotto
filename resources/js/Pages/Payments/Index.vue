@@ -1,64 +1,65 @@
 <template>
     <app-layout>
 
-            <Toolbar>
-                <template #left>
-                    <Button label="เพิ่ม" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
-                </template>
+        <Toolbar>
+            <template #left>
+                <Button label="เพิ่ม" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
+            </template>
 
-            </Toolbar>
+        </Toolbar>
 
-            <DataTable :value="payments"
-                       dataKey="id">
-                <Column field="id" header="#"></Column>
-                <Column field="team.name" header="สาขา"></Column>
-                <Column field="acc_date" header="วันที่บัญชี"></Column>
-                <Column field="dt" header="วันทำรายการ"></Column>
-                <Column field="payment_type.name" header="ประเภท"></Column>
-                <Column field="receive" header="รับ"></Column>
-                <Column field="pay" header="จ่าย"></Column>
-            </DataTable>
+        <DataTable :value="payments"
+                   dataKey="id"
+                   class="p-datatable-sm">
+            <Column field="id" header="#"></Column>
+            <Column field="team.name" header="สาขา"></Column>
+            <Column field="acc_date" header="วันที่บัญชี"></Column>
+            <Column field="dt" header="วันทำรายการ"></Column>
+            <Column field="payment_type.name" header="ประเภท"></Column>
+            <Column field="receive" header="รับ"></Column>
+            <Column field="pay" header="จ่าย"></Column>
+        </DataTable>
 
-            <Dialog v-model:visible="itemDialog" :style="{width: '450px'}" :modal="true"
-                    class="p-fluid">
-                <template #header>บัญชีธนาคาร</template>
-                <div class="p-field">
-                    <label for="bankName">ชื่อเรียก</label>
-                    <InputText id="bankName" v-model.trim="item.name" required="true" autofocus
-                               :class="{'p-invalid': v.item.name.$error}"/>
-                    <jet-input-error :errors="v.item.name.$errors"/>
-                </div>
-                <div class="p-field">
-                    <label for="bank">ธนาคาร</label>
-                    <select-bank id="bank" v-model="item.bank" required="true"/>
-                    <jet-input-error :errors="v.item.bank.$errors"/>
-                </div>
-                <div class="p-field">
-                    <label for="acc_no">เลขบัญชี</label>
-                    <InputText id="acc_no" v-model="item.acc_no" required="true"/>
-                    <jet-input-error :errors="v.item.acc_no.$errors"/>
-                </div>
-                <div class="p-field">
-                    <label for="acc_name">ชื่อบัญชี</label>
-                    <InputText id="acc_name" v-model="item.acc_name" required="true"/>
-                    <jet-input-error :errors="v.item.acc_name.$errors"/>
-                </div>
-                <template #footer>
-                    <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
-                    <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveItem"/>
-                </template>
-            </Dialog>
+        <Dialog v-model:visible="itemDialog" :style="{width: '450px'}" :modal="true"
+                class="p-fluid">
+            <template #header>บัญชีธนาคาร</template>
+            <div class="p-field">
+                <label for="bankName">ชื่อเรียก</label>
+                <InputText id="bankName" v-model.trim="item.name" required="true" autofocus
+                           :class="{'p-invalid': v.item.name.$error}"/>
+                <jet-input-error :errors="v.item.name.$errors"/>
+            </div>
+            <div class="p-field">
+                <label for="bank">ธนาคาร</label>
+                <select-bank id="bank" v-model="item.bank" required="true"/>
+                <jet-input-error :errors="v.item.bank.$errors"/>
+            </div>
+            <div class="p-field">
+                <label for="acc_no">เลขบัญชี</label>
+                <InputText id="acc_no" v-model="item.acc_no" required="true"/>
+                <jet-input-error :errors="v.item.acc_no.$errors"/>
+            </div>
+            <div class="p-field">
+                <label for="acc_name">ชื่อบัญชี</label>
+                <InputText id="acc_name" v-model="item.acc_name" required="true"/>
+                <jet-input-error :errors="v.item.acc_name.$errors"/>
+            </div>
+            <template #footer>
+                <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>
+                <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveItem"/>
+            </template>
+        </Dialog>
 
-            <Dialog v-model:visible="deleteItemDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
-                <div class="confirmation-content">
-                    <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem"/>
-                    <span v-if="item">Are you sure you want to delete <b>{{ item.name }}</b>?</span>
-                </div>
-                <template #footer>
-                    <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteItemDialog = false"/>
-                    <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteItem"/>
-                </template>
-            </Dialog>
+        <Dialog v-model:visible="deleteItemDialog" :style="{width: '450px'}" header="Confirm" :modal="true">
+            <div class="confirmation-content">
+                <i class="pi pi-exclamation-triangle p-mr-3" style="font-size: 2rem"/>
+                <span v-if="item">Are you sure you want to delete <b>{{ item.name }}</b>?</span>
+            </div>
+            <template #footer>
+                <Button label="No" icon="pi pi-times" class="p-button-text" @click="deleteItemDialog = false"/>
+                <Button label="Yes" icon="pi pi-check" class="p-button-text" @click="deleteItem"/>
+            </template>
+        </Dialog>
     </app-layout>
 
 </template>

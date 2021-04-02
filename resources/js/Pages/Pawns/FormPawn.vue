@@ -6,67 +6,91 @@
             :closeOnEscape="false"
             :closable="false"
             class="max-w-7xl">
-        <div class="grid grid-cols-2 p-fluid gap-4">
-            <div class="p-pt-3">
-                <div class="flex space-x-2">
-                    <div class="">
+        <div class="p-grid p-fluid">
+            <div class="p-md-6 p-pt-3">
+                <div class="p-grid">
+                    <div class="p-field p-sm-4">
                         <label for="">รหัส</label>
                         <InputText v-model="item.id" disabled></InputText>
                     </div>
-                    <div v-show="item.prev_id">
+                    <div v-show="item.prev_id" class="p-field p-sm-4">
                         <label for="">ใบเก่า</label>
                         <InputText v-model="item.prev_id" class="w-60"></InputText>
                     </div>
-                    <div v-show="item.next_id">
+                    <div v-show="item.next_id" class="p-field p-sm-4">
                         <label for="">ใบใหม่</label>
                         <InputText v-model="item.next_id" class="w-60"></InputText>
                     </div>
                 </div>
-                <div class="p-field">
                     <select-customer v-model="item.customer" force-selection
                                      :errors="v$.item.customer.$errors"></select-customer>
-                </div>
-                <div class="flex space-x-2">
-                    <div class="p-field flex-1">
-                        <label for="">จำนวนเงิน</label>
-                        <InputNumber v-model="item.price"
-                                     @input="onPriceChange($event)"
-                                     disabled></InputNumber>
-                        <small class="p-error" v-if="v$.item.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
+
+                <div class="p-fluid">
+                    <div class="p-grid">
+                        <div class="p-field p-md-5">
+                            <label for="">จำนวนเงิน</label>
+                            <InputNumber v-model="item.price"
+                                         @input="onPriceChange($event)"
+                                         disabled></InputNumber>
+                            <small class="p-error" v-if="v$.item.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
+                        </div>
+                        <div class="p-field p-md-4">
+                            <label for="">อัตราดอกเบี้ย</label>
+                            <InputNumber v-model="item.int_rate"></InputNumber>
+                        </div>
+                        <div class="p-field p-md-3">
+                            <label for="">ดอกเบี้ย/เดือน</label>
+                            <InputNumber v-model="item.int_per_month" disabled></InputNumber>
+                        </div>
                     </div>
-                    <div class="p-field w-1/4">
-                        <label for="">จำนวนเดือน</label>
-                        <InputNumber v-model="item.life" showButtons></InputNumber>
+                    <div class="p-grid">
+
+                        <div class="p-field p-md-5">
+                            <label for="">วันที่รับ</label>
+                            <Calendar v-model="item.dt"></Calendar>
+                        </div>
+                        <div class="p-field p-md-4">
+                            <label for="">ครบอายุ</label>
+                            <Calendar v-model="item.dt_end"></Calendar>
+                        </div>
+                        <div class="p-field p-md-3">
+                            <label for="">อายุสัญญา</label>
+                            <InputNumber v-model="item.life" showButtons></InputNumber>
+                        </div>
                     </div>
+
                 </div>
 
                 <div class="flex space-x-2">
-                    <div class="p-field flex-1">
-                        <label for="">อัตราดอกเบี้ย</label>
-                        <InputNumber v-model="item.int_rate"></InputNumber>
-                    </div>
-                    <div class="p-field flex-1">
-                        <label for="">ดอกเบี้ย/เดือน</label>
-                        <InputNumber v-model="item.int_per_month" disabled></InputNumber>
-                    </div>
-                </div>
-                <div class="flex space-x-2">
-                    <div class="p-field w-full">
-                        <label for="">วันที่รับ</label>
-                        <Calendar v-model="item.dt"></Calendar>
-                    </div>
-                    <div class="p-field w-full">
-                        <label for="">วันที่ครบกำหนด</label>
-                        <Calendar v-model="item.dt_end"></Calendar>
-                    </div>
+
+
                 </div>
             </div>
-            <div class="p-pt-3">
+            <div class="p-md-6 p-pt-3">
                 <label for="">รายการดอกเบี้ย</label>
-                <DataTable :value="item.int_receives">
-                    <Column field="dt_end" header="วันที่ครบกำหนด"></Column>
-                    <Column field="dt" header="วันที่"></Column>
+                <DataTable :value="item.int_receives"
+                           :scrollable="true"
+                           scrollHeight="380px"
+                           class="p-datatable-sm">
+                    <Column field="dt_end" header="ต่อถึงวันที่">
+                        <template #body="props">
+                            {{ $filters.date(props.data.dt_end) }}
+                        </template>
+                    </Column>
+                    <Column field="dt" header="วันที่จ่าย">
+                        <template #body="props">
+                            {{ $filters.date(props.data.dt) }}
+                        </template>
+                    </Column>
                     <Column field="amount" header="จำนวนเงิน"></Column>
+                    <Column field="month_pay" header="เดือน"></Column>
+                    <Column :exportable="false">
+                        <template #body="{index}">
+                            <Button icon="pi pi-trash"
+                                    class="p-button-text p-button-rounded p-button-danger p-button-sm"
+                                    @click="removeIntReceive(index)"></Button>
+                        </template>
+                    </Column>
                 </DataTable>
             </div>
         </div>
@@ -95,7 +119,7 @@
 
         </div>
         <div class="w-full mt-2">
-            <DataTable :value="item.items">
+            <DataTable :value="item.items" class="p-datatable-sm">
                 <Column field="gold_percent" header="% ทอง"></Column>
                 <Column field="product_type" header="ประเภท"></Column>
                 <Column field="weight" header="น้ำหนัก"></Column>
@@ -113,7 +137,7 @@
                 <div v-show="!creating">
                     <Button label="ต่อดอก" class="p-button-info"
                             @click="actionInt"></Button>
-                    <Button label="เปลี่ยนใบ" class="p-button-warning" @click="actionChg"></Button>
+                    <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
                     <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
                     <Button label="คัดออก" class="p-button-danger"></Button>
                     <Button label="พิมพ์" icon="pi pi-print"
@@ -135,15 +159,15 @@
             modal :show-header="false"
             :closeOnEscape="false"
             :closable="false" class="max-w-5xl w-full">
-        <div class="flex flex-wrap">
-            <div class="w-full md:w-7/12 ">
-                <TabView ref="tabview2" v-model:activeIndex="actionActive" class="pt-6">
-                    <TabPanel header="รับดอกเบี้ย">
+        <div class="p-grid p-pt-4">
+            <div class="p-md-7 ">
+                    <div v-if="action.type==='int'">
+                        <h1>รับดอกเบี้ย</h1>
                         <div class="p-fluid">
                             <div class="p-field p-grid">
                                 <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
                                 <div class="p-col-12 p-md-3">
-                                    <InputNumber v-model="action.life" showButtons/>
+                                    <InputNumber v-model="action.months" showButtons/>
                                 </div>
                             </div>
 
@@ -158,32 +182,38 @@
                             </div>
 
                         </div>
-                    </TabPanel>
-                    <TabPanel header="เปลี่ยนใบ">
+                    </div>
 
-                    </TabPanel>
-                    <TabPanel header="ไถ่ถอน">
-                        <div class="p-fluid">
+                    <div v-if="action.type==='red'">
+                        <h1 class="text-2xl">ไถ่ถอน</h1>
+                        <div class="p-fluid p-mt-4">
                             <div class="p-field p-grid">
-                                <lable class="p-fixed" style="width: 100px;">ระยะเวลา</lable>
+                                <label class="p-fixed" style="width: 100px;">ระยะเวลา</label>
                                 <div class="p-col">
-                                    <InputNumber suffix=" เดือน" v-model="action.months" disabled class="text-right"></InputNumber>
-                                    </div>
+                                    <InputNumber suffix=" เดือน" v-model="action.months" disabled
+                                                 class="text-right"></InputNumber>
+                                </div>
                                 <div class="p-col">
-                                    <InputNumber suffix=" วัน" v-model="action.days" disabled class="text-right"></InputNumber>
+                                    <InputNumber suffix=" วัน" v-model="action.days" disabled
+                                                 class="text-right"></InputNumber>
                                 </div>
                             </div>
                             <div class="p-field p-grid">
                                 <div class="p-col-fixed" style="width: 100px;">ดอกเบี้ย</div>
                                 <div class="p-col">
-                                    <InputNumber v-model="action.int" disabled class="text-right"></InputNumber>
+                                    <InputNumber v-model="action.int"  input-class="text-right"></InputNumber>
+                                </div>
+                            </div>
+                            <div class="p-field p-grid">
+                                <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
+                                <div class="p-col">
+                                    <InputNumber v-model="item.price" disabled  input-class="text-right"></InputNumber>
                                 </div>
                             </div>
                         </div>
-                    </TabPanel>
-                </TabView>
+                    </div>
             </div>
-            <div class="w-full md:w-5/12 pl-4">
+            <div class="p-md-5">
                 <div class="p-field p-grid mt-10">
                     <label for="" class="p-col-12 p-mb-2 p-md-4 p-mb-md-0">วันที่ทำรายการ</label>
                     <div class="p-col-12 p-md-8">
@@ -275,7 +305,7 @@ export default {
             action: {
                 dt: new Date(),
                 type: 'int',
-                life: 0,
+                months: 0,
                 amount: 0,
                 dt_end: null,
                 payments: []
@@ -306,18 +336,20 @@ export default {
                     this.item = {
                         life: this.config.pawn_life,
                         int_rate: this.config.pawn_int_default_rate,
-                        dt: new Date(),
+                        dt: moment().toDate(),
                         dt_end: moment().add(this.config.pawn_life, 'months').toDate(),
                         items: []
                     }
                     this.clearDetailItem();
                 }
+            } else {
+                this.$inertia.reload();
             }
         },
         'item.int_rate': function (val) {
             this.item.int_per_month = (this.item.price * this.item.int_rate) / 100;
         },
-        'action.life': function (val) {
+        'action.months': function (val) {
             if (this.action.type === 'int') {
                 this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
                 this.action.dt_end = moment(this.action.dt_start).add(val, 'months').toDate();
@@ -392,9 +424,10 @@ export default {
 
             this.v$.$touch();
             if (this.v$.$error) return;
-
+            console.log(this.item);
 
             _.assign(this.form, this.item);
+            console.log(this.form);
             if (!this.item.id) {
                 this.form.post(route('pawns.store'), {
                     preserveState: true,
@@ -413,12 +446,13 @@ export default {
         },
         actionInt() {
             this.action.type = 'int';
-            this.action.life = 1;
+            this.action.months = 1;
 
             let dt_end = this.item.dt;
             if (this.item.int_receives.length) {
                 dt_end = this.item.int_receives[this.item.int_receives.length - 1].dt_end;
             }
+            this.action.dt = moment().toDate();
             this.action.dt_start = moment(dt_end).toDate()
             this.action.dt_end = moment(dt_end).add(1, 'months').toDate();
             this.action.amount = this.intPerMonth;
@@ -427,8 +461,10 @@ export default {
             this.actioning = true;
         },
         actionRed() {
+            console.log('action red')
             axios.get(route('api.pawns.todayInt', this.item.id))
                 .then((res) => {
+                    console.log(res);
                     this.action.type = 'red';
                     this.action.dt = new Date();
                     this.action.months = res.data.months;
@@ -439,7 +475,6 @@ export default {
                     this.payments = [];
                     this.actioning = true;
                 })
-
         },
         getPayments() {
             this.action.payments = [];
@@ -453,6 +488,32 @@ export default {
                     this.$toast.add({severity: 'success', summary: 'สำเร็จ', detail: 'บันทึกรายการแล้ว', life: 3000})
                     this.item = this.transformItem(response.data)
                 });
+        },
+        removeIntReceive(index) {
+            this.$confirm.require({
+                message: 'Are you sure you want to proceed?',
+                header: 'Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    //callback to execute when user confirms the action
+                    axios.delete(route('api.pawn-int-receives.destroy', this.item.int_receives[index].id))
+                        .then(res => {
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'สำเร็จ',
+                                detail: 'บันทึกรายการแล้ว',
+                                life: 3000
+                            })
+                            this.item.int_receives.splice(index, 1);
+                            this.load(this.item.id);
+                        })
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+
+
         },
         print() {
             axios.get(route('api.pawns.print', this.item.id))

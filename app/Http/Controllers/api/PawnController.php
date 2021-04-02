@@ -7,7 +7,7 @@ use App\Http\Helpers\MetaHelper;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Pawn;
-use App\Models\PawnIntReceives;
+use App\Models\PawnIntReceive;
 use App\Models\Payment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -70,26 +70,31 @@ class PawnController extends Controller
 
     public function getTodayInt(Pawn $pawn)
     {
-        $latestInt= PawnIntReceives::wherePawnId($pawn->id)->latest('dt_end')->first();
-        $dt = new Carbon( $latestInt ? $latestInt->dt_end : $pawn->dt);
+        $latestInt = PawnIntReceive::wherePawnId($pawn->id)->latest('dt_end')->first();
+        $dt = Carbon::parse($latestInt ? $latestInt->dt_end : $pawn->dt);
+        $diff = $dt->diff(now()->setTime(0, 0));
 
-        $diff = $dt->diff(now());
         $months = ($diff->y * 12) + $diff->m;
         $days = $diff->d + 1;
         $intPerMonth = $pawn->price * $pawn->int_rate / 100;
-        $discounts = IntDiscountRate::orderBy('days')->where('days', '>=', $days)->first();
-        if ($discounts) {
-            $int_days = ceil($intPerMonth * $discounts->rate / 100);
-        } else {
-            $months++;
-            $int_days = 0;
+        $int_days = $intPerMonth;
+
+        $comments = [];
+
+        if (MetaHelper::get('pawn_int_discount_rates_enable', false)) {
+            $discounts = IntDiscountRate::orderBy('days')->where('days', '>=', $days)->first();
+            if ($discounts) {
+                $int_days = ceil($intPerMonth * $discounts->rate / 100);
+                array_push($comments,'ได้รับส่วนลดดอกเบี้ยตามจำนวนวัน');
+            }
         }
 
         $output = [
             'dt_start' => $dt->toDateTimeString(),
             'months' => $months,
             'days' => $days,
-            'int' => ($intPerMonth * $months) + $int_days
+            'int' => ($intPerMonth * $months) + $int_days,
+            'comments' => $comments
         ];
         return $output;
     }
@@ -119,40 +124,24 @@ class PawnController extends Controller
         //
     }
 
-    public function storeConfig(Request $request)
-    {
-        MetaHelper::set('pawn_life', $request->input('pawn_life'));
-        MetaHelper::set('pawn_int_default_rate', $request->input('int_default_rate'));
-        MetaHelper::set('pawn_int_min', $request->input('int_min'));
-        MetaHelper::set('pawn_int_range_rates_enable', $request->input('int_range_rates_enable'));
-        MetaHelper::set('pawn_int_discount_rates_enable', $request->input('int_discount_rates_enable'));
-        DB::transaction(function () use ($request) {
-            DB::table('int_range_rates')->truncate();
-            IntRangeRate::insert($request->input('int_range_rates'));
-            DB::table('int_discount_rates')->truncate();
-            IntDiscountRate::insert($request->input('int_discount_rates'));
-        });
-
-        return redirect()->back();
-    }
-
     public function storeAction(Request $request, Pawn $pawn)
     {
         if ($request->input('type') == 'int') {
             DB::transaction(function () use ($pawn, $request) {
-                $pawn->dt_end = jsDateToSql($request->input('dt_end'));
+                $pawn->dt_end = Carbon::parse($pawn->dt_end)->addMonths(request('months'))->toDateString();
                 $pawn->save();
 
                 $pawn->int_receives()->create([
-                    'dt' => jsDateToSql(request('dt')),
-                    'dt_end' => jsDateToSql(request('dt_end')),
-                    'amount' => request('amount')
+                    'dt' => jsDateToDateTimeString(request('dt')),
+                    'dt_end' => jsDateToDateTimeString(request('dt_end')),
+                    'amount' => request('amount'),
+                    'month_pay' => request('months')
                 ]);
                 foreach ($request->payments as $payment) {
                     $p = new Payment([
                         'team_id' => request()->user()->currentTeam->id,
                         'payment_no' => 0,
-                        'dt' => $payment['dt'],
+                        'dt' => jsDateToDateTimeString($payment['dt']),
                         'receive' => $payment['amount'],
                         'method' => $payment['method'],
                         'payment_type_id' => 'int'

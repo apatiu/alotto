@@ -108,9 +108,9 @@ const app = createApp({
             reject: 'ยกเลิก',
             dateFormat: 'dd/mm/yy',
             dayNamesShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-            dayNamesMin: ['จ.','อ.','พ.','พฤ.','ศ.','ส.','อ.'],
-            monthNames: ["January","February","March","April","May","June","July","August","September","October","November","December"],
-            monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun","Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            dayNamesMin: ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อ.'],
+            monthNames: ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมาษายน", "พฤษภาคม", "June", "July", "August", "September", "October", "November", "December"],
+            monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
             today: 'Today',
             weekHeader: 'Wk',
             firstDayOfWeek: 0,
@@ -125,6 +125,12 @@ const app = createApp({
     .use(ConfirmationService)
     .use(ToastService)
     .use(VueHtmlToPaper);
+
+app.config.globalProperties.$filters = {
+    date(value) {
+        return moment(value).format('DD/MM/YYYY')
+    }
+}
 
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);

@@ -37,10 +37,6 @@ class Payment extends Model
         'cancel_emp_name', 'payment_type_id', 'paymentable_id', 'paymentable_type',
     ];
 
-    public function setDtAttribute($value)
-    {
-        $this->attributes['dt'] = jsDateToSql($value);
-    }
 
     public function team() {
         return $this->belongsTo(Team::class);

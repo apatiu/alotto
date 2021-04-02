@@ -1,7 +1,7 @@
 <template>
-    <div class="flex-col mt-6">
+    <div class="p-field">
         <label for="">ลูกค้า:</label>
-        <div class="flex space-x-2">
+        <div class="p-d-flex">
             <AutoComplete :modelValue="modelValue"
                           @update:modelValue="$emit('update:modelValue',$event)"
                           :suggestions="filteredItems"
@@ -10,18 +10,19 @@
                           dropdown
                           class="flex-1"
             ></AutoComplete>
-            <Button icon="pi pi-plus" class="p-button-icon" @click="creating=true"></Button>
-
+            <Button icon="pi pi-plus" class="p-button-icon p-ml-2" @click="creating=true"></Button>
         </div>
-        <div class="flex space-x-2">
-            <small>เบอร์โทร: {{ selected.phone }}</small>
-            <small>ที่อยุ่: {{ selected.tax_id }}</small>
-        </div>
-        <small class="p-error" v-if="errors.length">กรุณาเลือกลูกค้า</small>
-
-        <form-customer v-model:visible="creating"
-                       @created="select"></form-customer>
     </div>
+
+    <div class="flex space-x-2">
+        <small>เบอร์โทร: {{ selected.phone }}</small>
+        <small>ที่อยุ่: {{ selected.tax_id }}</small>
+    </div>
+    <small class="p-error" v-if="errors.length">กรุณาเลือกลูกค้า</small>
+
+    <form-customer v-model:visible="creating"
+                   @created="select"></form-customer>
+
 
 </template>
 

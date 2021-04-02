@@ -19,6 +19,7 @@ class CreatePawnIntReceivesTable extends Migration
             $table->date('dt');
             $table->date('dt_end');
             $table->decimal('amount');
+            $table->unsignedInteger('month_pay');
             $table->timestamps();
         });
     }

@@ -29,11 +29,20 @@ if (!function_exists('weightgram')) {
     }
 }
 
-if (!function_exists('jsDateToSql')) {
-    function jsDateToSql($dt)
+if (!function_exists('jsDateToDateString')) {
+    function jsDateToDateString($dt)
     {
         return \Carbon\Carbon::create($dt)
-            ->timezone('Asia/Bangkok')
+            ->timezone(config('app.timezone'))
+            ->toDateString();
+    }
+}
+
+if (!function_exists('jsDateToDateTimeString')) {
+    function jsDateToDateTimeString($dt)
+    {
+        return \Carbon\Carbon::create($dt)
+            ->timezone(config('app.timezone'))
             ->toDateTimeString();
     }
 }

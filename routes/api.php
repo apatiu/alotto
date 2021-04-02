@@ -54,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
             Route::get('/pawns/today-int/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'getTodayInt'])->name('pawns.todayInt');
             Route::resource('pawns', 'PawnController');
+            Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
         });
 
