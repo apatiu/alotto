@@ -116,11 +116,29 @@ class PawnController extends Controller
      */
     public function update(Request $request, Pawn $pawn)
     {
-        $data = $request->except([
-            'id', 'items', 'int_receives', 'prev_id', 'next_id', 'team_id']);
-        $data['dt'] = jsDateToDateString($data['dt']);
-        $data['dt_end'] = jsDateToDateString($data['dt_end']);
-        $pawn->update($data);
+        DB::transaction(function () use ($pawn) {
+
+            $data = request()->except([
+                'id', 'items', 'int_receives', 'prev_id', 'next_id', 'team_id']);
+            $data['dt'] = jsDateToDateString($data['dt']);
+            $data['dt_end'] = jsDateToDateString($data['dt_end']);
+            $pawn->update($data);
+
+            foreach($pawn->items as $item) {
+                $item->img()->delete();
+            }
+            $pawn->items()->delete();
+            foreach (request('items', []) as $item) {
+                $pawnitem = $pawn->items()->create($item);
+
+                $media = new Media([
+                    'type' => 'base64',
+                    'datatext' => $item['img'][0]['datatext']
+                ]);
+                $pawnitem->img()->save($media);
+            }
+        });
+
         return redirect()->back();
     }
 

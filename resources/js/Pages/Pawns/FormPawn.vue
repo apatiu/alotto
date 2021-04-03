@@ -117,13 +117,7 @@
                              inputClass="text-right"/>
             </div>
             <div class="p-col-2 p-d-flex p-jc-between" style="padding-top: 1.9rem;">
-
-                <div class="p-d-flex">
-                    <img :src="pawnItem.img" v-if="pawnItem.img" style="width: 40px; height: 40px;">
-                    <Button icon="pi pi-camera" class="p-button-success" @click="capture"></Button>
-                </div>
                 <Button icon="pi pi-plus" class="p-button-rounded p-ml-1" @click="addItem"></Button>
-
             </div>
 
         </div>
@@ -135,9 +129,20 @@
                 <Column field="price" header="ราคา"></Column>
                 <Column field="img" header="ภาพ">
                     <template #body="props">
-                        <img v-if="props.data.img.length > 0"
-                             :src="props.data.img[0].datatext" alt=""
-                        class="max-h-16">
+                        <div class="flex">
+                            <div v-if="props.data.img[0]" class="flex">
+                                <img
+                                    :src="props.data.img[0].datatext" alt=""
+                                    class="h-10 w-10">
+                                <Button icon="pi pi-times"
+                                        class="p-button-danger p-button-rounded ml-2"
+                                        @click="clearItemImg(props.index)"></Button>
+                            </div>
+
+                            <Button icon="pi pi-camera" class="p-button-success p-button-rounded ml-2"
+                                    @click="editItemImg(props.index)"></Button>
+                        </div>
+
                     </template>
                 </Column>
                 <Column>
@@ -269,9 +274,9 @@
         <!--        end action dialog-->
     </Dialog>
     <div id="printable" v-html="printHtml"></div>
-    <Dialog v-model:visible="camDialog" style="min-width: 640px; ">
-        <capture-image @captured="onCaptured"></capture-image>
-    </Dialog>
+    <!--    begin cam-->
+    <capture-image v-model:visible="camDialog" @captured="onCaptured"></capture-image>
+
 </template>
 
 <script>
@@ -344,6 +349,7 @@ export default {
                 dt_end: null,
                 payments: []
             },
+            editingItemIndex: 0,
         }
     },
     validations() {
@@ -557,12 +563,16 @@ export default {
 
 
         },
-        capture() {
+        editItemImg(index) {
+            this.editingItemIndex = index;
             this.camDialog = true;
         },
         onCaptured(e) {
-            this.pawnItem.img = e;
+            this.item.items[this.editingItemIndex].img = [{datatext: e}];
             this.camDialog = false;
+        },
+        clearItemImg(i) {
+            this.item.items[i].img[0] = null
         },
         print() {
             axios.get(route('api.pawns.print', this.item.id))
