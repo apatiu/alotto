@@ -6,24 +6,27 @@
             :closeOnEscape="false"
             :closable="false"
             class="max-w-7xl">
+        <div class="flex items-center justify-between">
+            <div class="p-fluid w-full p-grid">
+                <div class="p-field p-col-3">
+                    <div class="p-inputgroup">
+                        <span class="p-inputgroup-addon">
+                            รหัส
+                        </span>
+                        <InputText v-model="item.id" disabled></InputText>
+                        <Button v-show="item.prev_id" :label="item.prev_id"></Button>
+                        <Button v-show="item.next_id" :label="item.next_id"></Button>
+                    </div>
+
+                </div>
+            </div>
+            <pawn-status v-model="item.status" badge></pawn-status>
+        </div>
         <div class="p-grid p-fluid">
             <div class="p-md-6 p-pt-3">
-                <div class="p-grid">
-                    <div class="p-field p-sm-4">
-                        <label for="">รหัส</label>
-                        <InputText v-model="item.id" disabled></InputText>
-                    </div>
-                    <div v-show="item.prev_id" class="p-field p-sm-4">
-                        <label for="">ใบเก่า</label>
-                        <InputText v-model="item.prev_id" class="w-60"></InputText>
-                    </div>
-                    <div v-show="item.next_id" class="p-field p-sm-4">
-                        <label for="">ใบใหม่</label>
-                        <InputText v-model="item.next_id" class="w-60"></InputText>
-                    </div>
-                </div>
-                    <select-customer v-model="item.customer" force-selection
-                                     :errors="v$.item.customer.$errors"></select-customer>
+                <select-customer v-model="item.customer" force-selection
+                                 :errors="v$.item.customer.$errors"
+                                 :disabled="!creating"></select-customer>
 
                 <div class="p-fluid">
                     <div class="p-grid">
@@ -36,7 +39,7 @@
                         </div>
                         <div class="p-field p-md-4">
                             <label for="">อัตราดอกเบี้ย</label>
-                            <InputNumber v-model="item.int_rate"></InputNumber>
+                            <InputNumber v-model="item.int_rate" :disabled="!actionable && !creating"></InputNumber>
                         </div>
                         <div class="p-field p-md-3">
                             <label for="">ดอกเบี้ย/เดือน</label>
@@ -47,26 +50,24 @@
 
                         <div class="p-field p-md-5">
                             <label for="">วันที่รับ</label>
-                            <Calendar v-model="item.dt"></Calendar>
+                            <Calendar v-model="item.dt"
+                                      :disabled="!actionable  && !creating"></Calendar>
                         </div>
                         <div class="p-field p-md-4">
                             <label for="">ครบอายุ</label>
-                            <Calendar v-model="item.dt_end"></Calendar>
+                            <Calendar v-model="item.dt_end"
+                                      :disabled="!actionable  && !creating"></Calendar>
                         </div>
                         <div class="p-field p-md-3">
                             <label for="">อายุสัญญา</label>
-                            <InputNumber v-model="item.life" showButtons></InputNumber>
+                            <InputNumber v-model="item.life" showButtons
+                                         :disabled="!actionable  && !creating"></InputNumber>
                         </div>
                     </div>
 
                 </div>
-
-                <div class="flex space-x-2">
-
-
-                </div>
             </div>
-            <div class="p-md-6 p-pt-3">
+            <div class="p-md-6 p-pt-3" v-if="!creating">
                 <label for="">รายการดอกเบี้ย</label>
                 <DataTable :value="item.int_receives"
                            :scrollable="true"
@@ -88,33 +89,41 @@
                         <template #body="{index}">
                             <Button icon="pi pi-trash"
                                     class="p-button-text p-button-rounded p-button-danger p-button-sm"
-                                    @click="removeIntReceive(index)"></Button>
+                                    @click="removeIntReceive(index)"
+                                    v-if="actionable"></Button>
                         </template>
                     </Column>
                 </DataTable>
             </div>
         </div>
-        <div class="p-fluid p-form-grid p-grid mt-8">
-            <div class="p-col">
+        <div class="p-fluid p-grid mt-6" v-if="actionable || creating">
+            <div class="p-col-2">
                 <select-gold-percent v-model="pawnItem.gold_percent"/>
             </div>
-            <div class="p-col">
+            <div class="p-col-4">
                 <select-product-type v-model="pawnItem.product_type"/>
             </div>
-            <div class="p-col">
+            <div class="p-col-2">
                 <label for="">น้ำหนัก (ก.)</label>
                 <InputNumber v-model="pawnItem.weight"
                              :minFractionDigits="1"
                              :maxFractionDigits="3"
+                             inputClass="text-right"
                              @input="onDetailItemWeightChange"></InputNumber>
             </div>
-            <div class="p-col">
+            <div class="p-col-2">
                 <label for="">ราคา</label>
                 <InputNumber v-model="pawnItem.price"
-                             class="w-full"/>
+                             inputClass="text-right"/>
             </div>
-            <div class="p-col" style="padding-top: 1.9rem;">
-                <Button icon="pi pi-plus" class="p-button-icon p-mt" @click="addItem"></Button>
+            <div class="p-col-2 p-d-flex p-jc-between" style="padding-top: 1.9rem;">
+
+                <div class="p-d-flex">
+                    <img :src="pawnItem.img" v-if="pawnItem.img" style="width: 40px; height: 40px;">
+                    <Button icon="pi pi-camera" class="p-button-success" @click="capture"></Button>
+                </div>
+                <Button icon="pi pi-plus" class="p-button-rounded p-ml-1" @click="addItem"></Button>
+
             </div>
 
         </div>
@@ -124,27 +133,39 @@
                 <Column field="product_type" header="ประเภท"></Column>
                 <Column field="weight" header="น้ำหนัก"></Column>
                 <Column field="price" header="ราคา"></Column>
+                <Column field="img" header="ภาพ">
+                    <template #body="props">
+                        <img v-if="props.data.img.length > 0"
+                             :src="props.data.img[0].datatext" alt=""
+                        class="max-h-16">
+                    </template>
+                </Column>
                 <Column>
                     <template #body="slotProps">
                         <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
-                                @click="removeItemItems(slotProps.index)"></Button>
+                                @click="removeItemItems(slotProps.index)"
+                                v-if="actionable || creating"></Button>
                     </template>
                 </Column>
             </DataTable>
         </div>
         <template #footer>
             <div class="flex items-center justify-between pt-2">
-                <div v-show="!creating">
-                    <Button label="ต่อดอก" class="p-button-info"
-                            @click="actionInt"></Button>
-                    <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
-                    <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
-                    <Button label="คัดออก" class="p-button-danger"></Button>
-                    <Button label="พิมพ์" icon="pi pi-print"
-                            class="p-button-secondary ml-6"
-                            @click="print"></Button>
+                <div class="p-d-flex">
+                    <div v-show="actionable">
+                        <Button label="ต่อดอก" class="p-button-info"
+                                @click="actionInt"></Button>
+                        <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
+                        <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
+                        <Button label="คัดออก" class="p-button-danger"></Button>
+                    </div>
+                    <div>
+                        <Button label="พิมพ์" icon="pi pi-print"
+                                class="p-button-secondary ml-6"
+                                @click="print"
+                                v-show="!creating"></Button>
+                    </div>
                 </div>
-                <div v-show="creating"></div>
                 <div class="flex items-center">
                     <action-message :on="form.recentlySuccessful">บันทึกข้อมูลแล้ว</action-message>
                     <Button label="ยกเลิก" class="p-button-text" @click="$emit('update:visible',false)"></Button>
@@ -161,57 +182,60 @@
             :closable="false" class="max-w-5xl w-full">
         <div class="p-grid p-pt-4">
             <div class="p-md-7 ">
-                    <div v-if="action.type==='int'">
-                        <h1>รับดอกเบี้ย</h1>
-                        <div class="p-fluid">
-                            <div class="p-field p-grid">
-                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
-                                <div class="p-col-12 p-md-3">
-                                    <InputNumber v-model="action.months" showButtons/>
-                                </div>
-                            </div>
-
-                            <div class="p-field p-grid">
-                                <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">สำหรับช่วงเวลา</label>
-                                <div class="p-col-12 p-md-4">
-                                    <Calendar v-model="action.dt_start" disabled/>
-                                </div>
-                                <div class="p-col-12 p-md-4">
-                                    <Calendar v-model="action.dt_end" disabled/>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div v-if="action.type==='red'">
-                        <h1 class="text-2xl">ไถ่ถอน</h1>
-                        <div class="p-fluid p-mt-4">
-                            <div class="p-field p-grid">
-                                <label class="p-fixed" style="width: 100px;">ระยะเวลา</label>
-                                <div class="p-col">
-                                    <InputNumber suffix=" เดือน" v-model="action.months" disabled
-                                                 class="text-right"></InputNumber>
-                                </div>
-                                <div class="p-col">
-                                    <InputNumber suffix=" วัน" v-model="action.days" disabled
-                                                 class="text-right"></InputNumber>
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <div class="p-col-fixed" style="width: 100px;">ดอกเบี้ย</div>
-                                <div class="p-col">
-                                    <InputNumber v-model="action.int"  input-class="text-right"></InputNumber>
-                                </div>
-                            </div>
-                            <div class="p-field p-grid">
-                                <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
-                                <div class="p-col">
-                                    <InputNumber v-model="item.price" disabled  input-class="text-right"></InputNumber>
-                                </div>
+                <div v-if="action.type==='int'">
+                    <h1>รับดอกเบี้ย</h1>
+                    <div class="p-fluid">
+                        <div class="p-field p-grid">
+                            <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">จำนวนเดือน</label>
+                            <div class="p-col-12 p-md-3">
+                                <InputNumber v-model="action.months" showButtons/>
                             </div>
                         </div>
+
+                        <div class="p-field p-grid">
+                            <label for="" class="p-col-12 p-mb-2 p-md-3 p-mb-md-0">สำหรับช่วงเวลา</label>
+                            <div class="p-col-12 p-md-4">
+                                <Calendar v-model="action.dt_start" disabled/>
+                            </div>
+                            <div class="p-col-12 p-md-4">
+                                <Calendar v-model="action.dt_end" disabled/>
+                            </div>
+                        </div>
+
                     </div>
+                </div>
+
+                <div v-if="action.type==='red'">
+                    <h1 class="text-2xl">ไถ่ถอน</h1>
+                    <div class="p-fluid p-mt-4">
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed" style="width: 100px;">ระยะเวลา</label>
+                            <div class="p-col">
+                                <InputNumber suffix=" เดือน" v-model="action.months" disabled
+                                             class="text-right"></InputNumber>
+                            </div>
+                            <div class="p-col">
+                                <InputNumber suffix=" วัน" v-model="action.days" disabled
+                                             class="text-right"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-fixed" style="width: 100px;">ดอกเบี้ย</div>
+                            <div class="p-col">
+                                <InputNumber v-model="action.int"
+                                             input-class="text-right"
+                                             :min="0"
+                                             @input="action.int=$event.value"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
+                            <div class="p-col">
+                                <InputNumber v-model="item.price" disabled input-class="text-right"></InputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="p-md-5">
                 <div class="p-field p-grid mt-10">
@@ -245,6 +269,9 @@
         <!--        end action dialog-->
     </Dialog>
     <div id="printable" v-html="printHtml"></div>
+    <Dialog v-model:visible="camDialog" style="min-width: 640px; ">
+        <capture-image @captured="onCaptured"></capture-image>
+    </Dialog>
 </template>
 
 <script>
@@ -256,6 +283,8 @@ import {required} from '@vuelidate/validators'
 import InputWeight from "@/A/InputWeight";
 import ActionMessage from "@/Jetstream/ActionMessage";
 import InputPayment from "@/A/InputPayment";
+import PawnStatus from "@/A/PawnStatus";
+import CaptureImage from "@/A/CaptureImage";
 
 export default {
     name: "FormPawn",
@@ -264,11 +293,16 @@ export default {
             v$: useVuelidate()
         }
     },
-    components: {InputPayment, ActionMessage, InputWeight, SelectProductType, SelectGoldPercent, SelectCustomer},
+    components: {
+        CaptureImage,
+        PawnStatus,
+        InputPayment, ActionMessage, InputWeight, SelectProductType, SelectGoldPercent, SelectCustomer
+    },
     props: ['visible', 'pawnId'],
     data() {
         return {
             paymentDialog: false,
+            camDialog: false,
             saved: false,
             printHtml: null,
             form: this.$inertia.form({
@@ -309,7 +343,7 @@ export default {
                 amount: 0,
                 dt_end: null,
                 payments: []
-            }
+            },
         }
     },
     validations() {
@@ -330,6 +364,7 @@ export default {
         visible(val) {
             if (val) {
                 if (this.pawnId) {
+                    this.creating = false;
                     this.load(this.pawnId);
                 } else {
                     this.creating = true;
@@ -354,9 +389,17 @@ export default {
                 this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
                 this.action.dt_end = moment(this.action.dt_start).add(val, 'months').toDate();
             }
+        },
+        'action.int': function (val) {
+            if (this.action.type === 'red') {
+                this.action.amount = numeral(this.item.price).add(val ?? 0).value();
+            }
         }
     },
     computed: {
+        actionable() {
+            return (this.item.status === 'new') || (this.item.status === 'int')
+        },
         intPerMonth() {
             return (this.item.price * this.item.int_rate) / 100;
         }
@@ -464,7 +507,6 @@ export default {
             console.log('action red')
             axios.get(route('api.pawns.todayInt', this.item.id))
                 .then((res) => {
-                    console.log(res);
                     this.action.type = 'red';
                     this.action.dt = new Date();
                     this.action.months = res.data.months;
@@ -514,6 +556,13 @@ export default {
             });
 
 
+        },
+        capture() {
+            this.camDialog = true;
+        },
+        onCaptured(e) {
+            this.pawnItem.img = e;
+            this.camDialog = false;
         },
         print() {
             axios.get(route('api.pawns.print', this.item.id))

@@ -14,7 +14,9 @@ class CreatePrsTable extends Migration
     public function up()
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+
+            $table->string('code')->unique();
 
             $table->foreignId('team_id');
             $table->string('emp_name')->nullable();

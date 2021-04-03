@@ -16,4 +16,8 @@ class PawnIntReceive extends Model
     {
         return $this->belongsTo(Pawn::class);
     }
+
+    public function payments() {
+        return $this->morphToMany(Payment::class, 'paymentable');
+    }
 }

@@ -10,59 +10,51 @@ class Payment extends Model
 {
     use HasFactory;
 
-    public $incrementing = false;
-
-    protected static function booted()
-    {
-        static::creating(function ($payment) {
-            $id = 'PM' . request()->user()->currentTeam->id . '-';
-            $id .= date('Ymd', strtotime($payment->attributes['dt'])) . '-';
-
-            $latest = Payment::where('id', 'like', $id . '%')->select('id')->orderBy('id', 'desc')->first();
-
-            if ($latest === null)
-                $id .= '001';
-            else
-                $id .= substr('00' . (intval(substr($latest->attributes['id'], -3)) + 1), -3);
-
-            $payment->attributes['id'] = $id;
-        });
-    }
-
-
     protected $fillable = [
+        'code',
         'team_id', 'emp_name', 'acc_date', 'payment_no', 'dt', 'detail', 'bill_id',
         'pay', 'receive', 'method', 'transfer_bank', 'transfer_acc_no', 'creditcard_bank',
         'creditcard_bank_no', 'creditcard_percent_fee', 'cancel_on', 'cancel_reason',
         'cancel_emp_name', 'payment_type_id', 'paymentable_id', 'paymentable_type',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($payment) {
+            $code = 'PM' . request()->user()->currentTeam->id . '-';
+            $code .= date('Ymd', strtotime($payment->attributes['dt'])) . '-';
 
-    public function team() {
+            $latest = Payment::where('code', 'like', $code . '%')->select('code')->orderBy('code', 'desc')->first();
+//
+            if (!$latest)
+                $code .= '001';
+            else
+                $code .= substr('00' . (intval(substr($latest->attributes['code'], -3)) + 1), -3);
+
+            $payment->attributes['code'] = $code;
+        });
+    }
+
+
+
+
+    public function team()
+    {
         return $this->belongsTo(Team::class);
     }
 
-    public function payment_type() {
+    public function payment_type()
+    {
         return $this->belongsTo(PaymentType::class);
+    }
+
+    public function pawn_int_receives()
+    {
+        return $this->morphedByMany(PawnIntReceive::class, 'paymentable');
     }
 
     public function paymentable()
     {
         return $this->morphTo();
-    }
-
-    public function gen_id($dt = null)
-    {
-        $id = 'PM' . request()->user()->currentTeam->id . '-';
-        $id .= date('Ymd', strtotime($dt)) . '-';
-
-        $latest = Payment::where('id', 'like', $id . '%')->select('id')->orderBy('id', 'desc')->first();
-
-        if ($latest === null)
-            $id .= '001';
-        else
-            $id .= substr('00' . (intval(substr($latest->attributes['id'], -3)) + 1), -3);
-
-        return $id;
     }
 }

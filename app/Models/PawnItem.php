@@ -15,4 +15,8 @@ class PawnItem extends Model
     {
         return $this->belongsTo(Pawn::class);
     }
+
+    public function img() {
+        return $this->morphToMany(Media::class, 'mediable');
+    }
 }

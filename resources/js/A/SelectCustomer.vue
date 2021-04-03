@@ -9,8 +9,10 @@
                           field="name"
                           dropdown
                           class="flex-1"
+                          :disabled=disabled
             ></AutoComplete>
-            <Button icon="pi pi-plus" class="p-button-icon p-ml-2" @click="creating=true"></Button>
+            <Button icon="pi pi-plus" class="p-button-icon p-ml-2" @click="creating=true"
+                    :disabled=disabled></Button>
         </div>
     </div>
 
@@ -38,6 +40,7 @@ export default {
             type: Boolean,
             default: false
         },
+        disabled: {type: Boolean, default: false},
         errors: {
             type: Array,
             default: []

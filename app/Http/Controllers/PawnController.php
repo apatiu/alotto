@@ -6,6 +6,7 @@ use App\Http\Helpers\MetaHelper;
 use App\Models\Customer;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
+use App\Models\Media;
 use App\Models\Pawn;
 use App\Models\Payment;
 use Illuminate\Http\Request;
@@ -48,8 +49,8 @@ class PawnController extends Controller
         $pawn = new Pawn();
         DB::transaction(function () use ($request, $pawn) {
             $pawn->team_id = $request->user()->currentTeam->id;
-            $pawn->dt = jsDateToDateString( request('dt') );
-            $pawn->dt_end = jsDateToDateString( request('dt_end') );
+            $pawn->dt = jsDateToDateString(request('dt'));
+            $pawn->dt_end = jsDateToDateString(request('dt_end'));
             $pawn->customer_id = request('customer_id');
             $pawn->price = request('price');
             $pawn->status = 'new';
@@ -59,7 +60,17 @@ class PawnController extends Controller
 
             $pawn->save();
 
-            $pawn->items()->createMany($request->input('items'));
+            foreach ($request->input('items', []) as $item) {
+                $pawnitem = $pawn->items()->create($item);
+
+                $media = new Media([
+                    'type' => 'base64',
+                    'datatext' => $item['img']
+                ]);
+                $pawnitem->img()->save($media);
+            }
+
+
             $payment = new Payment([
                 'team_id' => $pawn->team_id,
                 'payment_no' => '',
@@ -68,8 +79,6 @@ class PawnController extends Controller
                 'method' => 'cash',
                 'pay' => $pawn->price
             ]);
-            $payment->id = $payment->gen_id($pawn->dt);
-//            $payment->save();
 
             $pawn->payments()->save($payment);
         });
