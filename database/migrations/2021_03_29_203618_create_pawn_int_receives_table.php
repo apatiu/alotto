@@ -17,7 +17,7 @@ class CreatePawnIntReceivesTable extends Migration
             $table->id();
             $table->foreignId('pawn_id');
             $table->date('dt');
-            $table->date('dt_end');
+            $table->date('dt_end')->nullable();
             $table->decimal('amount');
             $table->unsignedInteger('month_pay')->nullable();
             $table->timestamps();

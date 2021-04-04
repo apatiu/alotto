@@ -8,9 +8,11 @@
                         <jet-application-mark class="block h-9 w-auto"/>
                     </inertia-link>
                     <Button class="p-button-text p-ml-4"
-                            @click="$inertia.get(route('pawns.index'))">ขายฝาก</Button>
+                            @click="$inertia.get(route('pawns.index'))">ขายฝาก
+                    </Button>
                     <Button class="p-button-text p-ml-4"
-                            @click="$inertia.get(route('customers.index'))">ลูกค้า</Button>
+                            @click="$inertia.get(route('customers.index'))">ลูกค้า
+                    </Button>
                     <Button class="p-button-text p-ml-4"
                             @click="$inertia.get(route('payments.index'))">รับจ่าย
                     </Button>
@@ -174,7 +176,11 @@ export default {
                     items: [
                         {
                             label: 'รายการสินค้า',
-                            url: route('products.index')
+                            url: route('products.index'),
+                            command: (e) => {
+                                e.preventDefault()
+                                console.log(e.item)
+                            }
                         }, {
                             separator: true
                         },

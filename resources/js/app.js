@@ -129,6 +129,14 @@ const app = createApp({
 app.config.globalProperties.$filters = {
     date(value) {
         return moment(value).format('DD/MM/YYYY')
+    },
+    datetime(value) {
+        return moment(value).format('DD/MM/YYYY HH:mm')
+    },
+    decimal(value, pre = 0) {
+        let format = '0,0.' + _.repeat('0', pre);
+
+        return numeral(value).format(format);
     }
 }
 

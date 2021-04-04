@@ -23,7 +23,7 @@ class PawnController extends Controller
     public function index()
     {
         return Inertia::render('Pawns/Index', [
-            'items' => Pawn::with(['customer'])->get(),
+            'data' => Pawn::with(['customer'])->get(),
             'new_id' => session('new', 0)
         ]);
     }
@@ -49,8 +49,8 @@ class PawnController extends Controller
         $pawn = new Pawn();
         DB::transaction(function () use ($request, $pawn) {
             $pawn->team_id = $request->user()->currentTeam->id;
-            $pawn->dt = jsDateToDateString(request('dt'));
-            $pawn->dt_end = jsDateToDateString(request('dt_end'));
+            $pawn->dt = jsDateToDateTimeString(request('dt'));
+            $pawn->dt_end = jsDateToDateTimeString(request('dt_end'));
             $pawn->customer_id = request('customer_id');
             $pawn->price = request('price');
             $pawn->status = 'new';

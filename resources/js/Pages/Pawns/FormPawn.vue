@@ -1,27 +1,35 @@
 <template>
     <Dialog :visible="visible"
             @update:visible="$emit('update:visible',$event)"
-            header="ข้อมูลใบขายฝาก"
+            :header="'ข้อมูลใบขายฝาก ' + item.code"
             modal
             :closeOnEscape="false"
             :closable="false"
             class="max-w-7xl">
-        <div class="flex items-center justify-between">
-            <div class="p-fluid w-full p-grid">
-                <div class="p-field p-col-3">
-                    <div class="p-inputgroup">
+            <div class="flex space-x-2 w-full">
+                <div class="p-inputgroup w-60">
                         <span class="p-inputgroup-addon">
                             รหัส
                         </span>
-                        <InputText v-model="item.id" disabled></InputText>
-                        <Button v-show="item.prev_id" :label="item.prev_id"></Button>
-                        <Button v-show="item.next_id" :label="item.next_id"></Button>
-                    </div>
+                    <InputText v-model="item.code" disabled class="text-center"></InputText>
+                </div>
+                <div class="w-60">
+                    <Button icon="pi pi-file" v-show="item.prev_id"
+                            :label="'ใบเดิม : ' + item.prev_code"
+                            class="p-button-outlined p-button-secondary w-full"
+                            @click="load(item.prev_id)"></Button>
 
                 </div>
+                <div class="w-60">
+                    <Button icon="pi pi-file" v-show="item.next_id"
+                            :label="'ใบใหม่ : ' + item.next_code"
+                            class="p-button-outlined p-button-secondary w-full"
+                            @click="load(item.next_id)"></Button>
+                </div>
+
+                <pawn-status v-model="item.status" class="flex-1" badge></pawn-status>
             </div>
-            <pawn-status v-model="item.status" badge></pawn-status>
-        </div>
+
         <div class="p-grid p-fluid">
             <div class="p-md-6 p-pt-3">
                 <select-customer v-model="item.customer" force-selection
@@ -34,7 +42,7 @@
                             <label for="">จำนวนเงิน</label>
                             <InputNumber v-model="item.price"
                                          @input="onPriceChange($event)"
-                                         disabled></InputNumber>
+                                         class="text-right"></InputNumber>
                             <small class="p-error" v-if="v$.item.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
                         </div>
                         <div class="p-field p-md-4">
@@ -164,7 +172,6 @@
                         <Button label="เปลี่ยนใบ" class="p-button-warning"
                                 @click="actionChg"></Button>
                         <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
-                        <Button label="คัดออก" class="p-button-danger"></Button>
                     </div>
                     <div>
                         <Button label="พิมพ์" icon="pi pi-print"
@@ -273,6 +280,7 @@
                         </div>
                         <div class="p-field p-grid">
                             <div class="p-col-4">
+                                <label for="">ประเภท</label>
                                 <Dropdown v-model="action.isMore"
                                           :options="[{
                                                 value:true, name: 'เพิ่มเงิน'},{
@@ -282,9 +290,11 @@
                                 ></Dropdown>
                             </div>
                             <div class="p-col-4">
+                                <label for="">จำนวนเงิน</label>
                                 <InputNumber v-model="action.amountChange" input-class="text-right"></InputNumber>
                             </div>
                             <div class="p-col-4">
+                                <label for="">เงินต้นใหม่</label>
                                 <InputNumber v-model="action.newPrice" disabled input-class="text-right"></InputNumber>
                             </div>
                         </div>
@@ -322,7 +332,7 @@
         </template>
         <!--        end action dialog-->
     </Dialog>
-    <div id="printable" v-html="printHtml"></div>
+    <div id="printable" v-html="printHtml" class="p-d-none p-d-print-block"></div>
     <!--    begin cam-->
     <capture-image v-model:visible="camDialog" @captured="onCaptured"></capture-image>
     <OverlayPanel ref="opImg">
@@ -452,6 +462,18 @@ export default {
         'action.int': function (val) {
             if (this.action.type === 'red') {
                 this.action.amount = numeral(this.item.price).add(val ?? 0).value();
+            } else if (this.action.type === 'chg') {
+                this.updateChgAmount()
+            }
+        },
+        'action.amountChange': function (val) {
+            if (this.action.type === 'chg') {
+                this.updateChgAmount()
+            }
+        },
+        'action.isMore': function (val) {
+            if (this.action.type === 'chg') {
+                this.updateChgAmount()
             }
         }
     },
@@ -503,7 +525,7 @@ export default {
             let item = _.assign({}, this.pawnItem)
             this.item.items.push(item);
             this.clearDetailItem();
-            this.calcPrice();
+            // this.calcPrice();
         },
         removeItemItems(i) {
             this.item.items.splice(i, 1)
@@ -593,8 +615,14 @@ export default {
                     this.updateChgAmount();
                 })
         },
-        updateChgAmount(byNewPrice = false) {
-            
+        updateChgAmount() {
+            if (this.action.isMore) {
+                this.action.newPrice = numeral(this.item.price).add(this.action.amountChange).value()
+                this.action.amount = numeral(this.action.amountChange).subtract(this.action.int).value();
+            } else {
+                this.action.newPrice = numeral(this.item.price).subtract(this.action.amountChange).value()
+                this.action.amount = numeral(this.action.amountChange).add(this.action.int).value();
+            }
         },
         getPayments() {
             this.action.payments = [];
@@ -644,7 +672,7 @@ export default {
             this.camDialog = false;
         },
         clearItemImg(i) {
-            this.item.items[i].img[0] = null
+            this.item.items[i].img = null
         },
         toggleOpImg(e, img) {
             this.opImg = img;

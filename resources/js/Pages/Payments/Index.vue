@@ -14,7 +14,11 @@
             <Column field="id" header="#"></Column>
             <Column field="team.name" header="สาขา"></Column>
             <Column field="acc_date" header="วันที่บัญชี"></Column>
-            <Column field="dt" header="วันทำรายการ"></Column>
+            <Column field="dt" header="วันทำรายการ">
+                <template #body="props">
+                    {{ $filters.datetime(props.data.dt)}}
+                </template>
+            </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
             <Column field="receive" header="รับ"></Column>
             <Column field="pay" header="จ่าย"></Column>
