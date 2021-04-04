@@ -130,10 +130,11 @@
                 <Column field="img" header="ภาพ">
                     <template #body="props">
                         <div class="flex">
-                            <div v-if="props.data.img[0]" class="flex">
+                            <div v-if="props.data.img" class="flex">
                                 <img
-                                    :src="props.data.img[0].datatext" alt=""
-                                    class="h-10 w-10">
+                                    :src="props.data.img" alt=""
+                                    class="h-10 w-10"
+                                    @click="toggleOpImg($event,props.data.img)">
                                 <Button icon="pi pi-times"
                                         class="p-button-danger p-button-rounded ml-2"
                                         @click="clearItemImg(props.index)"></Button>
@@ -142,7 +143,6 @@
                             <Button icon="pi pi-camera" class="p-button-success p-button-rounded ml-2"
                                     @click="editItemImg(props.index)"></Button>
                         </div>
-
                     </template>
                 </Column>
                 <Column>
@@ -153,6 +153,7 @@
                     </template>
                 </Column>
             </DataTable>
+
         </div>
         <template #footer>
             <div class="flex items-center justify-between pt-2">
@@ -276,6 +277,9 @@
     <div id="printable" v-html="printHtml"></div>
     <!--    begin cam-->
     <capture-image v-model:visible="camDialog" @captured="onCaptured"></capture-image>
+    <OverlayPanel ref="opImg">
+        <img :src="opImg">
+    </OverlayPanel>
 
 </template>
 
@@ -335,7 +339,7 @@ export default {
                 gold_percent: '96',
                 product_type: null,
                 weight: 0,
-                price: 0
+                price: 0,
             },
             config: {},
             creating: true,
@@ -350,6 +354,7 @@ export default {
                 payments: []
             },
             editingItemIndex: 0,
+            opImg: null
         }
     },
     validations() {
@@ -443,11 +448,12 @@ export default {
                 gold_percent: '96',
                 product_type: null,
                 weight: 0,
-                price: 0
+                price: 0,
             }
         },
         addItem() {
-            this.item.items.push(_.assign({}, this.pawnItem));
+            let item = _.assign({}, this.pawnItem)
+            this.item.items.push(item);
             this.clearDetailItem();
             this.calcPrice();
         },
@@ -568,11 +574,15 @@ export default {
             this.camDialog = true;
         },
         onCaptured(e) {
-            this.item.items[this.editingItemIndex].img = [{datatext: e}];
+            this.item.items[this.editingItemIndex].img = e;
             this.camDialog = false;
         },
         clearItemImg(i) {
             this.item.items[i].img[0] = null
+        },
+        toggleOpImg(e, img) {
+            this.opImg = img;
+            this.$refs.opImg.toggle(e)
         },
         print() {
             axios.get(route('api.pawns.print', this.item.id))

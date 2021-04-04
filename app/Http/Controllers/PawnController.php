@@ -63,13 +63,14 @@ class PawnController extends Controller
             foreach ($request->input('items', []) as $item) {
                 $pawnitem = $pawn->items()->create($item);
 
-                $media = new Media([
-                    'type' => 'base64',
-                    'datatext' => $item['img']
-                ]);
-                $pawnitem->img()->save($media);
+                if (isset($item['img'])) {
+                    $media = new Media([
+                        'type' => 'base64',
+                        'datatext' => $item['img']
+                    ]);
+                    $pawnitem->images()->save($media);
+                }
             }
-
 
             $payment = new Payment([
                 'team_id' => $pawn->team_id,
@@ -124,18 +125,20 @@ class PawnController extends Controller
             $data['dt_end'] = jsDateToDateString($data['dt_end']);
             $pawn->update($data);
 
-            foreach($pawn->items as $item) {
-                $item->img()->delete();
+            foreach ($pawn->items as $item) {
+                $item->images()->delete();
             }
             $pawn->items()->delete();
             foreach (request('items', []) as $item) {
                 $pawnitem = $pawn->items()->create($item);
 
-                $media = new Media([
-                    'type' => 'base64',
-                    'datatext' => $item['img'][0]['datatext']
-                ]);
-                $pawnitem->img()->save($media);
+                if (isset($item['img'])) {
+                    $media = new Media([
+                        'type' => 'base64',
+                        'datatext' => $item['img']
+                    ]);
+                    $pawnitem->images()->save($media);
+                }
             }
         });
 

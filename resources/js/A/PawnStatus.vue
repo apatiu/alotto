@@ -1,5 +1,5 @@
 <template>
-    <div :class="classObject">{{ title }}</div>
+    <div :class="classObject" class="whitespace-nowrap">{{ title }}</div>
 </template>
 
 <script>
@@ -14,6 +14,7 @@ export default {
             return {
                 'px-6 py-2 rounded font-bold': this.badge,
                 'bg-green-100': this.modelValue === 'new',
+                'bg-green-400 text-white': this.modelValue === 'int',
                 'bg-gray-100': this.modelValue === 'red',
             }
         },

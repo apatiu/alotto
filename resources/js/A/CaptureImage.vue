@@ -65,7 +65,9 @@ export default {
            if (!val) {
                this.$refs.webcam.stop();
            } else {
-               this.$refs.webcam.start();
+               this.$nextTick(() => {
+                   this.$refs.webcam.start();
+               })
            }
         },
         camera: function (id) {
