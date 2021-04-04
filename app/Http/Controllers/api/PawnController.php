@@ -54,7 +54,7 @@ class PawnController extends Controller
      */
     public function show(Pawn $pawn)
     {
-        return $pawn->load(['items','items.img', 'customer', 'int_receives']);
+        return $pawn->load(['items', 'customer', 'int_receives']);
     }
 
     /**
@@ -198,7 +198,7 @@ class PawnController extends Controller
 
         }
 
-        return $pawn->load(['items','items.img', 'payments', 'customer', 'int_receives']);
+        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
     }
 
     public function print_ticket(Pawn $pawn)

@@ -161,7 +161,8 @@
                     <div v-show="actionable">
                         <Button label="ต่อดอก" class="p-button-info"
                                 @click="actionInt"></Button>
-                        <Button label="เปลี่ยนใบ" class="p-button-warning"></Button>
+                        <Button label="เปลี่ยนใบ" class="p-button-warning"
+                                @click="actionChg"></Button>
                         <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
                         <Button label="คัดออก" class="p-button-danger"></Button>
                     </div>
@@ -210,7 +211,6 @@
 
                     </div>
                 </div>
-
                 <div v-if="action.type==='red'">
                     <h1 class="text-2xl">ไถ่ถอน</h1>
                     <div class="p-fluid p-mt-4">
@@ -238,6 +238,54 @@
                             <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
                             <div class="p-col">
                                 <InputNumber v-model="item.price" disabled input-class="text-right"></InputNumber>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div v-if="action.type==='chg'">
+                    <h1 class="text-2xl">เปลี่ยนใบ</h1>
+                    <div class="p-fluid p-mt-4">
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed" style="width: 100px;">ระยะเวลา</label>
+                            <div class="p-col">
+                                <InputNumber suffix=" เดือน" v-model="action.months" disabled
+                                             class="text-right"></InputNumber>
+                            </div>
+                            <div class="p-col">
+                                <InputNumber suffix=" วัน" v-model="action.days" disabled
+                                             class="text-right"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-fixed" style="width: 100px;">ดอกเบี้ย</div>
+                            <div class="p-col">
+                                <InputNumber v-model="action.int"
+                                             input-class="text-right"
+                                             :min="0"
+                                             @input="action.int=$event.value"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
+                            <div class="p-col">
+                                <InputNumber v-model="item.price" disabled input-class="text-right"></InputNumber>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <div class="p-col-4">
+                                <Dropdown v-model="action.isMore"
+                                          :options="[{
+                                                value:true, name: 'เพิ่มเงิน'},{
+                                                value:false, name: 'ลดต้น' }]"
+                                          optionValue="value"
+                                          optionLabel="name"
+                                ></Dropdown>
+                            </div>
+                            <div class="p-col-4">
+                                <InputNumber v-model="action.amountChange" input-class="text-right"></InputNumber>
+                            </div>
+                            <div class="p-col-4">
+                                <InputNumber v-model="action.newPrice" disabled input-class="text-right"></InputNumber>
                             </div>
                         </div>
                     </div>
@@ -529,6 +577,24 @@ export default {
                     this.payments = [];
                     this.actioning = true;
                 })
+        },
+        actionChg() {
+            axios.get(route('api.pawns.todayInt', this.item.id))
+                .then((res) => {
+                    this.action.type = 'chg';
+                    this.action.dt = new Date();
+                    this.action.months = res.data.months;
+                    this.action.days = res.data.days;
+                    this.action.int = res.data.int;
+                    this.action.isMore = true;
+                    this.action.amountChange = 0;
+                    this.payments = [];
+                    this.actioning = true;
+                    this.updateChgAmount();
+                })
+        },
+        updateChgAmount(byNewPrice = false) {
+            
         },
         getPayments() {
             this.action.payments = [];
