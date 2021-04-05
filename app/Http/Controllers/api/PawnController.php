@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Helpers\MetaHelper;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
+use App\Models\Media;
 use App\Models\Pawn;
 use App\Models\PawnIntReceive;
 use App\Models\Payment;
@@ -91,7 +92,7 @@ class PawnController extends Controller
 
         $int = ($intPerMonth * $months) + $int_days;
 
-        $int_min = MetaHelper::get('pawn_int_min',0);
+        $int_min = MetaHelper::get('pawn_int_min', 0);
 
         $int = ($int_min > $int) ? $int_min : $int;
 
@@ -164,6 +165,7 @@ class PawnController extends Controller
                 }
 
             });
+            return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
         } elseif (request('type') == 'red') {
 
             DB::transaction(function () use ($pawn, $team_id) {
@@ -191,14 +193,67 @@ class PawnController extends Controller
 
                     $pawn->payments()->save($p);
                     $int->payments()->attach($p);
+                }
+            });
+            return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
+        } elseif (request('type') == 'chg') {
+            $newPawn = null;
+            DB::transaction(function () use ($pawn, &$newPawn, $team_id) {
+                $intReceive = null;
+                $pawn->status = 'chg';
+                $pawn->save();
 
+                if (request('int') > 0) {
+                    $int = $pawn->int_receives()->create([
+                        'dt' => jsDateToDateTimeString(request('dt')),
+                        'dt_end' => null,
+                        'amount' => request('int'),
+                    ]);
                 }
 
-            });
+                foreach (request('payments') as $payment) {
+                    $p = new Payment([
+                        'team_id' => $team_id,
+                        'payment_no' => 0,
+                        'dt' => jsDateToDateTimeString($payment['dt']),
+                        'method' => $payment['method'],
+                        'payment_type_id' => request('isMore') ? 'mor' : 'les'
+                    ]);
 
+                    if (request('isMore')) {
+                        $p->pay = $payment['amount'];
+                    } else {
+                        $p->receive = $payment['amount'];
+                    }
+
+                    $pawn->payments()->save($p);
+                    $int->payments()->attach($p);
+                }
+
+                $newPawn = $pawn->replicate();
+                $newPawn->price = request('newPrice');
+                $newPawn->prev_id = $pawn->id;
+                $newPawn->status = 'new';
+                $newPawn->push();
+
+
+                $pawn->refresh();
+
+                foreach ($pawn->items as $item) {
+                    $newItem = $newPawn->items()->create($item->replicate()->toArray());
+                    foreach ($item->images as $image) {
+                        $newImage = new Media($image->replicate()->toArray());
+                        $newItem->images()->save($newImage);
+                    }
+                }
+
+                $pawn->next_id = $newPawn->id;
+                $pawn->save();
+            });
+            return $newPawn->load(['items', 'payments', 'customer', 'int_receives']);
         }
 
-        return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
+
     }
 
     public function print_ticket(Pawn $pawn)
