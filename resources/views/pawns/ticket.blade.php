@@ -1,21 +1,24 @@
 <div class="flex space-x-4">
     <div class="flex-1">
-        <div class="flex space-x-2">
-            <div>logo</div>
+        <div class="flex items-center space-x-2">
+            <div class="w-1/12">
+                <img src="{{ \App\Http\Helpers\MetaHelper::get('company_logo_url','company-logo/default.png') }}"
+                     alt="">
+            </div>
             <div class="flex-1 text-center">สัญญา</div>
-            <div>{{ $pawn->id }}</div>
+            <div>{{ $pawn->code }}</div>
         </div>
         <div class="flex space-x-2">
-            <div>ชื่อ:</div>
+            <div class="w-1/6">ชื่อ:</div>
             <div>{{ $pawn->customer->name }}</div>
         </div>
         <div class="flex space-x-2">
-            <div>ที่อยู่:</div>
+            <div class="w-1/6">ที่อยู่:</div>
             <div>{{ $pawn->customer->address }}</div>
         </div>
         <div class="flex space-x-2">
-            <div>จำนวนเงิน:</div>
-            <div>{{ $pawn->price }}</div>
+            <div class="w-1/6">จำนวนเงิน:</div>
+            <div>{{ number_format($pawn->price) }} บาท</div>
         </div>
         <table class="w-full">
             <thead>

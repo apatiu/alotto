@@ -12,13 +12,14 @@ export default {
     computed: {
         classObject() {
             return {
-                'whitespace-nowrap rounded-3xl' : true,
+                'whitespace-nowrap rounded-3xl w-full' : true,
                 'px-6 py-2 font-bold text-center': this.badge,
                 'px-6 py-1 rounded text-center': !this.badge,
                 'bg-green-100': this.modelValue === 'new',
                 'bg-green-400 text-white': this.modelValue === 'int',
                 'bg-gray-100': this.modelValue === 'red',
                 'bg-yellow-100': this.modelValue === 'chg',
+                'border': this.modelValue === 'cut',
             }
         },
         title() {
@@ -31,6 +32,8 @@ export default {
                     return 'ไถ่ถอน';
                 case 'chg':
                     return 'เปลี่ยนใบ';
+                case 'cut':
+                    return 'คัดออก';
             }
         }
     }

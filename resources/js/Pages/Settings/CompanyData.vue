@@ -15,11 +15,13 @@
                        ref="photo"
                        @change="updatePhotoPreview">
 
-                <jet-label for="photo" value="Photo"/>
+                <jet-label for="photo" value="โลโก้"/>
 
                 <!-- Current Profile Photo -->
                 <div class="mt-2" v-show="! photoPreview">
-                    <img :src="company.logo_url" :alt="company.name" class="rounded-full h-20 w-20 object-cover">
+                    <img :src="company.logo_url"
+                         :alt="company.name"
+                         class="rounded-full h-20 w-20 object-cover">
                 </div>
 
                 <!-- New Profile Photo Preview -->
@@ -42,9 +44,9 @@
             </div>
 
             <!--             Name-->
-            <div class="col-span-6 sm:col-span-8">
+            <div class="col-span-6 sm:col-span-8 p-field mt-4">
                 <jet-label for="name" value="ชื่อบริษัท"/>
-                <jet-input id="name" type="text" class="mt-1 block w-full"
+                <InputText id="name"
                            v-model="form.name" autocomplete="name"/>
                 <jet-input-error :message="form.errors.name" class="mt-2"/>
             </div>
@@ -77,7 +79,7 @@
                 Saved.
             </jet-action-message>
 
-            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="updateCompanyData">
                 Save
             </Button>
         </template>
@@ -115,6 +117,7 @@ export default {
                 addr: this.company.addr,
                 tel: this.company.tel,
                 tax_id: this.company.tax_id,
+                logo_url: null,
                 photo: null,
             }),
 

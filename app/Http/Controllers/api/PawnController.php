@@ -206,7 +206,7 @@ class PawnController extends Controller
                 if (request('int') > 0) {
                     $int = $pawn->int_receives()->create([
                         'dt' => jsDateToDateTimeString(request('dt')),
-                        'dt_end' => null,
+                        'dt_end' => jsDateToDateTimeString(request('dt_ned')),
                         'amount' => request('int'),
                     ]);
                 }
@@ -236,9 +236,7 @@ class PawnController extends Controller
                 $newPawn->status = 'new';
                 $newPawn->push();
 
-
                 $pawn->refresh();
-
                 foreach ($pawn->items as $item) {
                     $newItem = $newPawn->items()->create($item->replicate()->toArray());
                     foreach ($item->images as $image) {
@@ -247,10 +245,24 @@ class PawnController extends Controller
                     }
                 }
 
+
+                $avgPricePerGram = $newPawn->price / $newPawn->weight;
+                foreach ($newPawn->items as $item) {
+                    $item->price = $avgPricePerGram * $item->weight;
+                    $item->save();
+                }
+
                 $pawn->next_id = $newPawn->id;
                 $pawn->save();
             });
             return $newPawn->load(['items', 'payments', 'customer', 'int_receives']);
+        }elseif (request('type') == 'cut') {
+
+            DB::transaction(function () use ($pawn, &$newPawn, $team_id) {
+                $pawn->status = 'cut';
+                $pawn->save();
+            });
+            return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
         }
 
 

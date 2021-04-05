@@ -18,12 +18,33 @@ class PawnController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function index()
     {
+        $data = Pawn::with(['customer','team']);
+        $filters = [];
+
+        if (request()->has('filters')) {
+            $filters = request('filters');
+        } else {
+            $filters = [
+                'status' => 'new,int'
+            ];
+        }
+
+        if ($filters['status']) {
+            $data->whereIn('status', explode(',', $filters['status']));
+        }
+
+        $pagination = request('pagination',[
+            'rowsPerPage'=> 12
+        ]);
+
         return Inertia::render('Pawns/Index', [
-            'data' => Pawn::with(['customer'])->get(),
+            'filters' => $filters,
+            'pagination' => $pagination,
+            'data' => $data->paginate($pagination['rowsPerPage']),
             'new_id' => session('new', 0)
         ]);
     }

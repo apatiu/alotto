@@ -1,34 +1,31 @@
 <template>
     <Dialog :visible="visible"
             @update:visible="$emit('update:visible',$event)"
-            :header="'ข้อมูลใบขายฝาก ' + item.code"
+            :header="creating ? 'รับขายฝาก' : 'ข้อมูลใบขายฝาก ' + item.code"
             modal
             :closeOnEscape="false"
             :closable="false"
             class="max-w-7xl">
-            <div class="flex space-x-2 w-full">
-                <div class="p-inputgroup w-60">
-                        <span class="p-inputgroup-addon">
-                            รหัส
-                        </span>
-                    <InputText v-model="item.code" disabled class="text-center"></InputText>
-                </div>
-                <div class="w-60">
-                    <Button icon="pi pi-file" v-show="item.prev_id"
-                            :label="'ใบเดิม : ' + item.prev_code"
-                            class="p-button-outlined p-button-secondary w-full"
-                            @click="load(item.prev_id)"></Button>
-
-                </div>
-                <div class="w-60">
-                    <Button icon="pi pi-file" v-show="item.next_id"
-                            :label="'ใบใหม่ : ' + item.next_code"
-                            class="p-button-outlined p-button-secondary w-full"
-                            @click="load(item.next_id)"></Button>
-                </div>
-
-                <pawn-status v-model="item.status" class="flex-1" badge></pawn-status>
+        <div class="flex space-x-2 w-full py-6" :class="bodyClass">
+            <div class="w-60">
+                <div class="text-xl text-center border rounded px-6 py-1 h-10 border-black"> {{ item.code }}</div>
             </div>
+            <div class="w-60">
+                <Button icon="pi pi-file" v-show="item.prev_id"
+                        :label="'ใบเดิม : ' + item.prev_code"
+                        class="p-button-outlined p-button-secondary w-full"
+                        @click="load(item.prev_id)"></Button>
+
+            </div>
+            <div class="w-60">
+                <Button icon="pi pi-file" v-show="item.next_id"
+                        :label="'ใบใหม่ : ' + item.next_code"
+                        class="p-button-outlined p-button-secondary w-full"
+                        @click="load(item.next_id)"></Button>
+            </div>
+
+            <pawn-status v-model="item.status" class="flex-1" badge></pawn-status>
+        </div>
 
         <div class="p-grid p-fluid">
             <div class="p-md-6 p-pt-3">
@@ -42,7 +39,8 @@
                             <label for="">จำนวนเงิน</label>
                             <InputNumber v-model="item.price"
                                          @input="onPriceChange($event)"
-                                         class="text-right"></InputNumber>
+                                         class="text-right"
+                                         disabled></InputNumber>
                             <small class="p-error" v-if="v$.item.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
                         </div>
                         <div class="p-field p-md-4">
@@ -104,7 +102,8 @@
                 </DataTable>
             </div>
         </div>
-        <div class="p-fluid p-grid mt-6" v-if="actionable || creating">
+        <!--        add item-->
+        <div class="p-fluid p-grid mt-6" v-if="creating">
             <div class="p-col-2">
                 <select-gold-percent v-model="pawnItem.gold_percent"/>
             </div>
@@ -129,6 +128,8 @@
             </div>
 
         </div>
+
+        <!--        items table-->
         <div class="w-full mt-2">
             <DataTable :value="item.items" class="p-datatable-sm">
                 <Column field="gold_percent" header="% ทอง"></Column>
@@ -155,9 +156,10 @@
                 </Column>
                 <Column>
                     <template #body="slotProps">
-                        <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
-                                @click="removeItemItems(slotProps.index)"
-                                v-if="actionable || creating"></Button>
+                        <Button
+                            icon="pi pi-trash" class="p-button-rounded p-button-text"
+                            @click="removeItemItems(slotProps.index)"
+                            v-if="(item.items.length > 1 ) && (actionable || creating)"></Button>
                     </template>
                 </Column>
             </DataTable>
@@ -172,6 +174,10 @@
                         <Button label="เปลี่ยนใบ" class="p-button-warning"
                                 @click="actionChg"></Button>
                         <Button label="ไถ่ถอน" class="p-button-success" @click="actionRed"></Button>
+                        <Button label="คัดออก"
+                                class="p-button-danger ml-10"
+                                @click="actionCut"
+                                v-if="item.status === 'new' || item.status ==='int'"></Button>
                     </div>
                     <div>
                         <Button label="พิมพ์" icon="pi pi-print"
@@ -525,7 +531,7 @@ export default {
             let item = _.assign({}, this.pawnItem)
             this.item.items.push(item);
             this.clearDetailItem();
-            // this.calcPrice();
+            this.calcPrice();
         },
         removeItemItems(i) {
             this.item.items.splice(i, 1)
@@ -614,6 +620,31 @@ export default {
                     this.actioning = true;
                     this.updateChgAmount();
                 })
+        },
+        actionCut() {
+            this.$confirm.require({
+                message: 'ท่านแน่ใจว่าต้องการคัดออก?',
+                header: 'กรุณายืนยัน',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.action.type = 'cut';
+                    //callback to execute when user confirms the action
+                    axios.post(route('api.pawns.storeAction', this.item.id), this.action)
+                        .then(response => {
+                            this.actioning = false;
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'สำเร็จ',
+                                detail: 'บันทึกรายการแล้ว',
+                                life: 3000
+                            })
+                            this.item = this.transformItem(response.data)
+                        });
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
         },
         updateChgAmount() {
             if (this.action.isMore) {

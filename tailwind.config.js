@@ -10,10 +10,21 @@ module.exports = {
     ],
 
     theme: {
+        minWidth: {
+            '0': '0',
+            '1/4': '25%',
+            '1/2': '50%',
+            '3/4': '75%',
+            'full': '100%',
+            '80': '80px',
+            '100': '100px',
+            '150': '150px',
+            '200': '200px',
+        },
         extend: {
-            fontFamily: {
-                sans: ['Nunito', ...defaultTheme.fontFamily.sans],
-            },
+            // fontFamily: {
+            //     sans: ['Nunito', ...defaultTheme.fontFamily.sans],
+            // },
         },
     },
 
