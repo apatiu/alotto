@@ -5,7 +5,7 @@
             modal
             :closeOnEscape="false"
             :closable="false"
-            class="max-w-7xl">
+            class="max-w-4xl">
         <div class="flex space-x-2 w-full py-6" :class="bodyClass">
             <div class="w-60">
                 <div class="text-xl text-center border rounded px-6 py-1 h-10 border-black"> {{ item.code }}</div>
@@ -35,7 +35,7 @@
 
                 <div class="p-fluid">
                     <div class="p-grid">
-                        <div class="p-field p-md-5">
+                        <div class="p-field p-md-4">
                             <label for="">จำนวนเงิน</label>
                             <InputNumber v-model="item.price"
                                          @input="onPriceChange($event)"
@@ -47,14 +47,14 @@
                             <label for="">อัตราดอกเบี้ย</label>
                             <InputNumber v-model="item.int_rate" :disabled="!actionable && !creating"></InputNumber>
                         </div>
-                        <div class="p-field p-md-3">
+                        <div class="p-field p-md-4">
                             <label for="">ดอกเบี้ย/เดือน</label>
                             <InputNumber v-model="item.int_per_month" disabled></InputNumber>
                         </div>
                     </div>
                     <div class="p-grid">
 
-                        <div class="p-field p-md-5">
+                        <div class="p-field p-md-4">
                             <label for="">วันที่รับ</label>
                             <Calendar v-model="item.dt"
                                       :disabled="!actionable  && !creating"></Calendar>
@@ -64,7 +64,7 @@
                             <Calendar v-model="item.dt_end"
                                       :disabled="!actionable  && !creating"></Calendar>
                         </div>
-                        <div class="p-field p-md-3">
+                        <div class="p-field p-md-4">
                             <label for="">อายุสัญญา</label>
                             <InputNumber v-model="item.life" showButtons
                                          :disabled="!actionable  && !creating"></InputNumber>
@@ -135,23 +135,14 @@
                 <Column field="gold_percent" header="% ทอง"></Column>
                 <Column field="product_type" header="ประเภท"></Column>
                 <Column field="weight" header="น้ำหนัก"></Column>
-                <Column field="price" header="ราคา"></Column>
-                <Column field="img" header="ภาพ">
+                <Column field="price" header="ราคา" class="text-right">
                     <template #body="props">
-                        <div class="flex">
-                            <div v-if="props.data.img" class="flex">
-                                <img
-                                    :src="props.data.img" alt=""
-                                    class="h-10 w-10"
-                                    @click="toggleOpImg($event,props.data.img)">
-                                <Button icon="pi pi-times"
-                                        class="p-button-danger p-button-rounded ml-2"
-                                        @click="clearItemImg(props.index)"></Button>
-                            </div>
-
-                            <Button icon="pi pi-camera" class="p-button-success p-button-rounded ml-2"
-                                    @click="editItemImg(props.index)"></Button>
-                        </div>
+                        {{ $filters.decimal(props.data.price) }}
+                    </template>
+                </Column>
+                <Column field="img" header="ภาพ" class="text-center">
+                    <template #body="props">
+                        <input-image v-model="props.data.img"/>
                     </template>
                 </Column>
                 <Column>
@@ -339,11 +330,7 @@
         <!--        end action dialog-->
     </Dialog>
     <div id="printable" v-html="printHtml" class="p-d-none p-d-print-block"></div>
-    <!--    begin cam-->
-    <capture-image v-model:visible="camDialog" @captured="onCaptured"></capture-image>
-    <OverlayPanel ref="opImg">
-        <img :src="opImg">
-    </OverlayPanel>
+
 
 </template>
 
@@ -358,6 +345,7 @@ import ActionMessage from "@/Jetstream/ActionMessage";
 import InputPayment from "@/A/InputPayment";
 import PawnStatus from "@/A/PawnStatus";
 import CaptureImage from "@/A/CaptureImage";
+import InputImage from "@/A/InputImage";
 
 export default {
     name: "FormPawn",
@@ -367,7 +355,7 @@ export default {
         }
     },
     components: {
-        CaptureImage,
+        InputImage,
         PawnStatus,
         InputPayment, ActionMessage, InputWeight, SelectProductType, SelectGoldPercent, SelectCustomer
     },
@@ -375,7 +363,6 @@ export default {
     data() {
         return {
             paymentDialog: false,
-            camDialog: false,
             saved: false,
             printHtml: null,
             form: this.$inertia.form({
@@ -418,7 +405,6 @@ export default {
                 payments: []
             },
             editingItemIndex: 0,
-            opImg: null
         }
     },
     validations() {
@@ -555,24 +541,20 @@ export default {
 
             this.v$.$touch();
             if (this.v$.$error) return;
-            console.log(this.item);
-
             _.assign(this.form, this.item);
-            console.log(this.form);
             if (!this.item.id) {
-                this.form.post(route('pawns.store'), {
-                    preserveState: true,
-                    preserveScroll: true,
-                    onSuccess: (res) => {
-                        console.log(res);
-                        this.load(res.props.new_id)
-                    }
-                })
+                axios.post(route('api.pawns.store'), this.item)
+                    .then(res => {
+                            console.log(res);
+                            this.load(res.data.id);
+                        }
+                    )
             } else {
-                this.form.put(route('pawns.update', this.form.id), {
-                    preserveState: true,
-                    preserveScroll: true,
-                })
+                axios.put(route('api.pawns.update', this.form.id), this.item)
+                    .then(res => {
+                        this.notify('บันทึกข้อมูลแล้ว');
+                        this.load(res.data.id);
+                    })
             }
         },
         actionInt() {
@@ -694,21 +676,7 @@ export default {
 
 
         },
-        editItemImg(index) {
-            this.editingItemIndex = index;
-            this.camDialog = true;
-        },
-        onCaptured(e) {
-            this.item.items[this.editingItemIndex].img = e;
-            this.camDialog = false;
-        },
-        clearItemImg(i) {
-            this.item.items[i].img = null
-        },
-        toggleOpImg(e, img) {
-            this.opImg = img;
-            this.$refs.opImg.toggle(e)
-        },
+
         print() {
             axios.get(route('api.pawns.print', this.item.id))
                 .then(response => {

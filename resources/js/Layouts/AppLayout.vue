@@ -1,5 +1,5 @@
 <template>
-    <Toast position="top-center"/>
+    <Toast :baseZIndex="9999" :autoZIndex="false"/>
     <ConfirmDialog></ConfirmDialog>
     <div class="layout-wrapper">
         <AppTopBar></AppTopBar>

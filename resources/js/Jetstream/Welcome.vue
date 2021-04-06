@@ -20,13 +20,15 @@
         <div class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-2">
             <div class="p-6">
                 <div class="flex items-center">
-                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-400"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold"><a href="https://laravel.com/docs">Documentation</a></div>
+                    <img src="/icon/svg/clipboard-list.svg" class="w-8 h-8" alt="">
+                   <div class="ml-4 text-lg text-gray-600 leading-7 font-semibold">
+                        <a href="https://laravel.com/docs">งานขายฝาก</a></div>
                 </div>
 
                 <div class="ml-12">
                     <div class="mt-2 text-sm text-gray-500">
-                        Laravel has wonderful documentation covering every aspect of the framework. Whether you're new to the framework or have previous experience, we recommend reading all of the documentation from beginning to end.
+                        <Button icon="pi pi-plus" label="รับขายฝาก" @click="pawnCreate"></Button>
+                        <form-pawn v-model:visible="pawnDialog"></form-pawn>
                     </div>
 
                     <a href="https://laravel.com/docs">
@@ -95,10 +97,22 @@
 
 <script>
     import JetApplicationLogo from '@/Jetstream/ApplicationLogo'
+    import FormPawn from "@/Pages/Pawns/FormPawn";
 
     export default {
         components: {
+            FormPawn,
             JetApplicationLogo,
         },
+        data() {
+            return {
+                pawnDialog: false
+            }
+        },
+        methods: {
+            pawnCreate() {
+                this.pawnDialog = true;
+            }
+        }
     }
 </script>

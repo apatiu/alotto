@@ -140,6 +140,14 @@ app.config.globalProperties.$filters = {
     }
 }
 
+app.mixin({
+    methods: {
+        notify(summary, severity = 'success', detail = '', life = 3000) {
+            this.$toast.add({severity: severity, summary: summary, detail: detail, life: life})
+        }
+    }
+})
+
 app.directive('tooltip', Tooltip);
 app.directive('ripple', Ripple);
 // app.directive('code', CodeHighlight);

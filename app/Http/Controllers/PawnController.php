@@ -45,7 +45,7 @@ class PawnController extends Controller
             'filters' => $filters,
             'pagination' => $pagination,
             'data' => $data->paginate($pagination['rowsPerPage']),
-            'new_id' => session('new', 0)
+            'new_id' => session('new-pawn-id', 0)
         ]);
     }
 
@@ -104,7 +104,7 @@ class PawnController extends Controller
 
             $pawn->payments()->save($payment);
         });
-        return redirect()->back()->with('new', $pawn->id);
+        return redirect()->back()->with('new-pawn-id', $pawn->id);
     }
 
     /**

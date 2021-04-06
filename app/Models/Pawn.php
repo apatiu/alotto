@@ -25,12 +25,14 @@ class Pawn extends Model
 
     public function getPrevCodeAttribute()
     {
-        return substr('0000' . $this->attributes['prev_id'], -5);
+        if (!empty($this->attributes['prev_id']))
+            return substr('0000' . $this->attributes['prev_id'], -5);
     }
 
     public function getNextCodeAttribute()
     {
-        return substr('0000' . $this->attributes['next_id'], -5);
+        if (!empty($this->attributes['next_id']))
+            return substr('0000' . $this->attributes['next_id'], -5);
     }
 
     public function team()

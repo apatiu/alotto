@@ -1,7 +1,7 @@
 <template>
 
     <Dialog :visible="visible"
-            style="width: 750px; "
+            style="width: 750px; min-height: 330px; "
             :closable="false"
             :closeOnEscape="false"
             modal>
