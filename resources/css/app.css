@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    font-size: 14px;
+}
+
 .p-toast-message-content {
     border-style: initial;
 }

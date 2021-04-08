@@ -1,5 +1,5 @@
 <template>
-    <label for="">ประเภทสินค้า</label>
+    <label for="" v-if="showLabel">ประเภทสินค้า</label>
     <AutoComplete :modelValue="modelValue"
                   @update:modelValue="$event.name ? $emit('update:modelValue',$event.name) : $emit('update:modelValue',$event)"
                   :suggestions="filteredTypes"
@@ -8,7 +8,10 @@
                   :dropdown="true"
                   :forceSelection="forceSelection"
                   class="w-full"
+                  :class="{'p-invalid': errors.length}"
+                  placeholder="แบบสินค้า"
     ></AutoComplete>
+    <small class="p-error" v-show="errors.length">เลือกแบบสินค้า</small>
 
 
 </template>
@@ -18,7 +21,9 @@ export default {
     name: "SelectProductType",
     props: {
         modelValue: {default: {}},
-        forceSelection: {default: false}
+        forceSelection: {default: false},
+        errors: {default: []},
+        showLabel: {type: Boolean, default: true}
     },
     data() {
         return {
@@ -31,13 +36,12 @@ export default {
             this.types = response.data
         })
     },
-    methods:{
+    methods: {
         search(event) {
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.filteredTypes = [...this.types];
-                }
-                else {
+                } else {
                     this.filteredTypes = this.types.filter((type) => {
                         return type.name.toLowerCase().startsWith(event.query.toLowerCase());
                     });
