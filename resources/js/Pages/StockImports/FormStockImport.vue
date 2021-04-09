@@ -2,7 +2,9 @@
     <div class="py-4 px-6">
         <div class="p-grid">
             <div class="p-col"><h1 class="text-2xl mb-6">ใบรับสินค้า</h1></div>
-            <div class="p-col p-text-right"><stock-import-status v-model:value="form.status"></stock-import-status></div>
+            <div class="p-col p-text-right">
+                <stock-import-status v-model:value="form.status"></stock-import-status>
+            </div>
         </div>
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
@@ -40,8 +42,8 @@
             <Column field="product_weight" header="น้ำหนักต่อชิ้น">
                 <template #body="slotProps">
                     {{
-                        slotProps.data.product_weightbaht ? slotProps.data.product_weight * 15.2 :
-                            slotProps.data.product_weight
+                        slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
+                            slotProps.data.product_weight.toFixed(2)
                     }}
                 </template>
             </Column>
@@ -155,7 +157,7 @@
                         </small>
                     </div>
                     <div class="p-field p-col-4">
-                        <input-weight :model-value="[v$.product.weight.$model,product.weightbaht]"
+                        <input-weight :model-value="{weight:  v$.product.weight.$model, weightbaht: product.weightbaht}"
                                       @update:model-value="updateProductWeight"></input-weight>
                         <input-error class="p-error"
                                      :errors="v$.product.weight.$errors"></input-error>
@@ -473,10 +475,10 @@ export default {
     },
     computed: {
         product_weight_total() {
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-            return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
+            let w = this.product.weight;
+            if (this.product.weightbaht)
+                w = w * 15.2;
+            return numeral((this.line.qty ?? 0) * w).value().toFixed(2)
         },
         isApproved() {
             return this.form.status;
@@ -493,8 +495,8 @@ export default {
             this.creatingLine = true;
         },
         updateProductWeight(event) {
-            this.product.weight = event[0]
-            this.product.weightbaht = event[1]
+            this.product.weight = event.weight
+            this.product.weightbaht = event.weightbaht
         },
         checkProduct() {
 
@@ -609,17 +611,18 @@ export default {
                 this.form.put(route('stock-imports.update', this.form.id), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
-                    onSuccess: () => {
+                    onSuccess: (res) => {
                         this.$toast.add({severity: 'success', summary: 'บันทึกข้อมูลแล้ว', life: 3000})
-                        this.form.data(this.item);
+                        _.assign(this.form, res.props.item);
                     }
                 })
             } else {
                 this.form.post(route('stock-imports.store'), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
-                    onSuccess: () => {
-                        _.assign(this.form, this.item);
+                    onSuccess: (res) => {
+                        console.log(res)
+                        _.assign(this.form, res.props.item);
                     }
                 })
             }

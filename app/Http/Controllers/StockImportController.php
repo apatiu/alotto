@@ -91,7 +91,18 @@ class StockImportController extends Controller
         DB::transaction(function () use ($request, $data) {
             tap(StockImport::create($data), function (StockImport $stockImport) use ($request) {
                 $stockImport->lines()->createMany($request->input('lines', []));
+                if ($request->input('status') == 'approve-request') {
+
+                    $stockImport->refresh();
+                    foreach ($stockImport->lines as $line) {
+                        $this->line_product_processing($line);
+                    }
+                    $stockImport->status = 'approved';
+                    $stockImport->save();
+                    $this->updateStockCard($stockImport);
+                };
             });
+
 
         });
 
@@ -133,6 +144,7 @@ class StockImportController extends Controller
     public function edit(StockImport $stockImport)
     {
         $stockImport->load('lines');
+
         return Inertia::render('StockImports/FormStockImport', [
             'item' => $stockImport,
             'suppliers' => Supplier::all(),
@@ -159,9 +171,9 @@ class StockImportController extends Controller
             ->validateWithBag('stockImportBag');
 
         $data = $request->all();
+        $data['dt'] = jsDateToDateString($data['dt']);
+
         DB::transaction(function () use ($data, $stockImport) {
-            $data['dt'] =
-            $approve_request = false;
 
             $stockImport->fill($data)->save();
             $stockImport->lines()->delete();
@@ -178,7 +190,7 @@ class StockImportController extends Controller
                 $this->updateStockCard($stockImport);
             };
         });
-
+        $stockImport->refresh();
         return redirect()->back();
     }
 

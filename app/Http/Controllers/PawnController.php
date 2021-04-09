@@ -22,7 +22,7 @@ class PawnController extends Controller
      */
     public function index()
     {
-        $data = Pawn::with(['customer','team']);
+        $data = Pawn::with(['customer', 'team']);
         $filters = [];
 
         if (request()->has('filters')) {
@@ -33,14 +33,25 @@ class PawnController extends Controller
             ];
         }
 
+
+        if (isset($filters['q'])) {
+            $data->where(function ($q) use ($filters) {
+                $q->where('id', 'like', "%{$filters['q']}%");
+                $q->orWhereHas('customer', function ($query) use ($filters) {
+                    return $query->where('name', 'like', "%{$filters['q']}%");
+                });
+            });
+        }
+
+
         if ($filters['status']) {
             $data->whereIn('status', explode(',', $filters['status']));
         }
 
-        $pagination = request('pagination',[
-            'rowsPerPage'=> 12
+        $pagination = request('pagination', [
+            'rowsPerPage' => 12
         ]);
-
+//        dd($data->toSql());
         return Inertia::render('Pawns/Index', [
             'filters' => $filters,
             'pagination' => $pagination,

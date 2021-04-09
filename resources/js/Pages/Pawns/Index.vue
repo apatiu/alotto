@@ -5,13 +5,16 @@
         </div>
         <div class="p-formgroup-inline justify-end items-center">
             <div class="p-field">
-                <select-pawn-status v-model="filter.status"/>
+                <InputText ref="inputSearch"
+                           v-model="filter.q"
+                           placeholder="ค้นหาจากชื่อ, หมายเลข"
+                           @input="onSearch"></InputText>
             </div>
             <div class="p-field mr-0">
-                <Button icon="pi pi-search" @click="onFilter"></Button>
+                <select-pawn-status v-model="filter.status" @update:modelValue="onFilter"/>
             </div>
             <Divider layout="vertical"/>
-            <div class="p-field">
+            <div class="p-field mr-0">
                 <Button @click="create" icon="pi pi-circle-plus" label="รับขายฝาก" class="p-button-success"></Button>
             </div>
         </div>
@@ -104,15 +107,33 @@ export default {
             loading: false
         }
     },
+    watch: {
+        filter: {
+            handler() {
+
+            },
+            deep: true
+        }
+    },
+    mounted() {
+        this.$refs.inputSearch.$el.focus();
+    },
     methods: {
         create() {
             this.pawnId = 0
             this.showForm = true
         },
         open(e) {
-            console.log(e);
             this.pawnId = e.data.id;
             this.showForm = true;
+        },
+        onSearch(e) {
+            let q = e.target.value
+            clearTimeout(timeout);
+            let timeout = setTimeout(() => {
+                this.filter.q = q;
+                this.onFilter()
+            }, 300)
         },
         onFilter() {
             this.$inertia.reload({
@@ -120,7 +141,6 @@ export default {
             });
         },
         onPage(event) {
-            console.log(event);
             this.$inertia.reload({
                 data: {
                     page: numeral(event.page).add(1).value()

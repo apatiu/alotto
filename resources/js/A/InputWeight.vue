@@ -2,10 +2,10 @@
     <label for="">น้ำหนัก</label>
     <div class="p-inputgroup">
         <Dropdown :options="options"
-                  :modelValue="value.weight"
-                  @input="emit"
+                  v-model="value.weight"
+                  @update:modelValue="emit"
                   :editable="true"></Dropdown>
-        <Button :label="value.weightbaht ? 'บาท' : 'กรัม'"
+        <Button :label="buttonLabel"
                 @click="value.weightbaht=!value.weightbaht"
                 v-bind:class="classObject"></Button>
     </div>
@@ -15,37 +15,26 @@
 export default {
     name: "InputWeight",
     props: {
-        'modelValue': {
-            type: [Array, Number],
-            default: [null, true]
-        },
-        returnGram: {type: Boolean, default: false}
+        modelValue: {
+            type: Object,
+            default: {weight: 0, weightbaht: true}
+        }
     },
     data() {
         return {
             value: {
-                weight: this.modelValue[0],
-                weightbaht: this.modelValue[1]
+                weight: this.modelValue.weight,
+                weightbaht: this.modelValue.weightbaht
             },
             options: [0.125, 0.25, 0.5, 1, 2, 3, 5, 10]
         }
     },
     watch: {
-        modelValue(val) {
-            if (_.isArray(val)) {
-                this.value = {
-                    weight: val[0],
-                    weightbaht: val[1]
-                }
-            } else {
-                this.value = {
-                    weight: val,
-                    weightbaht: false
-                }
-            }
-        },
-        value(val) {
-            this.emit()
+        value: {
+            handler(val) {
+                this.emit()
+            },
+            deep: true
         }
 
     },
@@ -54,20 +43,15 @@ export default {
             return {
                 'p-button-warning': !this.weightbaht,
             }
+        },
+        buttonLabel() {
+            return this.value.weightbaht ? 'บาท' : 'กรัม'
         }
     },
     methods: {
         emit() {
-            if (this.returnGram) {
-                if (this.value.weightbaht) {
-                    this.$emit('update:modelValue', this.value.weight * 15.2)
-                } else {
-                    console.log(this.value.weight);
-                    this.$emit('update:modelValue', this.value.weight)
-                }
-            } else {
-                this.$emit('update:modelValue', [this.value.weight, this.value.weightbaht])
-            }
+            console.log(this.value);
+            this.$emit('update:modelValue', {weight: this.value.weight, weightbaht: this.value.weightbaht})
         }
     }
 }

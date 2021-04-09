@@ -1,7 +1,7 @@
 <template>
     <label for="" v-if="showLabel">ประเภทสินค้า</label>
     <AutoComplete :modelValue="modelValue"
-                  @update:modelValue="$event.name ? $emit('update:modelValue',$event.name) : $emit('update:modelValue',$event)"
+                  @update:modelValue="$emit('update:modelValue',$event)"
                   :suggestions="filteredTypes"
                   @complete="search($event)"
                   field="name"
@@ -32,9 +32,10 @@ export default {
         }
     },
     created() {
-        axios.get('api/product_types').then(response => {
-            this.types = response.data
-        })
+        axios.get(route('api.product-types.index'))
+            .then(response => {
+                this.types = response.data
+            })
     },
     methods: {
         search(event) {

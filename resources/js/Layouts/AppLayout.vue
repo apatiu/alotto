@@ -61,10 +61,8 @@ export default {
                     label: 'สินค้า',
                     items: [
                         {label: 'รายการสินค้า', url: route('products.index')},
-                        {
-                            label: 'นำเข้าสินค้า',
-                            url: route('stock-imports.index')
-                        }, {
+                        {separator: true},
+                        {label: 'นำเข้าสินค้า', url: route('stock-imports.index')}, {
                             label: 'ผู้จำหน่าย',
                             url: route('suppliers.index')
                         }, {

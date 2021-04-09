@@ -1,6 +1,7 @@
 <template>
     <Dropdown
         :modelValue="modelValue"
+        @update:modelValue="$emit('update:modelValue',$event)"
         :options="options"
         optionValue="code"
         optionLabel="label"
@@ -10,6 +11,7 @@
 <script>
 export default {
     name: "SelectPawnStatus",
+    props: ['modelValue'],
     data() {
         return {
             options: [

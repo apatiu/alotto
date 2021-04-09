@@ -25,10 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
         return \App\Models\Customer::where('name', 'like', '%' . $request->input('q', '') . '%')->get();
     });
 
-    Route::get('/product_types', function () {
-        return \App\Models\ProductType::all('name');
-    });
-    Route::get('/product_designs', function () {
+
+    Route::get('/product-designs', function () {
         return \App\Models\ProductDesign::all();
     });
 
@@ -50,12 +48,15 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
 
-            Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class,'storeAction'])->name('pawns.storeAction');
+            Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
             Route::get('/pawns/today-int/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'getTodayInt'])->name('pawns.todayInt');
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
+            Route::get('/product-types', function () {
+                return \App\Models\ProductType::all();
+            })->name('product-types.index');
         });
 
     Route::get('/goldprice', function () {

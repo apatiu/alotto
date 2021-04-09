@@ -73,8 +73,7 @@
                         </small>
                     </div>
                     <div class="p-field p-col-4">
-                        <input-weight :model-value="[product.weight,product.weightbaht]"
-                                      @update:model-value="updateProductWeight"></input-weight>
+                        <input-weight v-model="productWeight"></input-weight>
                     </div>
                     <div class="p-field p-col-9">
                         <select-product-design
@@ -296,8 +295,8 @@ export default {
                 product_design: null,
                 size: null,
                 name: null,
-                weight: null,
-                weightbaht: null,
+                weight: 0,
+                weightbaht: true,
                 cost_wage: null,
                 tag_wage: null,
                 cost_price: null,
@@ -381,11 +380,22 @@ export default {
     },
     computed: {
         product_weight_total() {
-            let w = Weight(
-                this.product.weight,
-                this.product.weightbaht);
-            return numeral(this.line.qty ?? 0).multiply(w.toGram()).value()
+            let g = (this.product.weightbaht) ? this.product.weight * 15.2 : this.product.weight;
+            return numeral(this.line.qty ?? 0).multiply(g).value()
 
+        },
+        productWeight: {
+            get: () => {
+                return 'ooooo'
+                return {
+                    weight: this.product.weight ?? null,
+                    weightbaht: this.product.weightbaht ?? true
+                }
+            },
+            set: (val) => {
+                this.product.weight = val.weight;
+                this.product.weightbaht = val.weightbaht;
+            }
         },
     },
     methods: {
@@ -397,10 +407,6 @@ export default {
             this.product.sale_with_gold_price = true;
             this.product.wage_by_pcs = true;
             this.creatingLine = true;
-        },
-        updateProductWeight(event) {
-            this.product.weight = event[0]
-            this.product.weightbaht = event[1]
         },
         checkProduct() {
 
