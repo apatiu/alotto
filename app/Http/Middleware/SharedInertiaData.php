@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Helpers\MetaHelper;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -20,6 +21,8 @@ class SharedInertiaData
     {
 
         Inertia::share(array_filter([
+            'company_name'=> MetaHelper::get('company_name','GOLD SHOP'),
+            'company_logo_url'=> MetaHelper::get('company_logo_url',null),
             'user_roles' => function () use ($request) {
                 if (!$request->user()) {
                     return;

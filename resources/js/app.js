@@ -1,7 +1,7 @@
 require('./bootstrap');
 
 // Import modules...
-import {createApp, h} from 'vue';
+import {createApp, h, reactive} from 'vue';
 import {App as InertiaApp, plugin as InertiaPlugin} from '@inertiajs/inertia-vue3';
 import {InertiaProgress} from '@inertiajs/progress';
 
@@ -125,6 +125,8 @@ const app = createApp({
     .use(ConfirmationService)
     .use(ToastService)
     .use(VueHtmlToPaper);
+
+app.config.globalProperties.$appState = reactive({ inputStyle: 'outlined' });
 
 app.config.globalProperties.$filters = {
     date(value) {

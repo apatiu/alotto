@@ -7,6 +7,7 @@ use App\Http\Helpers\MetaHelper;
 use App\Models\IntDiscountRate;
 use App\Models\IntRangeRate;
 use App\Models\Media;
+use App\Models\OldGoldStockCard;
 use App\Models\Pawn;
 use App\Models\PawnIntReceive;
 use App\Models\Payment;
@@ -316,16 +317,52 @@ class PawnController extends Controller
                 $pawn->save();
             });
             return $newPawn->load(['items', 'payments', 'customer', 'int_receives']);
-        }elseif (request('type') == 'cut') {
-
-            DB::transaction(function () use ($pawn, &$newPawn, $team_id) {
-                $pawn->status = 'cut';
-                $pawn->save();
-            });
+        } elseif (request('type') == 'cut') {
+            $pawn = $this->cut($pawn);
             return $pawn->load(['items', 'payments', 'customer', 'int_receives']);
         }
 
 
+    }
+
+    public function cut(Pawn $pawn)
+    {
+
+        DB::transaction(function () use ($pawn) {
+            $pawn->status = 'cut';
+            $pawn->save();
+
+            foreach ($pawn->items as $item) {
+                $sc = OldGoldStockCard::where('gold_percent_id', '=', $item->gold_percent)
+                    ->orderBy('dt', 'desc')
+                    ->first();
+
+                if ($sc === null) {
+                    $sc = new OldGoldStockCard([
+                        'gold_percent_id' => $item->gold_percent,
+                        'team_id' => $pawn->team_id,
+                        'avg_per_bath' => 0,
+                        'qty_begin' => 0,
+                        'qty_in' => 0,
+                        'qty_out' => 0,
+                        'qty_remain' => 0,
+                        'dt' => now(),
+                        'ref_no' => ''
+                    ]);
+                }
+
+                $new = $sc->replicate();
+                $new->description='คัดออก';
+                $new->qty_begin = $new->qty_remain;
+                $new->qty_in = $item->weight;
+                $new->qty_remain = $new->qty_begin + $new->qty_in;
+                $new->dt = now();
+                $pawn->oldGoldStockCard()->save($new);
+            }
+        });
+
+
+        return $pawn;
     }
 
     public function print_ticket(Pawn $pawn)

@@ -8,5 +8,7 @@ html {
 
 .p-toast-message-content {
     border-style: initial;
+    z-index: 1000;
+    top: 70px;
 }
 

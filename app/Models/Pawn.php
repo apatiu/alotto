@@ -13,6 +13,11 @@ class Pawn extends Model
     protected $fillable = ['dt', 'dt_end', 'customer_id', 'price', 'int_rate', 'life', 'status'];
     protected $appends = ['code', 'prev_code', 'next_code', 'weight'];
 
+    public function oldGoldStockCard()
+    {
+        return $this->morphOne(OldGoldStockCard::class, 'ref');
+    }
+
     public function getWeightAttribute()
     {
         return $this->items()->sum('weight');
