@@ -58,7 +58,7 @@
             <Column field="product_weight_total" header="รวมน้ำหนัก">
                 <template #footer>{{ formatNumber(form.product_weight_total, 2) }}</template>
             </Column>
-            <Column>
+            <Column class="w-14 p-0">
                 <template #body="slotProps">
                     <Button icon="pi pi-trash" class="p-button-rounded p-button-text"
                             @click="removeLine(slotProps)"/>
