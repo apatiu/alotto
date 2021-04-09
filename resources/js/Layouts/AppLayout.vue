@@ -9,9 +9,6 @@
 
                 <AppProfile/>
                 <AppMenu :model="menu" @menuitem-click="onMenuItemClick"/>
-                <AppMenu
-                    v-if="$page.props.user_roles.admin"
-                    :model="menuAdmin" @menuitem-click="onMenuItemClick"/>
             </div>
         </transition>
 
@@ -42,7 +39,7 @@ export default {
     data() {
         return {
             layoutMode: 'static',
-            layoutColorMode: 'dark',
+            layoutColorMode: 'light',
             staticMenuInactive: false,
             overlayMenuActive: false,
             mobileMenuActive: false,
@@ -92,11 +89,25 @@ export default {
                             ]
                         }
                     ]
+                }, {
+                    label: 'Settings', icon: 'pi pi-cog',
+                    visible: () => {
+                        return this.$page.props.user_roles.admin;
+                    },
+                    items: [
+                        {label: 'ตั้งค่าสาขา', url: route('teams.show', this.$page.props.user.current_team)},
+                        {label: 'System', url: route('settings.index')},
+                        {label: 'Users', url: route('users')},
+                        {
+                            label: 'API Token', url: route('api-tokens.index'),
+                            visible: () => {
+                                return this.$page.props.jetstream.hasApiFeatures
+                            }
+                        },
+                    ]
                 }
             ],
-            menuAdmin: [
-                {label: 'ดูแลระบบ', icon: 'pi pi-cog'}
-            ]
+
         }
     },
     computed: {

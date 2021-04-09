@@ -40,16 +40,9 @@
                         <i class="pi pi-fw pi-user"></i><span>Profile</span></inertia-link>
                 </li>
                 <li>
-                    <button class="p-link"><i class="pi pi-fw pi-inbox"></i><span>Notifications</span><span
-                        class="menuitem-badge">2</span></button>
+                    <button class="p-link" @click="$inertia.post('/logout')"><i class="pi pi-fw pi-power-off"></i><span>Logout</span>
+                    </button>
                 </li>
-                <li>
-                    <button class="p-link"><i class="pi pi-fw pi-power-off"></i><span>Logout</span></button>
-                </li>
-                <!-- Account Management -->
-                <div class="block px-4 py-2 text-xs text-gray-400">
-                    Manage Account
-                </div>
             </ul>
         </transition>
 
