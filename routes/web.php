@@ -77,7 +77,7 @@ Route::middleware(['role:admin'])->group(function () {
         ->name('users.restore');
 });
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);
@@ -85,7 +85,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('stock-imports', StockImportController::class);
-    Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class,'storeConfig'])->name('pawns-config.store');
+    Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class, 'storeConfig'])->name('pawns-config.store');
     Route::resource('pawns', \App\Http\Controllers\PawnController::class);
     Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
     Route::resource('payments', \App\Http\Controllers\PaymentController::class);
@@ -93,7 +93,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('stock-cards', \App\Http\Controllers\StockCardController::class);
     Route::resource('shifts', \App\Http\Controllers\ShiftController::class);
 
-    Route::get('api-gold_percents', function() {
+    Route::get('api-gold_percents', function () {
         return \App\Models\GoldPercent::all();
     });
 

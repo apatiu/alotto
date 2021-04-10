@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Shift;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ShiftController extends Controller
 {
@@ -58,11 +60,14 @@ class ShiftController extends Controller
      * Display the specified resource.
      *
      * @param \App\Models\Shift $shift
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function show(Shift $shift)
     {
-        //
+        $shift->calc();
+        return Inertia::render('Shifts/Show',[
+            'shift'=> $shift->load('payments')
+        ]);
     }
 
     /**

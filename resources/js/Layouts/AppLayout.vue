@@ -79,6 +79,9 @@ export default {
                     label: 'ลูกค้า',
                     url: route('customers.index')
                 }, {
+                    label: 'กะทำงาน',
+                    url: route('shifts.show', this.$page.props.shift)
+                }, {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
                     items: [{
