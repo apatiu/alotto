@@ -80,8 +80,9 @@ export default {
                     url: route('customers.index')
                 }, {
                     label: 'กะทำงาน',
-                    command: () => {
+                    command: (e) => {
                         let id = this.$page.props.shift ?? null
+                        console.log(id);
                         if (id) {
                             this.$inertia.get(route('shifts.show', id))
                         }

@@ -2,7 +2,7 @@
     <app-layout>
         <div class="text-2xl mb-3">สรุปกะทำงาน {{ $filters.date(shift.d) }}</div>
         <div class="p-grid">
-            <div class="p-sm-8">
+            <div class="p-sm-5">
                 <div class="p-fluid">
                     <div class="p-field p-formgrid p-grid">
                         <label class="p-col-fixed w-40">เงินสดในลิ้นชักต้นวัน</label>
@@ -50,6 +50,33 @@
             </div>
             <div class="p-sm-4">
                 <Card>
+                    <template #title>ทองเก่า</template>
+                    <template #content>
+                        <div class="p-fluid">
+                            <div class="p-field p-formgrid p-grid">
+                                <label for="" class="p-col-fixed w-40">ทองเก่า 96.5</label>
+                                <div class="p-col">
+                                    <InputNumber v-model="shift.old_gold_965"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-formgrid p-grid">
+                                <label for="" class="p-col-fixed w-40">ทองเก่า 90</label>
+                                <div class="p-col">
+                                    <InputNumber v-model="shift.old_gold_90"/>
+                                </div>
+                            </div>
+                            <div class="p-field p-formgrid p-grid">
+                                <label for="" class="p-col-fixed w-40">ทองเก่า 99</label>
+                                <div class="p-col">
+                                    <InputNumber v-model="shift.old_gold_99"/>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </Card>
+            </div>
+            <div class="p-sm-3">
+                <Card>
 
                     <template #title>วันเวลา</template>
                     <template #content>
@@ -93,11 +120,10 @@ export default {
     props: ['shift'],
     data() {
         return {
-            shift: this.$page.props.shift
+            shift: this.shift
         }
     },
-    methods: {
-    }
+    methods: {}
 }
 </script>
 

@@ -36,10 +36,9 @@ class Shift extends Model
         foreach ($this->payments as $payment) {
             $attr = '';
             if ($payment->receive > 0) {
-                dd($payment->receive);
                 $this->attributes[$payment->method] += $payment->receive;
             } else {
-                $this->attributes[$payment->method] -= $payment->pay;
+                $this->attributes[$payment->method] += $payment->pay;
             }
         }
     }

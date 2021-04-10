@@ -24,9 +24,9 @@
                 </template>
             </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
-            <Column field="receive" header="รับ"></Column>
-            <Column field="pay" header="จ่าย"></Column>
-            <Column field="paymentable" header="อ้างอิง">
+            <Column field="receive" header="รับ" class="text-right"></Column>
+            <Column field="pay" header="จ่าย" class="text-right"></Column>
+            <Column field="paymentable" header="อ้างอิง" class="py-0 text-center">
                 <template #body="props">
                     <cell-ref :data="props.data ?? {}"
                               morph-name="paymentable"

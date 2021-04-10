@@ -16,7 +16,7 @@ class CreateShiftsTable extends Migration
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id');
-            $table->date('d');
+            $table->date('dt_start');
             $table->decimal('cash_begin');
             $table->decimal('cash');
             $table->decimal('cash_to_safe');
@@ -29,6 +29,14 @@ class CreateShiftsTable extends Migration
             $table->dateTime('opened_at');
             $table->dateTime('closed_at')->nullable();
             $table->enum('status',['open','close']);
+            $table->text('note');
+            $table->decimal('pawn_amount',10)->default(0);
+            $table->unsignedInteger('pawn_count')->default(0);
+            $table->decimal('saving_amount', 10)->default(0);
+            $table->unsignedInteger('saving_count')->default(0);
+            $table->double('old_gold_965')->default(0);
+            $table->double('old_gold_90')->default(0);
+            $table->double('old_gold_99')->default(0);
 
             $table->timestamps();
         });
