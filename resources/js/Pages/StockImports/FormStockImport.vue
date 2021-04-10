@@ -9,8 +9,8 @@
         <div class="grid grid-cols-6 gap-8">
             <div class="p-field col-span-1">
                 <text-input
-                    v-model="form.id"
-                    :error="form.errors.id"
+                    v-model="form.code"
+                    :error="form.errors.code"
                     label="เลขที่"
                     disabled
                 />
@@ -621,7 +621,6 @@ export default {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                     onSuccess: (res) => {
-                        console.log(res)
                         _.assign(this.form, res.props.item);
                     }
                 })

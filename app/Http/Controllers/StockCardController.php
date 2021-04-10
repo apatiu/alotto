@@ -2,19 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OldGoldStockCard;
 use App\Models\StockCard;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class StockCardController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function index()
     {
-        //
+        $rows = StockCard::with(['team','product','ref']);
+
+        $pagination = request('pagination',[
+            'rowsPerPage'=> 12
+        ]);
+
+        return Inertia::render('StockCards/Index', [
+            'rows' => $rows->paginate($pagination['rowsPerPage']),
+            'pagination' => $pagination
+        ]);
     }
 
     /**

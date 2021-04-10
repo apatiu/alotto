@@ -32,12 +32,19 @@ class Product extends Model
         "description"
     ];
 
-    public function team() {
+    public function team()
+    {
         return $this->belongsTo(Team::class);
     }
+
     public function type()
     {
         return $this->belongsTo(ProductType::class);
+    }
+
+    public function stockCards()
+    {
+        return $this->hasMany(StockCard::class);
     }
 
     public function gen_product_id()

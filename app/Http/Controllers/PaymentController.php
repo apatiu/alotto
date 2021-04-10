@@ -10,7 +10,7 @@ class PaymentController extends Controller
 {
     public function index() {
         return Inertia::render('Payments/Index',[
-            'payments'=> Payment::with('team','payment_type')->get()
+            'payments'=> Payment::with('team','payment_type','paymentable')->get()
         ]);
     }
 }

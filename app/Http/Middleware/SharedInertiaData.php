@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Helpers\MetaHelper;
+use App\Models\Shift;
 use Closure;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -19,15 +20,13 @@ class SharedInertiaData
      */
     public function handle(Request $request, Closure $next)
     {
-
         Inertia::share(array_filter([
-            'company_name'=> MetaHelper::get('company_name','GOLD SHOP'),
-            'company_logo_url'=> MetaHelper::get('company_logo_url',null),
+            'company_name' => MetaHelper::get('company_name', 'GOLD SHOP'),
+            'company_logo_url' => MetaHelper::get('company_logo_url', null),
             'user_roles' => function () use ($request) {
                 if (!$request->user()) {
                     return;
                 }
-
                 $output = array_map(function ($item) {
                     return true;
                 }, array_flip(
@@ -48,6 +47,14 @@ class SharedInertiaData
                     $request->user()->permissions()->pluck('name')->toArray()
                 ));
             },
+            'shift' => function() use ($request) {
+                if ($request->user()) {
+                    $user = $request->user();
+                    return Shift::whereTeamId($user->currentTeam->id)
+                        ->whereStatus('open')
+                        ->first();
+                }
+            }
         ]));
         return $next($request);
     }

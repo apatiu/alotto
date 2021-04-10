@@ -60,6 +60,9 @@ class PawnController extends Controller
             $pawn->save();
 
             foreach ($request->input('items', []) as $item) {
+                if (is_array($item['product_type'])) {
+                    $item['product_type'] = $item['product_type']['name'];
+                }
                 $pawnitem = $pawn->items()->create($item);
 
                 if (isset($item['img'])) {
@@ -74,6 +77,7 @@ class PawnController extends Controller
             $payment = new Payment([
                 'team_id' => $pawn->team_id,
                 'payment_no' => '',
+                'acc_date' => now(),
                 'dt' => $pawn->dt,
                 'payment_type_id' => 'paw',
                 'method' => 'cash',
@@ -352,7 +356,7 @@ class PawnController extends Controller
                 }
 
                 $new = $sc->replicate();
-                $new->description='คัดออก';
+                $new->description = 'คัดออก';
                 $new->qty_begin = $new->qty_remain;
                 $new->qty_in = $item->weight;
                 $new->qty_remain = $new->qty_begin + $new->qty_in;

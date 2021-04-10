@@ -25,6 +25,10 @@ class CreatePaymentTypesTable extends Migration
             ['id' => 'mor', 'name' => 'เพิ่มเงิน'],
             ['id' => 'les', 'name' => 'ตัดต้น'],
             ['id' => 'red', 'name' => 'ไถ่ถอน'],
+            ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า'],
+            ['id' => 'sale', 'name' => 'ขาย'],
+            ['id' => 'buy', 'name' => 'ซื้อ'],
+            ['id' => 'change', 'name' => 'เปลี่ยน'],
         ]);
     }
 

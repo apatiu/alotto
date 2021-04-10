@@ -1,7 +1,7 @@
 <template>
     <label for="" v-if="showLabel">ประเภทสินค้า</label>
     <AutoComplete :modelValue="modelValue"
-                  @update:modelValue="$emit('update:modelValue',$event)"
+                  @update:modelValue="emit"
                   :suggestions="filteredTypes"
                   @complete="search($event)"
                   field="name"
@@ -23,7 +23,7 @@ export default {
         modelValue: {default: {}},
         forceSelection: {default: false},
         errors: {default: []},
-        showLabel: {type: Boolean, default: true}
+        showLabel: {type: Boolean, default: true},
     },
     data() {
         return {
@@ -48,6 +48,9 @@ export default {
                     });
                 }
             }, 250);
+        },
+        emit(e) {
+                this.$emit('update:modelValue', e)
         }
     }
 }

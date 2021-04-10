@@ -13,15 +13,28 @@
                    class="p-datatable-sm">
             <Column field="id" header="#"></Column>
             <Column field="team.name" header="สาขา"></Column>
-            <Column field="acc_date" header="วันที่บัญชี"></Column>
+            <Column field="acc_date" header="วันที่บัญชี">
+                <template #body="props">
+                    {{ $filters.date(props.data.acc_date) }}
+                </template>
+            </Column>
             <Column field="dt" header="วันทำรายการ">
                 <template #body="props">
-                    {{ $filters.datetime(props.data.dt)}}
+                    {{ $filters.datetime(props.data.dt) }}
                 </template>
             </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
             <Column field="receive" header="รับ"></Column>
             <Column field="pay" header="จ่าย"></Column>
+            <Column field="paymentable" header="อ้างอิง">
+                <template #body="props">
+                    <cell-ref :data="props.data ?? {}"
+                              morph-name="paymentable"
+                              field-id="paymentable_id"
+                              field-type="paymentable_type"></cell-ref>
+                </template>
+            </Column>
+
         </DataTable>
 
         <Dialog v-model:visible="itemDialog" :style="{width: '450px'}" :modal="true"
@@ -80,10 +93,12 @@ import SelectBank from "@/A/SelectBank";
 import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import AppLayout from "@/Layouts/AppLayout";
+import CellRef from "@/A/CellRef";
 
 export default {
 
     components: {
+        CellRef,
         AppLayout,
         SelectBank,
         JetActionMessage,

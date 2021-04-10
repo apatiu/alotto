@@ -5,10 +5,10 @@
             modal
             :closeOnEscape="false"
             :closable="false"
-            class="max-w-6xl">
+            :class="classDialog">
         <div class="p-grid p-fluid">
-            <div class="p-md-7 p-pt-3">
-                <div class="flex mb-4">
+            <div :class="classLeft">
+                <div class="flex mb-4" v-if="!creating">
                     <div class="w-40">
                         <Button icon="pi pi-chevron-left" v-show="item.prev_id"
                                 :label="item.prev_code"
@@ -32,7 +32,7 @@
                                  :errors="v$.item.customer.$errors"
                                  :disabled="!creating"
                                  :show-label="false"
-                                 ></select-customer>
+                ></select-customer>
                 <div class="p-grid mt-4">
                     <div class="p-col-6">
                         <div class="p-field p-grid">
@@ -87,7 +87,8 @@
                     <div class="p-col-4">
                         <select-product-type
                             v-model="pawnItem.product_type"
-                            :errors="v$.pawnItem.$errors"/>
+                            :errors="v$.pawnItem.$errors"
+                        />
                     </div>
                     <div class="p-col-2">
                         <label for="">น้ำหนัก (ก.)</label>
@@ -97,25 +98,29 @@
                                      inputClass="text-right"
                                      @input="onDetailItemWeightChange"></InputNumber>
                     </div>
-                    <div class="p-col-2">
-                        <label for="">ราคา</label>
-                        <InputNumber v-model="pawnItem.price"
-                                     inputClass="text-right"/>
-                    </div>
-                    <div class="p-col-2 p-d-flex p-jc-between pt-8">
+                    <div class="p-col-4 flex">
+                        <div class="flex-1">
+                            <label for="">ราคา</label>
+                            <InputNumber v-model="pawnItem.price"
+                                         inputClass="text-right"/>
+                        </div>
                         <Button icon="pi pi-plus"
                                 class="p-button-rounded p-ml-1"
+                                style="margin-top:23px;"
                                 @click="addItem">
                         </Button>
                     </div>
-
                 </div>
 
                 <!--        items table-->
                 <div class="w-full mt-2">
                     <DataTable :value="item.items" class="p-datatable-sm">
                         <Column field="gold_percent" header="% ทอง"></Column>
-                        <Column field="product_type" header="ประเภท"></Column>
+                        <Column field="product_type" header="ประเภท">
+                            <template #body="props">
+                                {{ props.data.product_type.name ?? props.data.product_type }}
+                            </template>
+                        </Column>
                         <Column field="weight" header="น้ำหนัก"></Column>
                         <Column field="price" header="ราคา" class="text-right">
                             <template #body="props">
@@ -197,7 +202,7 @@
                     <Button label="ยกเลิก" class="p-button-text" @click="$emit('update:visible',false)"></Button>
                     <Button label="บันทึก" icon="pi pi-check"
                             @click="save"
-                    v-if="creating || actionable"></Button>
+                            v-if="creating || actionable"></Button>
                 </div>
             </div>
         </template>
@@ -497,6 +502,18 @@ export default {
         },
         intPerMonth() {
             return (this.item.price * this.item.int_rate) / 100;
+        },
+        classDialog() {
+            return {
+                'max-w-6xl': !this.creating,
+                'max-w-3xl': this.creating,
+            }
+        },
+        classLeft() {
+            return {
+                'mt-2': true,
+                'p-md-7 p-pt-3': !this.creating
+            }
         }
     },
     methods: {
@@ -570,7 +587,7 @@ export default {
             if (!this.item.id) {
                 axios.post(route('api.pawns.store'), this.item)
                     .then(res => {
-                            console.log(res);
+                            this.notify('บันทึกข้อมูลแล้ว');
                             this.load(res.data.id);
                         }
                     )

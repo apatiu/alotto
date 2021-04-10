@@ -18,6 +18,7 @@
 
         <Toast :baseZIndex="9999" :autoZIndex="false"/>
         <ConfirmDialog></ConfirmDialog>
+        <open-shift ref="openShift"/>
     </div>
 </template>
 
@@ -27,15 +28,16 @@ import AppTopBar from "@/Layouts/AppTopBar";
 import ApplicationMark from "@/Jetstream/ApplicationMark";
 import AppMenu from "@/Layouts/AppMenu";
 import AppProfile from "@/Layouts/AppProfile";
+import OpenShift from "@/Pages/Shifts/OpenShift";
 
 export default {
     components: {
+        OpenShift,
         AppProfile,
         AppMenu,
         ApplicationMark,
         AppTopBar
     },
-
     data() {
         return {
             layoutMode: 'static',
@@ -51,9 +53,6 @@ export default {
                 }, {
                     label: 'ขายฝาก',
                     url: route('pawns.index')
-                }, {
-                    label: 'ลูกค้า',
-                    url: route('customers.index')
                 }, {
                     label: 'รับจ่าย',
                     url: route('payments.index')
@@ -77,9 +76,17 @@ export default {
                         }
                     ]
                 }, {
+                    label: 'ลูกค้า',
+                    url: route('customers.index')
+                }, {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
-                    items: [
+                    items: [{
+                        label: 'สินค้า',
+                        items: [{
+                            label: 'เคลื่อนไหวสินค้า', url: route('stock-cards.index')
+                        }]
+                    },
                         {
                             label: 'ทองเก่า',
                             items: [
@@ -106,6 +113,11 @@ export default {
                 }
             ],
 
+        }
+    },
+    mounted() {
+        if (!this.$page.props.shift) {
+            this.$refs.openShift.show()
         }
     },
     computed: {

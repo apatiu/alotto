@@ -14,7 +14,8 @@ class CreateStockImportsTable extends Migration
     public function up()
     {
         Schema::create('stock_imports', function (Blueprint $table) {
-            $table->string('id')->primary();
+            $table->id();
+            $table->string('code')->index();
             $table->dateTime('dt')->nullable();
             $table->foreignId('team_id');
             $table->string('supplier_id')->nullable();
@@ -43,7 +44,7 @@ class CreateStockImportsTable extends Migration
             $table->string('product_design_id')->nullable();
             $table->string('product_size')->nullable();
             $table->string('product_name');
-            $table->decimal('product_weight')->nullable();
+            $table->decimal('product_weight',10,3)->nullable();
             $table->decimal('product_weightbaht')->nullable();
             $table->decimal('product_min')->nullable();
             $table->boolean('wage_by_pcs')->default(false);

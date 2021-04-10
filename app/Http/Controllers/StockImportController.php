@@ -20,6 +20,8 @@ use Carbon\Carbon;
 
 class StockImportController extends Controller
 {
+    private $bill;
+
     /**
      * Display a listing of the resource.
      *
@@ -43,8 +45,9 @@ class StockImportController extends Controller
         return Inertia::render('StockImports/FormStockImport', [
                 'item' => [
                     'id' => null,
+                    'code' => null,
                     'dt' => now(),
-                    'team_id' => null,
+                    'team_id' => request()->user()->currentTeam->id,
                     'supplier_id' => null,
                     'emp_name' => null,
                     'status' => 'draft',
@@ -81,58 +84,40 @@ class StockImportController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $data['id'] = $this->gen_id();
+        $data['code'] = $this->genCode();
         $data['team_id'] = $request->user()->currentTeam->id;
         $data['status'] = 'draft';
         $data['dt'] = Carbon::create($data['dt'])->toDateTimeString();
 
         Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
 
+        $this->bill = new StockImport();
+
         DB::transaction(function () use ($request, $data) {
-            tap(StockImport::create($data), function (StockImport $stockImport) use ($request) {
-                $stockImport->lines()->createMany($request->input('lines', []));
-                if ($request->input('status') == 'approve-request') {
+            $this->bill->fill($data);
+            $this->bill->save();
+            $this->bill->lines()->createMany($request->input('lines', []));
 
-                    $stockImport->refresh();
-                    foreach ($stockImport->lines as $line) {
-                        $this->line_product_processing($line);
-                    }
-                    $stockImport->status = 'approved';
-                    $stockImport->save();
-                    $this->updateStockCard($stockImport);
-                };
-            });
-
-
+            if ($request->input('status') == 'approve-request') {
+                $this->approveBill();
+            }
         });
-
-        return redirect()->route('stock-imports.edit', $data['id']);
+        return redirect()->route('stock-imports.edit', $this->bill->id);
     }
 
-    private function gen_id()
+    private function genCode()
     {
-        $id = 'SI' . request()->user()->currentTeam->id . '-';
-        $id .= date('Ym') . '-';
+        $code = 'SI' . request()->user()->currentTeam->id . '-';
+        $code .= date('Ym') . '-';
 
-        $latest = StockImport::where('id', 'like', $id . '%')->select('id')->orderBy('id', 'desc')->first();
+        $latest = StockImport::where('code', 'like', $code . '%')->select('id')->orderBy('id', 'desc')->first();
         if (!$latest)
-            $id .= '0001';
+            $code .= '0001';
         else
-            $id .= substr('000' . (intval(substr($latest->id, -4)) + 1), -4);
+            $code .= substr('000' . (intval(substr($latest->code, -4)) + 1), -4);
 
-        return $id;
+        return $code;
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\Models\StockImport $stockImport
-     * @return \Illuminate\Http\Response
-     */
-    public function show(StockImport $stockImport)
-    {
-        //
     }
 
     /**
@@ -161,11 +146,12 @@ class StockImportController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\StockImport $stockImport
+     * @param \App\Models\StockImport $this- >bill
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, StockImport $stockImport)
     {
+        $this->bill = $stockImport;
 
         Validator::make($request->all(), $this->validateRules())
             ->validateWithBag('stockImportBag');
@@ -173,28 +159,45 @@ class StockImportController extends Controller
         $data = $request->all();
         $data['dt'] = jsDateToDateString($data['dt']);
 
-        DB::transaction(function () use ($data, $stockImport) {
+        DB::transaction(function () use ($data) {
 
-            $stockImport->fill($data)->save();
-            $stockImport->lines()->delete();
-            $stockImport->lines()->createMany($data['lines']);
+            $this->bill->fill($data)->save();
+            $this->bill->lines()->delete();
+            $this->bill->lines()->createMany($data['lines']);
 
             if ($data['status'] == 'approve-request') {
-
-                $stockImport->refresh();
-                foreach ($stockImport->lines as $line) {
-                    $this->line_product_processing($line);
-                }
-                $stockImport->status = 'approved';
-                $stockImport->save();
-                $this->updateStockCard($stockImport);
+                $this->approveBill();
             };
         });
-        $stockImport->refresh();
+
+        $this->bill->refresh();
         return redirect()->back();
     }
 
-    public function line_product_processing(StockImportLine $line)
+    public function approveBill()
+    {
+        $this->bill->refresh();
+        foreach ($this->bill->lines as $line) {
+            $this->line_product_processing($line, true);
+        }
+        $this->bill->status = 'approved';
+        $this->bill->save();
+
+        $this->bill->payments()->create([
+            'team_id' => $this->bill->team_id,
+            'acc_date' => now(),
+            'payment_no' => '',
+            'dt' => $this->bill->dt,
+            'payment_type_id' => 'stock-import',
+            'detail' => 'นำเข้าสินค้า',
+            'pay' => $this->bill->real_cost,
+            'method' => 'cash',
+        ]);
+
+
+    }
+
+    public function line_product_processing(StockImportLine $line, $updateStock = false)
     {
         $found = Product::whereProductId($line->product_id)->exists();
         if (!$found) {
@@ -202,7 +205,7 @@ class StockImportController extends Controller
             $product->fill([
                 'product_id' => $line->product_id,
                 'name' => $line->product_name,
-                'team_id' => $line->stock_import->team_id,
+                'team_id' => request()->user()->currentTeam->id,
                 'gold_percent' => $line->gold_percent,
                 'product_type_id' => $line->product_type_id,
                 'product_design_id' => $line->product_design_id,
@@ -249,6 +252,10 @@ class StockImportController extends Controller
             $product->save();
         }
 
+        if ($updateStock) {
+            $this->updateStockCard($product, $line);
+        }
+
     }
 
     /**
@@ -265,7 +272,7 @@ class StockImportController extends Controller
     public function validateRules()
     {
         return [
-            'id' => ['required'],
+            'code' => ['required'],
             'team_id' => ['required'],
             'dt' => ['required'],
             'real_cost' => ['required']
@@ -296,37 +303,46 @@ class StockImportController extends Controller
         return $product;
     }
 
-    private function updateStockCard(StockImport $bill)
+    private function updateStockCard(Product $product, $line)
     {
-        foreach ($bill->lines as $line) {
-            $data = [
-                'product_id' => $line->product_id,
+
+        $sc = StockCard::where('product_id', '=', $product->id)
+            ->orderBy('dt', 'desc')
+            ->first();
+
+        if ($sc === null) {
+            $sc = new StockCard([
+                'team_id' => $product->team_id,
+                'product_id' => $product->id,
                 'cost_wage' => $line->cost_wage,
                 'tag_wage' => $line->tag_wage,
                 'cost_price' => $line->cost_price,
                 'tag_price' => $line->tag_price,
                 'qty_begin' => 0,
-                'qty_in' => $line->product_qty,
+                'qty_in' => 0,
                 'qty_out' => 0,
-                'qty_end' => $line->product_qty,
+                'qty_end' => 0,
                 'weight_begin' => 0,
-                'weight_in' => weightgram($line->product_weight, $line->product_weightbaht),
+                'weight_in' => 0,
                 'weight_out' => 0,
-                'weight_end' => weightgram($line->product_weight, $line->product_weightbaht),
-                'description' => $line->description,
-                'dt' => $bill->dt,
-                'ref_no' => $bill->id,
+                'weight_end' => 0,
+                'description' => 'นำเข้า',
+                'dt' => $this->bill->dt,
                 'user_id' => Auth::user()->id
-            ];
-            $last = StockCard::whereProductId($line->product_id)->latest('dt')->first();
-            if ($last) {
-                $data['qty_begin'] = $last->qty_end;
-                $data['weight_begin'] = $last->qty_end;
-            }
-            $data['qty_end'] += ($data['qty_in'] - $data['qty_out']);
-            $data['weight_end'] += ($data['weight_in'] - $data['weight_out']);
-
-            StockCard::create($data);
+            ]);
         }
+
+        $new = $sc->replicate();
+        $new->qty_begin = $new->qty_end;
+        $new->qty_in = $line->product_qty;
+        $new->qty_end = $new->qty_begin + $new->qty_in;
+        $new->weight_begin = $new->weight_out;
+        $new->weight_in = $line->product_weight_total;
+        $new->weight_end = $new->weight_begin + $new->weight_in;
+        $new->dt = $this->bill->dt;
+        $new->ref_id = $this->bill->id;
+        $new->ref_type = StockImport::class;
+        $product->stockCards()->save($new);
+
     }
 }

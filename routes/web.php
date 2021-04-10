@@ -90,6 +90,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
     Route::resource('payments', \App\Http\Controllers\PaymentController::class);
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);
+    Route::resource('stock-cards', \App\Http\Controllers\StockCardController::class);
+    Route::resource('shifts', \App\Http\Controllers\ShiftController::class);
 
     Route::get('api-gold_percents', function() {
         return \App\Models\GoldPercent::all();

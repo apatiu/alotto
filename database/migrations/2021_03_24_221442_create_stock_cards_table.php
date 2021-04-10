@@ -15,6 +15,7 @@ class CreateStockCardsTable extends Migration
     {
         Schema::create('stock_cards', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('team_id');
             $table->string('product_id');
             $table->decimal('cost_wage')->nullable();
             $table->decimal('tag_wage')->nullable();
@@ -30,8 +31,9 @@ class CreateStockCardsTable extends Migration
             $table->decimal('weight_end')->nullable();
             $table->text('description')->nullable();
             $table->dateTime('dt')->nullable();
-            $table->string('ref_no')->nullable();
             $table->string('user_id')->nullable();
+            $table->foreignId('ref_id')->nullable();
+            $table->string('ref_type')->nullable();
         });
     }
 
