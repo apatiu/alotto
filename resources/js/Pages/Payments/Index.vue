@@ -11,7 +11,7 @@
         <DataTable :value="payments"
                    dataKey="id"
                    class="p-datatable-sm">
-            <Column field="id" header="#"></Column>
+            <Column field="code" header="#"></Column>
             <Column field="team.name" header="สาขา"></Column>
             <Column field="acc_date" header="วันที่บัญชี">
                 <template #body="props">

@@ -43,4 +43,8 @@ class Shift extends Model
             }
         }
     }
+
+    static function current() {
+        return Shift::whereStatus('open')->first();
+    }
 }

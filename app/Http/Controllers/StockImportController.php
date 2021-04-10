@@ -6,6 +6,7 @@ use App\Models\GoldPercent;
 use App\Models\Product;
 use App\Models\ProductDesign;
 use App\Models\ProductType;
+use App\Models\Shift;
 use App\Models\StockCard;
 use App\Models\StockImport;
 use App\Models\StockImportLine;
@@ -185,7 +186,7 @@ class StockImportController extends Controller
 
         $this->bill->payments()->create([
             'team_id' => $this->bill->team_id,
-            'acc_date' => now(),
+            'acc_date' => Shift::current()->d,
             'payment_no' => '',
             'dt' => $this->bill->dt,
             'payment_type_id' => 'stock-import',

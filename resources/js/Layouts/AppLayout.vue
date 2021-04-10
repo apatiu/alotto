@@ -80,7 +80,12 @@ export default {
                     url: route('customers.index')
                 }, {
                     label: 'กะทำงาน',
-                    url: route('shifts.show', this.$page.props.shift)
+                    command: () => {
+                        let id = this.$page.props.shift ?? null
+                        if (id) {
+                            this.$inertia.get(route('shifts.show', id))
+                        }
+                    }
                 }, {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
