@@ -91,6 +91,8 @@ Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
     Route::resource('payments', \App\Http\Controllers\PaymentController::class);
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);
     Route::resource('stock-cards', \App\Http\Controllers\StockCardController::class);
+
+    Route::get('shifts/latest', [\App\Http\Controllers\ShiftController::class,'showLatest'])->name('shifts.show-latest');
     Route::resource('shifts', \App\Http\Controllers\ShiftController::class);
 
     Route::get('api-gold_percents', function () {

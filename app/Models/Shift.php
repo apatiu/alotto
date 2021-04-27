@@ -20,6 +20,7 @@ class Shift extends Model
         'open_user_id',
         'close_user_id',
         'opened_at',
+        'closed_at',
         'status'
     ];
 

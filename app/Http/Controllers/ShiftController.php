@@ -70,6 +70,19 @@ class ShiftController extends Controller
         ]);
     }
 
+    public function showLatest()
+    {
+        $shift = $this->getLatestShift();
+        $shift->calc();
+        return Inertia::render('Shifts/Show',[
+            'shift'=> $shift->load('payments')
+        ]);
+    }
+
+    public function getLatestShift() {
+        return Shift::whereTeamId(request()->user()->currentTeam->id)->latest()->first();
+    }
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -90,7 +103,9 @@ class ShiftController extends Controller
      */
     public function update(Request $request, Shift $shift)
     {
-        //
+        $shift->fill($request->all());
+        $shift->save();
+        return redirect('/dashboard');
     }
 
     /**

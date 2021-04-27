@@ -50,9 +50,7 @@ class SharedInertiaData
             'shift' => function() use ($request) {
                 if ($request->user()) {
                     $user = $request->user();
-                    return Shift::whereTeamId($user->currentTeam->id)
-                        ->whereStatus('open')
-                        ->first();
+                    return Shift::whereTeamId($user->currentTeam->id)->latest()->first();
                 }
             }
         ]));

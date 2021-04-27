@@ -80,7 +80,7 @@ export default {
                     url: route('customers.index')
                 }, {
                     label: 'กะทำงาน',
-                    url: route('shifts.show', this.$page.props.shift)
+                    url: route('shifts.show-latest')
                 }, {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
@@ -119,7 +119,7 @@ export default {
         }
     },
     mounted() {
-        if (!this.$page.props.shift) {
+        if (this.$page.props.shift.status==='close') {
             this.$refs.openShift.show()
         }
     },
