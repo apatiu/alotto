@@ -48,13 +48,13 @@ export default {
             if (!item.to && !item.url) {
                 event.preventDefault();
             }
+
             //execute command
             if (item.command) {
                 item.command({originalEvent: event, item: item});
             }
 
             if (item.url) {
-
                 this.$inertia.get(item.url);
             }
             this.activeIndex = index === this.activeIndex ? null : index;

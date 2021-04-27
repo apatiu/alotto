@@ -11,6 +11,7 @@ use App\Models\OldGoldStockCard;
 use App\Models\Pawn;
 use App\Models\PawnIntReceive;
 use App\Models\Payment;
+use App\Models\Shift;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -220,6 +221,7 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => request()->user()->currentTeam->id,
                         'payment_no' => 0,
+                        'acc_date' => Shift::current()->d,
                         'dt' => jsDateToDateTimeString($payment['dt']),
                         'receive' => $payment['amount'],
                         'method' => $payment['method'],
@@ -250,6 +252,7 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => $team_id,
                         'payment_no' => 0,
+                        'acc_date' => Shift::current()->d,
                         'dt' => jsDateToDateTimeString($payment['dt']),
                         'receive' => $payment['amount'],
                         'method' => $payment['method'],
@@ -280,6 +283,7 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => $team_id,
                         'payment_no' => 0,
+                        'acc_date' => Shift::current()->d,
                         'dt' => jsDateToDateTimeString($payment['dt']),
                         'method' => $payment['method'],
                         'payment_type_id' => request('isMore') ? 'mor' : 'les'
