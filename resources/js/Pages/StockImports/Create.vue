@@ -43,7 +43,7 @@
         </div>
     </div>
     <Dialog header="เพิ่มสินค้า" v-model:visible="creatingLine"
-            :modal="true" position="bottom" style="max-width: 800px">
+            :modal="true" style="max-width: 800px">
         <div class="p-fluid p-grid">
             <div class="p-col-9">
                 <div class="p-grid pt-8">

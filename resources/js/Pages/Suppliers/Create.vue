@@ -1,6 +1,6 @@
 <template>
-    <dialog-modal
-        :show="show"
+    <Dialog
+        :visible="show"
         :closeable="false" @close="$emit('close')">
 
         <template #title>สร้างผู้จำหน่าย</template>
@@ -33,7 +33,7 @@
                 Save
             </Button>
         </template>
-    </dialog-modal>
+    </Dialog>
 
 </template>
 

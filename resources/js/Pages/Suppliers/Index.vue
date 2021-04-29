@@ -29,7 +29,7 @@
                 </tr>
             </table>
         </div>
-        <create :show="showCreateModal" @close="showCreateModal=false"></create>
+        <create v-model:visible="showCreateModal" @close="showCreateModal=false"></create>
     </div>
 </template>
 

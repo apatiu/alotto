@@ -51,6 +51,7 @@
             <Column field="cost_wage_total" header="รวมค่าแรงทุน">
                 <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
             </Column>
+            <Column field="tag_wage" header="ค่าแรงขาย"></Column>
             <Column field="cost_price" header="ราคาทุน"></Column>
             <Column field="cost_price_total" header="รวมทุน">
                 <template #footer>{{ formatNumber(form.cost_price_total) }}</template>
@@ -558,6 +559,8 @@ export default {
 
             newline.cost_wage = this.line.cost_wage;
             newline.cost_price = this.line.cost_price;
+            newline.tag_wage = this.line.tag_wage;
+            newline.tag_price = this.line.tag_price;
 
             newline.name = null;
             newline.qty = null;

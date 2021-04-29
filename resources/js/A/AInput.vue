@@ -1,5 +1,6 @@
 <template>
-    <span class="p-float-label">
+
+    <label v-if="label">{{ label }}</label>
         <InputText :modelValue="modelValue"
                    @update:modelValue="$emit('update:modelValue', $event)"
                    v-bind="$attrs"
@@ -7,8 +8,6 @@
                    :readonly="readonly"
                    class="p-filled"
         ></InputText>
-        <label v-if="label">{{ label }}</label>
-    </span>
     <small class="p-error">{{ error }}</small>
 </template>
 

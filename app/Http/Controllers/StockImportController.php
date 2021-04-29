@@ -190,7 +190,7 @@ class StockImportController extends Controller
             'payment_no' => '',
             'dt' => $this->bill->dt,
             'payment_type_id' => 'stock-import',
-            'detail' => 'นำเข้าสินค้า',
+            'detail' => 'นำเข้าสินค้า' . $this->bill->code,
             'pay' => $this->bill->real_cost,
             'method' => 'cash',
         ]);
