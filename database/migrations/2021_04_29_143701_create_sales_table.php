@@ -27,6 +27,8 @@ class CreateSalesTable extends Migration
 
             $table->decimal('total_price_sale', 10, 2)->nullable();
             $table->decimal('total_price_buy', 10, 2)->nullable();
+            $table->decimal('total_amount', 10, 2)->nullable();
+
             $table->decimal('total_wt_sale', 10, 2)->nullable();
             $table->decimal('total_wt_buy', 10, 2)->nullable();
             $table->decimal('total_qty_sale', 10, 2)->nullable();

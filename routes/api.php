@@ -57,11 +57,12 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/product-types', function () {
                 return \App\Models\ProductType::all();
             })->name('product-types.index');
+
+            Route::get('/goldprice', function () {
+                return goldprice();
+            })->name('goldprice');
         });
 
-    Route::get('/goldprice', function () {
-        return goldprice();
-    });
 
     Route::resource('payment-methods', \App\Http\Controllers\PaymentMethodController::class);
 

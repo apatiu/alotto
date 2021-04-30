@@ -11,6 +11,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyConfigController;
 use App\Http\Controllers\TeamController;
+use App\Http\Controllers\PosController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -78,6 +79,9 @@ Route::middleware(['role:admin'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
+
+    Route::get('/pos',[PosController::class,'index'])->name('pos.index');
+
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);

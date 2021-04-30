@@ -51,6 +51,9 @@ export default {
                     icon: 'pi pi-fw pi-home',
                     url: route('dashboard')
                 }, {
+                    label: 'ซื้อขาย',
+                    url: route('pos.index')
+                }, {
                     label: 'ขายฝาก',
                     url: route('pawns.index')
                 }, {

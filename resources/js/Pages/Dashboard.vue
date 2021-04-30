@@ -1,6 +1,6 @@
 <template>
     <app-layout>
-        <pos></pos>
+        <welcome></welcome>
     </app-layout>
 </template>
 
