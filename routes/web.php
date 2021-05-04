@@ -79,8 +79,9 @@ Route::middleware(['role:admin'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
-    Route::get('/pos',[PosController::class,'index'])->name('pos.index');
 
+    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+    Route::resource('sales', \App\Http\Controllers\SaleController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);
@@ -95,7 +96,7 @@ Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);
     Route::resource('stock-cards', \App\Http\Controllers\StockCardController::class);
 
-    Route::get('shifts/latest', [\App\Http\Controllers\ShiftController::class,'showLatest'])->name('shifts.show-latest');
+    Route::get('shifts/latest', [\App\Http\Controllers\ShiftController::class, 'showLatest'])->name('shifts.show-latest');
     Route::resource('shifts', \App\Http\Controllers\ShiftController::class);
 
     Route::get('api-gold_percents', function () {

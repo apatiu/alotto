@@ -137,13 +137,13 @@ export default {
             this.rows.push(this.row);
             this.row = {};
 
-            if (this.remain > 0) {
+            if (this.remain !== 0) {
                 this.row.method = 'cash';
                 this.row.amount = this.remain
                 this.row.dt = new Date()
             } else {
-                this.$emit('done', this.rows)
                 this.$emit('update:visible', false)
+                this.$emit('done', this.rows)
             }
         },
 

@@ -1,105 +1,124 @@
 <template>
     <div class="p-flex border-b">
-        <div class="cell-gold-price">{{ goldprice }}</div>
+        <div class="cell-gold-price">{{ form.gold_price }}</div>
     </div>
-    <div class="p-grid p-mt-2">
-        <div class="p-col-8">
-            <div class="p-flex-column">
-                <div class="cell-sell">
-                    <div class="card">
-                        <div class="p-flex-column">
-                            <h5>ขาย</h5>
-                            <div>
-                                <select-product
-                                    @select="onSelectProduct($event)"
-                                ></select-product>
-                                <Button label="S"></Button>
-                            </div>
-                            <DataTable
-                                :value="form.sales"
-                                class="p-datatable-sm p-mt-1">
-                                <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
-                                <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
-                                <Column field="qty" header="จำนวน" class="w-20">
-                                    <template #footer>
-                                        {{ salesQtySum }}
-                                    </template>
-                                </Column>
-                                <Column field="wt" header="นน.รวม" class="w-20"></Column>
-                                <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
-                                <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
-                                    <template #footer>
-                                        {{ salesTagWageSum }}
-                                    </template>
-                                </Column>
-                                <Column field="discount" header="ส่วนลด" class="w-20"></Column>
-                                <Column field="deposit" header="มัดจำ" class="w-20"></Column>
-                                <Column field="price_sale_total" header="รวม" class="w-20">
-                                    <template #footer>
-                                        {{ salesPriceSaleTotalSum }}
-                                    </template>
-                                </Column>
-                                <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
-                            </DataTable>
-                        </div>
-                    </div>
+    <div class="flex justify-between items-center space-x-2 py-6">
+        <SelectButton v-model="form.type"
+                      :options="types"
+                      optionLabel="label"
+                      optionValue="value">
+            <template #option="slotProps">
+                <div class="type-options w-28">
+                    <div>{{ slotProps.option.label }}</div>
                 </div>
-                <div class="cell-buy mt-2">
-                    <div class="card p-flex-column">
-                        <h5>ซื้อ</h5>
-                        <div class="flex space-x-1">
-                            <div class="w-24">
-                                <select-gold-percent v-model="buy.product_percent_id"></select-gold-percent>
-                            </div>
-                            <div class="w-40">
-                                <select-product-type v-model="buy.product_type"></select-product-type>
-                            </div>
-                            <div class="w-24">
-                                <label for="">น้ำหนัก</label>
-                                <InputNumber v-model="buy.wt"
-                                             :minFractionDigits="2"
-                                             input-class="w-full"></InputNumber>
-                            </div>
-                            <div class="w-40">
-                                <label for="">ราคารรับซื้อ</label>
-                                <InputNumber v-model="buy.price_buy_total"
-                                             input-class="w-full"/>
-                            </div>
-                            <div class="w-20 flex items-end">
-                                <Button icon="pi pi-plus" @click="addBuy"></Button>
-                            </div>
+            </template>
+        </SelectButton>
+        <div class="cell-bill p-4 flex flex-1 justify-end">
+            <div :class="['text-right font-bold text-5xl pr-4',classBillTotal]">{{ $filters.decimal(billTotal) }}</div>
+            <Button label="รับชำระเงิน"
+                    class="p-button-lg"
+                    :disabled="form.type===null"
+                    @click="checkout"></Button>
+        </div>
+    </div>
+
+    <template v-if="form.type">
+        <div class="p-field" v-if="form.code">
+            <label for="">รหัส</label>
+            <InputText v-model="form.code" />
+        </div>
+        <div class="mt-2">
+            <select-customer v-model="form.customer" class="bg-white"></select-customer>
+        </div>
+        <div class="p-flex-column mt-2">
+            <div class="cell-sell" v-if="form.type !== 'buy'">
+                <div class="card">
+                    <div class="p-flex-column">
+                        <h5>ขาย</h5>
+                        <div>
+                            <select-product
+                                @select="onSelectProduct($event)"
+                            ></select-product>
+                            <Button label="S"></Button>
                         </div>
-                        <DataTable :value="form.buys" class="p-mt-1">
-                            <Column field="product_percent_id" header="%" frozen footer=""></Column>
-                            <Column field="product_type" header="สินค้า" footer=""></Column>
-                            <Column field="wt" header="นน.รวม"></Column>
-                            <Column field="price_buy_calc" header="ราคาคำนวณ">
+                        <DataTable
+                            :value="form.sales"
+                            class="p-datatable-sm p-mt-1">
+                            <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
+                            <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
+                            <Column field="qty" header="จำนวน" class="w-20">
                                 <template #footer>
-                                    {{ buysPriceBuyCalcSum }}
+                                    {{ salesQtySum }}
                                 </template>
                             </Column>
-                            <Column field="price_buy_total" header="ราคารับซื้อ">
+                            <Column field="wt" header="นน.รวม" class="w-20"></Column>
+                            <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
+                            <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
                                 <template #footer>
-                                    {{ buysPriceBuyTotalSum }}
+                                    {{ salesTagWageSum }}
                                 </template>
                             </Column>
+                            <Column field="discount" header="ส่วนลด" class="w-20"></Column>
+                            <Column field="deposit" header="มัดจำ" class="w-20"></Column>
+                            <Column field="price_sale_total" header="รวม" class="w-20">
+                                <template #footer>
+                                    {{ salesPriceSaleTotalSum }}
+                                </template>
+                            </Column>
+                            <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
                         </DataTable>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="p-col-4">
-            <div class="p-flex-column">
-                <div class="cell-cust">
-                    <select-customer v-model="form.customer"></select-customer>
+            <div class="cell-buy mt-2" v-if="form.type !== 'sale'">
+                <div class="card p-flex-column">
+                    <h5>ซื้อ</h5>
+                    <div class="flex space-x-1">
+                        <div class="w-24">
+                            <select-gold-percent v-model="buy.product_percent_id"></select-gold-percent>
+                        </div>
+                        <div class="w-40">
+                            <select-product-type v-model="buy.product_type"></select-product-type>
+                        </div>
+                        <div class="w-24">
+                            <label for="">น้ำหนัก</label>
+                            <InputNumber v-model="buy.wt"
+                                         :minFractionDigits="2"
+                                         input-class="w-full"></InputNumber>
+                        </div>
+                        <div class="w-40">
+                            <label for="">ราคารรับซื้อ</label>
+                            <InputNumber v-model="buy.price_buy_total"
+                                         input-class="w-full"/>
+                        </div>
+                        <div class="w-20 flex items-end">
+                            <Button icon="pi pi-plus" @click="addBuy"></Button>
+                        </div>
+                    </div>
+                    <DataTable :value="form.buys" class="p-datatable-sm p-mt-1">
+                        <Column field="product_percent_id" header="%" frozen footer=""></Column>
+                        <Column field="product_type" header="สินค้า" footer=""></Column>
+                        <Column field="wt" header="นน.รวม"></Column>
+                        <Column field="price_buy_calc" header="ราคาคำนวณ">
+                            <template #footer>
+                                {{ buysPriceBuyCalcSum }}
+                            </template>
+                        </Column>
+                        <Column field="price_buy_total" header="ราคารับซื้อ">
+                            <template #footer>
+                                {{ buysPriceBuyTotalSum }}
+                            </template>
+                        </Column>
+                    </DataTable>
                 </div>
-                <div class="cell-bill bg-yellow-50 shadow p-4">
-                    <p class="text-center font-bold text-sm">{{ billTotal }}</p>
-                </div>
-                <Button label="รับชำระเงิน" class="p-button-lg w-full"></Button>
             </div>
         </div>
-    </div>
+
+
+    </template>
+    <input-payment v-model:visible="paymentDialog"
+                   :target="form.total_amount"
+                   @done="savePayments($event)"></input-payment>
 </template>
 
 <script>
@@ -107,37 +126,99 @@ import SelectGoldPercent from "@/A/SelectGoldPercent";
 import InputWeight from "@/A/InputWeight";
 import SelectProductType from "@/A/SelectProductType";
 import SelectProduct from "@/A/SelectProduct";
+import SelectCustomer from "@/A/SelectCustomer";
+import InputPayment from "@/A/InputPayment";
+import useVuelidate from '@vuelidate/core'
+import {required} from '@vuelidate/validators'
 
 export default {
     name: "Pos",
-    components: {SelectProduct, SelectProductType, InputWeight, SelectGoldPercent},
+    setup() {
+        const v = useVuelidate()
+        return {
+            v
+        }
+    },
+    components: {
+        InputPayment,
+        SelectCustomer,
+        SelectProduct,
+        SelectProductType, InputWeight, SelectGoldPercent
+    },
     props: {
         bill: Object,
         customer: Object,
     },
     data() {
         return {
-            form: this.$inertia.form({}),
-            goldprice: 0,
+            types: [
+                {label: 'ขาย', icon: 'pi pi-arrow-up', value: 'sale'},
+                {label: 'ซื้อ', icon: 'pi pi-arrow-up', value: 'buy'},
+                {label: 'เปลี่ยน', icon: 'pi pi-arrow-up', value: 'change'}
+            ],
+            form: this.$inertia.form({
+                id: null,
+                code: null,
+                dt: new Date(),
+                gold_price: this.goldprice,
+                customer: this.customer,
+                customer_id: null,
+                customer_name: null,
+                customer_phone: null,
+                customer_tax_id: null,
+                total_price_sale: 0,
+                total_price_buy: 0,
+                total_amount: 0,
+                total_wt_sale: 0,
+                total_wt_buy: 0,
+                total_qty_sale: 0,
+                product_cost_price: 0,
+                total_deposit: 0,
+                note: null,
+                type: null,
+                status: 'open',
+                gold_price_buy: 0,
+                sales: [],
+                buys: [],
+
+            }),
             product: null,
-            buy: {
-                product_percent_id: 96,
-                product_type: '',
-                wt: 0,
-                price_buy_calc: 0,
-                price_buy_total: 0,
+            buy:
+                {
+                    product_percent_id: 96,
+                    product_type: '',
+                    wt: 0,
+                    price_buy_calc: 0,
+                    price_buy_total: 0,
+                },
+            paymentDialog: false,
+        }
+    },
+    validations() {
+        return {
+            form: {
+                customer: {required},
+                sales: {required}
             }
         }
     },
     watch: {
-        'buy.wt': function (val) {
-            let self = this;
-            this.calcBuyPrice(val)
-                .then((data) => {
-                    self.buy.price_buy_calc = Math.round(data)
-                    self.buy.price_buy_total = Math.round(data)
-                })
-        }
+        'form.type': function (val) {
+            if (val === 'sale') {
+                this.form.buys = []
+            } else if (val === 'buy') {
+                this.form.sales = []
+            }
+        },
+        'buy.wt':
+            function (val) {
+                let self = this;
+                this.calcBuyPrice(val)
+                    .then((data) => {
+                        self.buy.price_buy_calc = Math.round(data)
+                        self.buy.price_buy_total = Math.round(data)
+                    })
+            }
     },
     computed: {
         salesQtySum() {
@@ -188,11 +269,17 @@ export default {
         billTotal() {
             this.form.total_amount = this.form.total_price_sale - this.form.total_price_buy
             return this.form.total_amount
+        },
+        classBillTotal() {
+            return {
+                'text-blue-600': this.form.total_amount >= 0,
+                'text-red-600': this.form.total_amount < 0
+            }
         }
     },
     mounted() {
         if (!this.bill) {
-            this.goldprice = this.getGoldPrice();
+            this.form.gold_price = this.getGoldPrice();
             this.create()
         }
     },
@@ -213,13 +300,12 @@ export default {
         getGoldPrice() {
             axios.get(route('api.goldprice'))
                 .then(({data}) => {
-                    this.goldprice = data
+                    this.form.gold_price = data
                 })
         },
         onSelectProduct(e) {
             let sale = this.getSaleLine(e, 1)
             this.form.sales.push(sale);
-
         },
         onInputProduct(e) {
             this.getSaleLine(e.gold_percent, e.wt)
@@ -229,7 +315,7 @@ export default {
             if (e.sale_with_gold_price) {
 
                 let wtGram = e.weightbaht ? e.weight * 15.2 : e.weight;
-                let priceSaleGold = numeral(this.goldprice)
+                let priceSaleGold = numeral(this.form.gold_price)
                     .add(e.gold_percent.add_sale)
                     .multiply(e.gold_percent.percent_sale / 100)
                     .multiply(wtGram)
@@ -272,7 +358,6 @@ export default {
                     let p = numeral(productPercent)
                     return p
                 })
-
         },
         getGoldPercent(id) {
             return axios.get(route('api.product-percents.show', id))
@@ -285,15 +370,15 @@ export default {
         },
         async calcBuyPrice(wt) {
             let gPercent = await this.getGoldPercent(this.buy.product_percent_id)
-            let o = numeral(this.goldprice)
+            let o = numeral(this.form.gold_price)
                 .subtract(gPercent.deduct_buy)
-                .multiply(gPercent.percent_buy / 100)
-                .multiply(wt)
-                .divide(15.2)
-                .value()
+                .multiply(gPercent.percent_buy / 100);
 
-            o = numeral(o).multiply(1 - (gPercent.percent_deduct_total_buy / 100)).value();
-            return o
+            this.form.gold_price_buy = o.value();
+
+            o.multiply(wt).divide(15.2);
+            o.multiply(1 - (gPercent.percent_deduct_total_buy / 100));
+            return o.value()
         },
         addBuy() {
             let buy = _.assign({}, this.buy, {
@@ -302,8 +387,33 @@ export default {
             buy.product_type = this.buy.product_type.name
             this.form.buys.push(buy)
         },
+        checkout() {
+            switch (this.form.type) {
+                case 'sale' :
+                    if (this.form.sales.length === 0) {
+                        this.notify('กรุณาป้อนข้อมูลขาย', 'error')
+                        return
+                    }
+                case 'buy' :
+                    if (this.form.sales.length === 0) {
+                        this.notify('กรุณาป้อนข้อมูลซื้อ', 'error')
+                        return
+                    }
+                case 'change' :
+                    if (this.form.sales.length === 0 && this.form.buys.length === 0) {
+                        this.notify('กรุณาป้อนข้อมูลขาย และ ซื้อ', 'error')
+                        return
+                    }
+            }
+            this.paymentDialog = true;
+        },
+        savePayments(e) {
+            this.form.payments = e
+            this.update()
+        },
         update() {
-            this.form.post(route('sales.store'))
+            this.setLoading();
+            this.form.post(route('sales.store'));
         }
     }
 }

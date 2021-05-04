@@ -126,7 +126,7 @@ const app = createApp({
     .use(ToastService)
     .use(VueHtmlToPaper);
 
-app.config.globalProperties.$appState = reactive({ inputStyle: 'outlined' });
+app.config.globalProperties.$appState = reactive({inputStyle: 'outlined'});
 
 app.config.globalProperties.$filters = {
     date(value) {
@@ -143,7 +143,15 @@ app.config.globalProperties.$filters = {
 }
 
 app.mixin({
+    data() {
+        return {
+            loading: false
+        }
+    },
     methods: {
+        setLoading(val = true) {
+            this.loading = val
+        },
         notify(summary, severity = 'success', detail = '', life = 3000) {
             this.$toast.add({severity: severity, summary: summary, detail: detail, life: life})
         }

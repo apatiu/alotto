@@ -1,27 +1,37 @@
 <template>
     <div class="border rounded p-4">
-        <small class="font-bold">ลูกค้า</small>
-        <div class="divp-field m-0 p-0">
-            <label for="" v-if="showLabel">ลูกค้า:</label>
+        <div class="p-field m-0 p-0">
+
             <div class="p-d-flex">
-                <AutoComplete :modelValue="modelValue"
-                              @item-select="onSelect"
-                              :suggestions="filteredItems"
-                              @complete="search($event)"
-                              field="name"
-                              dropdown
-                              class="flex-1"
-                              :disabled=disabled
-                ></AutoComplete>
-                <Button icon="pi pi-plus"
-                        class="p-button-icon p-ml-2"
-                        @click="creating=true"
-                        :disabled=disabled></Button>
-            </div>
-            <div class="flex flex-col mt-2">
-                <small>เบอร์โทร: {{ selected.phone ?? '' }}</small>
-                <small>เลขบัตร: {{ selected.tax_id ?? '' }}</small>
-                <small>ที่อยุ่: {{ selected.address ?? '' }}</small>
+                <div class="p-col-8">
+                    <label for="" v-if="showLabel" class="mb-1">ลูกค้า:</label>
+                    <div class="flex">
+                        <AutoComplete :model-value="modelValue"
+                                      @update:modelValue="onUpdateValue($event)"
+                                      :suggestions="filteredItems"
+                                      @complete="search($event)"
+                                      field="name"
+                                      class="flex-1"
+                                      input-class="flex-1"
+                                      :disabled=disabled
+                                      force-selection
+                        ></AutoComplete>
+                        <Button icon="pi pi-plus"
+                                class="p-button-icon p-ml-2"
+                                @click="creating=true"
+                                :disabled=disabled></Button>
+                    </div>
+                    <div class="flex flex-col mt-1">
+                        <template v-if="modelValue">
+                            <small>เบอร์โทร: {{ modelValue.phone }}</small>
+                            <small>เลขบัตร: {{ modelValue.tax_id }}</small>
+                            <small>ที่อยุ่: {{ modelValue.address }}</small>
+                        </template>
+                        <template v-else>
+                            กรุณาเลือกลูกค้า
+                        </template>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -68,14 +78,9 @@ export default {
                     });
             }, 250);
         },
-        onSelect(e) {
-            this.selected = e.value;
-            this.$emit('update:modelValue', e.value);
-        },
-        select(e) {
-            this.selected = e;
-            this.filteredItems = [e]
-            this.$emit('update:modelValue', e);
+        onUpdateValue(e) {
+            this.selected = e
+            this.$emit('update:modelValue', e)
         }
     }
 }

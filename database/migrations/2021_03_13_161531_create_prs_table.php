@@ -26,8 +26,8 @@ class CreatePrsTable extends Migration
 
             $table->string('detail')->nullable();
             $table->string('bill_id')->nullable();
-            $table->decimal('pay')->nullable();
-            $table->decimal('receive')->nullable();
+            $table->decimal('pay',12,2)->nullable();
+            $table->decimal('receive',12,2)->nullable();
 
             $table->string('method');
             $table->string('transfer_bank')->nullable();
