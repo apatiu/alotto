@@ -10,7 +10,8 @@ class Sale extends Model
     use HasFactory;
 
     protected $fillable = [
-        'code', 'dt', 'team_id',
+        'code', 'dt',
+        'gold_price',
         'customer_id', 'customer_name', 'customer_phone', 'customer_tax_id',
         'total_price_sale',
         'total_price_buy',
@@ -29,4 +30,16 @@ class Sale extends Model
         'user_id_cancel',
         'gold_price_buy',
     ];
+
+    public function details() {
+        return $this->hasMany(SaleDetail::class);
+    }
+
+    public function sales(){
+        return $this->details()->whereStatus('sale');
+    }
+
+    public function buys(){
+        return $this->details()->whereStatus('buy');
+    }
 }

@@ -1,8 +1,6 @@
 <template>
-    <div class="p-flex border-b">
-        <div class="cell-gold-price">{{ form.gold_price }}</div>
-    </div>
-    <div class="flex justify-between items-center space-x-2 py-6">
+
+    <div class="layout-topbar type-bar">
         <SelectButton v-model="form.type"
                       :options="types"
                       optionLabel="label"
@@ -21,54 +19,71 @@
                     @click="checkout"></Button>
         </div>
     </div>
-
+    <div class="mt-24"></div>
     <template v-if="form.type">
         <div class="p-field" v-if="form.code">
             <label for="">รหัส</label>
-            <InputText v-model="form.code" />
+            <InputText v-model="form.code"/>
         </div>
-        <div class="mt-2">
-            <select-customer v-model="form.customer" class="bg-white"></select-customer>
+        <div class="mt-2 p-grid">
+            <div class="p-col-9 p-lg-10">
+                <select-customer v-model="form.customer" class="bg-white"></select-customer>
+            </div>
+            <div class="p-col-3 p-lg-2">
+                <Card>
+                    <template #title>ราคาทองคำแท่ง</template>
+                    <template #content>
+                        <div class="p-fluid">
+                            <div class="p-field">
+                                <label for="">ขายออก</label>
+                                <InputNumber v-model="form.gold_price"></InputNumber>
+                            </div>
+                        </div>
+                    </template>
+                </Card>
+            </div>
         </div>
         <div class="p-flex-column mt-2">
             <div class="cell-sell" v-if="form.type !== 'buy'">
-                <div class="card">
-                    <div class="p-flex-column">
-                        <h5>ขาย</h5>
-                        <div>
-                            <select-product
-                                @select="onSelectProduct($event)"
-                            ></select-product>
-                            <Button label="S"></Button>
+                <Card>
+                    <template #title>ขาย</template>
+                    <template #content>
+                        <div class="p-flex-column">
+                            <div>
+                                <select-product
+                                    @select="onSelectProduct($event)"
+                                ></select-product>
+                                <Button label="S"></Button>
+                            </div>
+                            <DataTable
+                                :value="form.sales"
+                                class="p-datatable-sm p-mt-1">
+                                <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
+                                <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
+                                <Column field="qty" header="จำนวน" class="w-20">
+                                    <template #footer>
+                                        {{ salesQtySum }}
+                                    </template>
+                                </Column>
+                                <Column field="wt" header="นน.รวม" class="w-20"></Column>
+                                <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
+                                <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
+                                    <template #footer>
+                                        {{ salesTagWageSum }}
+                                    </template>
+                                </Column>
+                                <Column field="discount" header="ส่วนลด" class="w-20"></Column>
+                                <Column field="deposit" header="มัดจำ" class="w-20"></Column>
+                                <Column field="price_sale_total" header="รวม" class="w-20">
+                                    <template #footer>
+                                        {{ salesPriceSaleTotalSum }}
+                                    </template>
+                                </Column>
+                                <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
+                            </DataTable>
                         </div>
-                        <DataTable
-                            :value="form.sales"
-                            class="p-datatable-sm p-mt-1">
-                            <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
-                            <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
-                            <Column field="qty" header="จำนวน" class="w-20">
-                                <template #footer>
-                                    {{ salesQtySum }}
-                                </template>
-                            </Column>
-                            <Column field="wt" header="นน.รวม" class="w-20"></Column>
-                            <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
-                            <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
-                                <template #footer>
-                                    {{ salesTagWageSum }}
-                                </template>
-                            </Column>
-                            <Column field="discount" header="ส่วนลด" class="w-20"></Column>
-                            <Column field="deposit" header="มัดจำ" class="w-20"></Column>
-                            <Column field="price_sale_total" header="รวม" class="w-20">
-                                <template #footer>
-                                    {{ salesPriceSaleTotalSum }}
-                                </template>
-                            </Column>
-                            <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
-                        </DataTable>
-                    </div>
-                </div>
+                    </template>
+                </Card>
             </div>
             <div class="cell-buy mt-2" v-if="form.type !== 'sale'">
                 <div class="card p-flex-column">
@@ -281,10 +296,12 @@ export default {
         if (!this.bill) {
             this.form.gold_price = this.getGoldPrice();
             this.create()
+        } else {
         }
     },
     methods: {
         create() {
+            console.log('create')
             this.form = _.assign(this.form, {
                 id: null,
                 code: '',
@@ -321,7 +338,7 @@ export default {
                     .multiply(wtGram)
                     .divide(15.2)
                     .value();
-
+                priceSaleGold = Math.floor(priceSaleGold);
                 sale.price_sale_gold = priceSaleGold
                 sale.product_wt = wtGram
                 sale.cost_wage = e.cost_wage
@@ -334,7 +351,7 @@ export default {
                     .value()
                 sale.profit_wage = sale.price_sale_wage - (e.cost_wage * qty)
                 sale.profit_gold = sale.price_sale_gold - (sale.avg_cost_per_baht)
-                sale.profit_total = numeral(sale.profit_wage).add(sale.profit_gold)
+                sale.profit_total = numeral(sale.profit_wage).add(sale.profit_gold).value()
             } else {
 
             }
@@ -413,12 +430,23 @@ export default {
         },
         update() {
             this.setLoading();
-            this.form.post(route('sales.store'));
+            this.form.post(route('sales.store'), {
+                onSuccess: (e) => {
+                    this.notify('บันทึกข้อมูลเรียบร้อย')
+                    this.create()
+
+                }
+            });
         }
     }
 }
 </script>
 
 <style scoped>
-
+.type-bar {
+    top: 50px;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
 </style>

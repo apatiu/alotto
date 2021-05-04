@@ -37,18 +37,24 @@ class SaleController extends Controller
      */
     public function store(Request $request)
     {
-//        dd($request->all());
-
         try {
             DB::beginTransaction();
             $data = $request->all();
             if ($data['id'])
                 $this->update($request, $data['id']);
             else {
-                unset($data['id'],$data['code']);
+                unset($data['id'], $data['code']);
                 $data['dt'] = jsDateToDateString($data['dt']);
                 $data['team_id'] = $request->user()->currentTeam->id;
+                $data['status'] = 'checked';
                 $sale = Sale::create($data);
+
+                if (in_array($data['type'], ['sale', 'change']))
+                    $sale->details()->createMany([$data['sales']]);
+//                    $sale->details()->createMany($data['sales']);
+
+                if (in_array($data['type'], ['buy', 'change']))
+                    $sale->details()->createMany($data['buys']);
             }
             DB::commit();
         } catch (\Throwable $e) {

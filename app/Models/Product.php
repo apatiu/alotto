@@ -25,7 +25,7 @@ class Product extends Model
         "cost_price",
         "tag_wage",
         "tag_price",
-        "avr_cost_per_baht",
+        "avg_cost_per_baht",
         "sale_with_gold_price",
         "wage_by_pcs",
         "qty",
