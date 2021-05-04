@@ -47,6 +47,10 @@ class Product extends Model
         return $this->hasMany(StockCard::class);
     }
 
+    public function getGoldPercentAttribute() {
+        return GoldPercent::whereId($this->attributes['gold_percent'])->first();
+    }
+
     public function gen_product_id()
     {
         $gold_percent = $this->attributes['gold_percent'];

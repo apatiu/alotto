@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Actions\Fortify\CreateNewUser;
+use App\Models\Customer;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -37,13 +38,18 @@ class DatabaseSeeder extends Seeder
         $user = $this->creator->create($details);
         $user->assignRole('admin');
 
+        $cust_cash = Customer::updateOrCreate([
+            'id' => 1
+        ], [
+            'name' => 'ลูกค้าเงินสด'
+        ]);
+
         $this->call(ProductTypeSeeder::class);
         $this->call(BankSeeder::class);
         $this->call(BankAccountSeeder::class);
         $this->call(PaymentMethodSeeder::class);
 //        $this->call(IntRangeRateSeeder::class);
 //        $this->call(IntDiscountRateSeeder::class);
-
 
 
         $this->call(TestSeeder::class);

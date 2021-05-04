@@ -79,7 +79,6 @@ Route::middleware(['role:admin'])->group(function () {
 });
 
 Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
-
     Route::get('/pos',[PosController::class,'index'])->name('pos.index');
 
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);

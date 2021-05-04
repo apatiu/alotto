@@ -5,7 +5,7 @@
                    @cell-edit-complete="onCellEditComplete"
                    class="editable-cells_table"
                    responsiveLayout="scroll">
-            <Column field="name" header="เปอร์เซ็นทอง" key="name">
+            <Column field="gold_percent" header="เปอร์เซ็นทอง" key="name">
                 <template #editor="slotProps">
                     <InputText :modelValue="slotProps.data[slotProps.column.props.field]"
                                @update:modelValue="onCellEdit($event, slotProps)"/>

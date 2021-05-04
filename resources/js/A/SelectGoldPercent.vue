@@ -2,7 +2,7 @@
     <label for="">เปอร์เซ็นทอง</label>
     <Dropdown class="w-full p-filled"
               :options="items"
-              optionLabel="name"
+              optionLabel="gold_percent"
               optionValue="id"
               :modelValue="modelValue"
               @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>

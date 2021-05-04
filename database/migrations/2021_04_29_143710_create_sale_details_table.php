@@ -18,7 +18,7 @@ class CreateSaleDetailsTable extends Migration
             $table->foreignId('sale_id');
             $table->enum('status',['sale','buy']);
             $table->foreignId('product_id')->nullable();
-            $table->decimal('product_percent')->nullable();
+            $table->foreignId('product_percent_id')->nullable();
             $table->string('product_type')->nullable();
             $table->string('product_design')->nullable();
             $table->string('product_size')->nullable();

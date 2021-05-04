@@ -48,6 +48,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
 
+            Route::resource('product-percents', 'ProductPercentController');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
             Route::get('/pawns/today-int/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'getTodayInt'])->name('pawns.todayInt');
@@ -61,6 +62,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/goldprice', function () {
                 return goldprice();
             })->name('goldprice');
+
+            Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
         });
 
 

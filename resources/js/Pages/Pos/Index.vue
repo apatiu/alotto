@@ -1,6 +1,6 @@
 <template>
     <app-layout>
-        <pos :bill="bill"></pos>
+        <pos :bill="bill" :customer="customer"></pos>
     </app-layout>
 </template>
 
@@ -15,6 +15,7 @@ export default {
     },
     props: {
         bill: Object,
+        customer: Object,
     },
     data() {
         return {}

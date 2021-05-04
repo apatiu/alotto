@@ -39,7 +39,6 @@ class ShiftController extends Controller
     {
         $shift = new Shift([
             'team_id' => $request->user()->currentTeam->id,
-            'd' => now(),
             'cash_begin' => $request->input('cash_begin'),
             'cash' => 0,
             'cash_to_safe' => 0,
