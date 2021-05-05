@@ -164,10 +164,12 @@
 <script>
 import SelectGoldPercent from "@/A/SelectGoldPercent";
 import SelectProductType from "@/A/SelectProductType";
+import InputWeight from "@/A/InputWeight";
+import SelectProductDesign from "@/A/SelectProductDesign";
 
 export default {
     name: "CreateStockImportLine",
-    components: {SelectProductType, SelectGoldPercent},
+    components: {SelectProductDesign, InputWeight, SelectProductType, SelectGoldPercent},
     data() {
         return {
             visible: false,
