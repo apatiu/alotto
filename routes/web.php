@@ -86,6 +86,7 @@ Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);
     Route::resource('product-designs', ProductDesignController::class);
+    Route::resource('product-sizes', \App\Http\Controllers\ProductSizeController::class);
     Route::resource('products', ProductController::class);
     Route::resource('customers', CustomerController::class);
     Route::resource('stock-imports', StockImportController::class);

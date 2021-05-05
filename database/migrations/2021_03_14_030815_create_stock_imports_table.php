@@ -38,8 +38,8 @@ class CreateStockImportsTable extends Migration
         Schema::create('stock_import_lines', function (Blueprint $table) {
             $table->id();
             $table->string('stock_import_id');
-            $table->string('product_id');
-            $table->string('gold_percent');
+            $table->string('product_code');
+            $table->foreignId('gold_percent_id');
             $table->string('product_type_id');
             $table->string('product_design_id')->nullable();
             $table->string('product_size')->nullable();

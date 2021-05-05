@@ -74,6 +74,9 @@ export default {
                             label: 'ลายสินค้า',
                             url: route('product-designs.index')
                         }, {
+                            label: 'ขนาดสินค้า',
+                            url: route('product-sizes.index')
+                        }, {
                             label: 'เปอร์เซ็นต์ทอง',
                             url: route('gold-percents.index')
                         }
