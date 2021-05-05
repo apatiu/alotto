@@ -363,7 +363,12 @@ export default {
     props: ['item', 'gold_percents', 'errors', 'goldprice'],
     data() {
         return {
-            form: this.$inertia.form(this.item),
+            form: this.$inertia.form({
+                id:null,
+                code: null,
+                dt: new Date(),
+                lines:[]
+            }),
             approve: false,
             bill_goldprice: this.goldprice,
             creatingLine: false,

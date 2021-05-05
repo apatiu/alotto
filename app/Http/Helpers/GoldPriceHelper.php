@@ -7,6 +7,7 @@ if (!function_exists('goldprice')) {
             header('Access-Control-Allow-Origin: *');
 
             $output = file_get_contents('http://thaigold.info/RealTimeDataV2/gtdata_.txt');
+            \Illuminate\Support\Facades\Log::info($output);
             $output = json_decode($output, false);
             $output = Arr::first($output, function ($value, $key) {
                 return $value->name == 'สมาคมฯ';
@@ -14,6 +15,7 @@ if (!function_exists('goldprice')) {
 
             $gbSell = floatval($output->ask);
             $gbBuy = floatval($output->bid);
+            \Illuminate\Support\Facades\Log::info($output);
 
             return $gbSell;
         } catch (\Exception $exception) {

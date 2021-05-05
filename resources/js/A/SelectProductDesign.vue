@@ -1,15 +1,16 @@
 <template>
-    <span class="p-float-label p-filled">
-    <AutoComplete :modelValue="modelValue"
-                  @update:modelValue="$emit('update:modelValue',$event)"
-                  :suggestions="filteredItems"
-                  @complete="search($event)"
-                  field="name"
-                  :dropdown="true"
-                  forceSelection
-    ></AutoComplete>
-    <label for="">ดีไซน์</label>
-    </span>
+    <div class="p-field">
+        <label for="">ดีไซน์</label>
+        <AutoComplete :modelValue="modelValue"
+                      @update:modelValue="$emit('update:modelValue',$event)"
+                      :suggestions="filteredItems"
+                      @complete="search($event)"
+                      field="name"
+                      :dropdown="true"
+                      forceSelection
+        ></AutoComplete>
+
+    </div>
 </template>
 
 <script>

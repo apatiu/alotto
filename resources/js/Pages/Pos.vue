@@ -26,10 +26,10 @@
             <InputText v-model="form.code"/>
         </div>
         <div class="mt-2 p-grid">
-            <div class="p-col-9 p-lg-10">
+            <div class="p-col-9">
                 <select-customer v-model="form.customer" class="bg-white"></select-customer>
             </div>
-            <div class="p-col-3 p-lg-2">
+            <div class="p-col-3">
                 <Card>
                     <template #title>ราคาทองคำแท่ง</template>
                     <template #content>
@@ -57,10 +57,19 @@
                             </div>
                             <DataTable
                                 :value="form.sales"
-                                class="p-datatable-sm p-mt-1">
+                                class="p-datatable-sm p-mt-1"
+                                editMode="cell"
+                                @cellEditComplete="onSalesCellEditComplete"
+                                :scrollable="true">
                                 <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
                                 <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
                                 <Column field="qty" header="จำนวน" class="w-20">
+                                    <template #editor="slotProps">
+                                        <InputNumber
+                                            :modelValue="slotProps.data.qty"
+                                            @update:modelValue="onSalesCellEdit($event,slotProps)"
+                                            inputClass="w-full"></InputNumber>
+                                    </template>
                                     <template #footer>
                                         {{ salesQtySum }}
                                     </template>
@@ -80,6 +89,14 @@
                                     </template>
                                 </Column>
                                 <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
+                                <Column headerClass="text-center w-20">
+                                    <template #body="{index}">
+                                        <Button type="button"
+                                                icon="pi pi-trash"
+                                                class="p-button-sm p-button-rounded p-button-text p-button-plain"
+                                                @click="removeSale(index)"></Button>
+                                    </template>
+                                </Column>
                             </DataTable>
                         </div>
                     </template>
@@ -122,6 +139,14 @@
                         <Column field="price_buy_total" header="ราคารับซื้อ">
                             <template #footer>
                                 {{ buysPriceBuyTotalSum }}
+                            </template>
+                        </Column>
+                        <Column headerClass="text-center w-20">
+                            <template #body="{index}">
+                                <Button type="button"
+                                        icon="pi pi-trash"
+                                        class="p-button-sm p-button-rounded p-button-text p-button-plain"
+                                        @click="removeBuy(index)"></Button>
                             </template>
                         </Column>
                     </DataTable>
@@ -207,6 +232,8 @@ export default {
                     price_buy_total: 0,
                 },
             paymentDialog: false,
+            editingSalesCellRows: {},
+            editingBuysCellRows: {},
         }
     },
     validations() {
@@ -332,13 +359,7 @@ export default {
             if (e.sale_with_gold_price) {
 
                 let wtGram = e.weightbaht ? e.weight * 15.2 : e.weight;
-                let priceSaleGold = numeral(this.form.gold_price)
-                    .add(e.gold_percent.add_sale)
-                    .multiply(e.gold_percent.percent_sale / 100)
-                    .multiply(wtGram)
-                    .divide(15.2)
-                    .value();
-                priceSaleGold = Math.floor(priceSaleGold);
+                let priceSaleGold = this.getPriceSaleGold(e.gold_percent, wtGram);
                 sale.price_sale_gold = priceSaleGold
                 sale.product_wt = wtGram
                 sale.cost_wage = e.cost_wage
@@ -352,6 +373,8 @@ export default {
                 sale.profit_wage = sale.price_sale_wage - (e.cost_wage * qty)
                 sale.profit_gold = sale.price_sale_gold - (sale.avg_cost_per_baht)
                 sale.profit_total = numeral(sale.profit_wage).add(sale.profit_gold).value()
+                sale.sale_with_gold_price = e.sale_with_gold_price
+                sale.wage_by_pcs = e.wage_by_pcs
             } else {
 
             }
@@ -365,16 +388,15 @@ export default {
             sale.prodcut_name = e.name
             return sale
         },
-        getPriceSaleGold(pp, w) {
-            let productPercent = null
-            let price = 0;
-            axios.get(route('api.product-percents.show', pp))
-                .then(({data}) => {
-                    productPercent = data;
-                    console.log(productPercent)
-                    let p = numeral(productPercent)
-                    return p
-                })
+        getPriceSaleGold(goldPercent, wtGram, goldprice = null) {
+            goldprice = (goldprice) ? goldprice : this.form.gold_price;
+            let priceSaleGold = numeral(goldprice)
+                .add(goldPercent.add_sale)
+                .multiply(goldPercent.percent_sale / 100)
+                .multiply(wtGram)
+                .divide(15.2)
+                .value();
+            return Math.floor(priceSaleGold);
         },
         getGoldPercent(id) {
             return axios.get(route('api.product-percents.show', id))
@@ -384,6 +406,39 @@ export default {
         },
         addRawProduct(e) {
 
+        },
+        onSalesCellEditComplete(e) {
+            if (!this.editingSalesCellRows[e.index])
+                return;
+
+            const editingCellValue = this.editingSalesCellRows[e.index][e.field];
+
+            let editingRow = this.editingSalesCellRows[e.index];
+            switch (e.field) {
+                case 'qty':
+                    if (editingRow.sale_with_gold_price) {
+                        editingRow.wt = numeral(editingRow.product_wt).multiply(editingRow.qty).value();
+                        editingRow.price_sale_gold = this.getPriceSaleGold(editingRow.gold_percent, editingRow.wt, editingRow.gold_price);
+                    }
+                    this.form.sales[e.index] = editingRow
+                    break;
+                case 'price_sale_total':
+                    this.form.sales[e.index] = {...this.editingSalesCellRows[e.index]}
+                    break;
+            }
+        },
+        onSalesCellEdit(val, props) {
+            if (!this.editingSalesCellRows[props.index]) {
+                this.editingSalesCellRows[props.index] = {...props.data}
+            }
+
+            this.editingSalesCellRows[props.index][props.column.props.field] = val;
+        },
+        removeSale(i) {
+            this.form.sales.splice(i, 1)
+        },
+        removeBuy(i) {
+            this.form.buys.splice(i, 1)
         },
         async calcBuyPrice(wt) {
             let gPercent = await this.getGoldPercent(this.buy.product_percent_id)
@@ -448,5 +503,7 @@ export default {
     height: auto;
     display: flex;
     align-items: center;
+    background: white;
+    border-bottom: 1px solid lightblue;
 }
 </style>

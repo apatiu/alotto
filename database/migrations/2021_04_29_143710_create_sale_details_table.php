@@ -36,7 +36,7 @@ class CreateSaleDetailsTable extends Migration
             $table->decimal('price_sale_wage')->nullable();
             $table->decimal('price_buy_total')->nullable();
             $table->decimal('price_buy_calc')->nullable();
-            $table->decimal('sale_by_baht')->nullable();
+            $table->decimal('sale_with_gold_price')->nullable();
             $table->decimal('wage_by_pcs')->nullable();
 
             $table->decimal('profit_wage')->nullable();

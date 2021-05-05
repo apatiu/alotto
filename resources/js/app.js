@@ -143,11 +143,6 @@ app.config.globalProperties.$filters = {
 }
 
 app.mixin({
-    data() {
-        return {
-            loading: false
-        }
-    },
     methods: {
         setLoading(val = true) {
             this.loading = val
