@@ -83,10 +83,10 @@ class ProductSizeController extends Controller
     {
         $rules = $this->validateRules();
         unset($rules['id']);
-        Validator::make($request->all(), $rules)->validateWithBag('typeBag');;
-        DB::transaction(function () use ($request, $productType) {
-            $productType->name = $request->input('name');
-            $productType->save();
+        Validator::make($request->all(), $rules)->validateWithBag('productSizeBag');;
+        DB::transaction(function () use ($request, $productSize) {
+            $productSize->name = $request->input('name');
+            $productSize->save();
         });
         return redirect()->back();
     }

@@ -1,20 +1,19 @@
 <template>
     <Dialog header="เพิ่มสินค้า" v-model:visible="visible"
-            :modal="true" position="bottom" style="max-width: 800px">
+            :modal="true" position="bottom" style="max-width: 800px; width: 800px">
         <div class="p-fluid p-grid">
             <div class="p-col-9">
                 <div class="p-grid pt-8">
-                    <div class="p-field p-col-3">
-                        <a-input
-                            v-model="line.product_code"
-                            label="รหัสสินค้า"
-                        ></a-input>
+                    <div class="p-field p-col-4">
+                        <label for="">รหัสสินค้า</label>
+                        <InputText v-model="line.product_code"></InputText>
                     </div>
-                    <div class="p-field p-col-9">
+                    <div class="p-field p-col-8">
                         <a-input
                             v-model="line.product_name"
                             label="ชื่อสินค้า"></a-input>
                     </div>
+                    <Divider></Divider>
                     <div class="p-field p-col-3">
                         <select-gold-percent v-model="line.gold_percent"/>
                     </div>
@@ -29,7 +28,7 @@
                         <select-product-design
                             v-model="line.product_design"
                             :product-type-id="line.product_type_id"
-                            ></select-product-design>
+                        ></select-product-design>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input
@@ -37,8 +36,7 @@
                             label="ขนาด"></a-input>
                     </div>
                     <div class="p-field p-col-3">
-                        <a-input-currency v-model="v$.line.qty.$model" label="จำนวน"
-                                          :error="v$.line.qty.$errors.length ? v$.line.qty.$errors[0].$message : null"></a-input-currency>
+                        <a-input-currency v-model="line.qty" label="จำนวน"></a-input-currency>
                     </div>
                     <div class="p-field p-col-3">
                         <a-input v-model="product_weight_total"
@@ -47,19 +45,18 @@
                     </div>
                     <div class="p-field p-col-3">
                         <a-input-currency
-                            v-model="v$.line.avg_cost_per_baht.$model"
+                            v-model="line.avg_cost_per_baht"
                             label="ต้นทุน/บาท"
-                            :error="v$.line.avg_cost_per_baht.$errors.length ? v$.line.avg_cost_per_baht.$errors[0].$message : null"
                         ></a-input-currency>
                     </div>
                 </div>
                 <div class="p-grid">
                     <div class="p-col-6 p-flex-column">
                         <div class="p-field-radiobutton">
-                            <RadioButton v-model="product.sale_with_gold_price"
+                            <RadioButton v-model="line.sale_with_gold_price"
                                          name="sale_with_gold"
                                          :value="true"
-                                         :disabled="product.id"></RadioButton>
+                                         :disabled="line.id"></RadioButton>
                             <label>ราคาเปลี่ยนตามราคาทอง</label>
                         </div>
                         <div class="flex">
@@ -67,58 +64,54 @@
                                 <RadioButton id="wage_by_pcs"
                                              name="wage_type"
                                              :value="true"
-                                             v-model="product.wage_by_pcs"
-                                             :disabled="product.sale_with_gold_price === false"/>
+                                             v-model="line.wage_by_pcs"
+                                             :disabled="line.sale_with_gold_price === false"/>
                                 <label for="wage_by_pcs">คิดค่าแรงต่อชิ้น</label>
                             </div>
                             <div class="p-field-radiobutton ml-3">
                                 <RadioButton id="wage_by_baht"
                                              name="wage_type"
                                              :value="false"
-                                             v-model="product.wage_by_pcs"
-                                             :disabled="product.sale_with_gold_price === false"/>
+                                             v-model="line.wage_by_pcs"
+                                             :disabled="line.sale_with_gold_price === false"/>
                                 <label for="wage_by_baht">คิดค่าแรงต่อบาท</label>
                             </div>
                         </div>
                         <div class="p-field mt-4">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="v$.line.cost_wage.$model"
-                                                 :disabled="product.sale_with_gold_price === false"/>
+                                    <InputNumber v-model="line.cost_wage"
+                                                 :disabled="line.sale_with_gold_price === false"/>
                                     <label>ค่าแรงทุน</label>
                                 </span>
-                            <input-error :errors="v$.line.cost_wage.$errors"></input-error>
                         </div>
                         <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="v$.line.tag_wage.$model"
-                                                 :disabled="product.sale_with_gold_price === false"/>
+                                    <InputNumber v-model="line.tag_wage"
+                                                 :disabled="line.sale_with_gold_price === false"/>
                                     <label>ค่าแรงขาย</label>
                                 </span>
-                            <input-error :errors="v$.line.tag_wage.$errors"/>
                         </div>
                     </div>
                     <div class="p-col-6 p-flex-column justify-end">
                         <div class="p-field-radiobutton">
-                            <RadioButton v-model="product.sale_with_gold_price"
+                            <RadioButton v-model="line.sale_with_gold_price"
                                          name="sale_with_gold"
                                          :value="false"></RadioButton>
                             <label>ราคาคงที่</label>
                         </div>
                         <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="v$.line.cost_price.$model"
-                                                 :disabled="product.sale_with_gold_price === true"/>
+                                    <InputNumber v-model="line.cost_price"
+                                                 :disabled="line.sale_with_gold_price === true"/>
                                     <label>ราคาทุน</label>
                                 </span>
-                            <input-error :errors="v$.line.cost_price.$errors"/>
                         </div>
                         <div class="p-field mt-6">
                                 <span class="p-float-label">
-                                    <InputNumber v-model="v$.line.tag_price.$model"
-                                                 :disabled="product.sale_with_gold_price === true"/>
+                                    <InputNumber v-model="line.tag_price"
+                                                 :disabled="line.sale_with_gold_price === true"/>
                                     <label>ราคาขาย</label>
                                 </span>
-                            <input-error :errors="v$.line.tag_price.$errors"/>
                         </div>
                     </div>
 
@@ -132,7 +125,7 @@
             <!--            photo-->
             <div class="p-col-3">
                 <label>ภาพ:</label>
-                <Carousel :value="product.photos" orientation="vertical">
+                <Carousel :value="line.photos" orientation="vertical">
                     <template #item="slotProps">
                     </template>
                 </Carousel>
@@ -147,7 +140,7 @@
                     <div class="flex items-center">
                         <template v-if="productChecked">
                             <Tag class="p-mr-2" icon="pi pi-check" value="ผ่าน" severity="success"></Tag>
-                            <span class="text-blue-800" v-if="product.id">สินค้าในสต้อก</span>
+                            <span class="text-blue-800" v-if="line.id">สินค้าในสต้อก</span>
                             <span class="text-red-800" v-else>สินค้าใหม่</span>
                         </template>
                         <template v-else>
@@ -160,7 +153,7 @@
                             class="p-button-text"
                             @click="creatingLine=false"/>
                     <Button label="บันทึก" icon="pi pi-check"
-                            :disabled="!productChecked || v$.line.$error"
+                            :disabled="!productChecked || line.$error"
                             @click="storeLine"/>
                 </div>
             </div>
@@ -169,12 +162,19 @@
 </template>
 
 <script>
+import SelectGoldPercent from "@/A/SelectGoldPercent";
+import SelectProductType from "@/A/SelectProductType";
+
 export default {
     name: "CreateStockImportLine",
+    components: {SelectProductType, SelectGoldPercent},
     data() {
         return {
             visible: false,
-            line: {}
+            line: {
+                gold_percent: null,
+                product_type: null
+            }
         }
     },
     methods: {
@@ -182,8 +182,8 @@ export default {
             this.visible = true
         },
         updateProductWeight(event) {
-            this.product.weight = event.weight
-            this.product.weightbaht = event.weightbaht
+            this.line.weight = event.weight
+            this.line.weightbaht = event.weightbaht
         },
     }
 }

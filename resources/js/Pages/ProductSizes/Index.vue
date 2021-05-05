@@ -35,7 +35,8 @@
                 <div class="p-field">
                     <label for="code">รหัส</label>
                     <InputText id="id" v-model.trim="form.id" required="true" autofocus
-                               :class="{'p-invalid': submitted && !form.id}"/>
+                               :class="{'p-invalid': submitted && !form.id}"
+                               :disabled="!creating"/>
                     <small class="p-error" v-if="form.errors.id">{{ form.errors.id }}</small>
                 </div>
             </div>
@@ -171,7 +172,7 @@ export default {
             this.deleteRowDialog = true;
         },
         deleteRow() {
-            this.form.delete(route('product-types.destroy', this.form.id), {
+            this.form.delete(route('product-sizes.destroy', this.form.id), {
                 onSuccess: () => {
                     this.$toast.add({severity: 'success', summary: 'Successful', detail: 'Row Deleted', life: 3000});
                     this.rows = this.rows.filter(val => val.id !== this.form.id);
