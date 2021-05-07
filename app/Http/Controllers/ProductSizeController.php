@@ -106,8 +106,7 @@ class ProductSizeController extends Controller
     private function validateRules()
     {
         return [
-            'id' => ['required', 'unique:product_sizes'],
-            'name' => ['required']
+            'name' => ['required','unique:product_sizes']
         ];
     }
 }

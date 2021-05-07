@@ -42,6 +42,7 @@ class CreateStockImportsTable extends Migration
             $table->foreignId('gold_percent_id');
             $table->string('product_type_id');
             $table->string('product_design_id')->nullable();
+            $table->string('product_size_id')->nullable();
             $table->string('product_size')->nullable();
             $table->string('product_name');
             $table->decimal('product_weight',10,3)->nullable();

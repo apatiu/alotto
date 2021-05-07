@@ -47,6 +47,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
+            Route::post('/check-product', [\App\Http\Controllers\Api\ProductController::class, 'check'])
+                ->name('check-product');
+            Route::get(
+                '/product-designs/filter/type/{product_type}',
+                [\App\Http\Controllers\Api\ProductDesignController::class, 'filterType']
+            )->name('product-designs.filter.type');
+            Route::resource('product-designs', 'ProductDesignController');
+            Route::resource('product-sizes', 'ProductSizeController');
 
             Route::resource('product-percents', 'ProductPercentController');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');

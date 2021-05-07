@@ -33,7 +33,7 @@
         <div class="flex p-mt-3 justify-end">
             <Button @click="createLine">เพิ่มสินค้า</Button>
         </div>
-        <DataTable :value="lines">
+        <DataTable :value="form.lines">
             <Column field="product_id" header="รหัสสินค้า"></Column>
             <Column field="product_name" header="ชื่อสินค้า"></Column>
             <Column field="product_qty" header="จำนวน">
@@ -127,7 +127,8 @@
             </Button>
         </div>
     </div>
-    <create-stock-import-line ref="createLineDialog"></create-stock-import-line>
+    <create-stock-import-line ref="createLineDialog"
+    @update:modelValue="addLine"></create-stock-import-line>
 </template>
 
 <script>
@@ -198,84 +199,11 @@ export default {
             approve: false,
             bill_goldprice: this.goldprice,
             creatingLine: false,
-            formProduct: this.$inertia.form(),
-            productChecked: false,
-            product: {
-                id: null,
-                product_id: null,
-                gold_percent: null,
-                product_type_id: null,
-                product_type: null,
-                product_design_id: null,
-                product_design: null,
-                size: null,
-                name: null,
-                weight: null,
-                weightbaht: null,
-                cost_wage: null,
-                tag_wage: null,
-                cost_price: null,
-                tag_price: null,
-                sale_with_gold_price: null,
-                wage_by_pcs: null,
 
-            },
-            lines: this.item.lines ?? [],
-            line: {
-                product_id: null,
-                gold_percent: null,
-                product_type_id: null,
-                product_design_id: null,
-                product_size: null,
-                product_name: null,
-                product_weight: null,
-                product_weightbaht: null,
-                product_min: null,
-                qty: null,
-                product_weight_total: null,
-                avg_cost_per_baht: null,
-                description: null,
-                cost_wage: null,
-                tag_wage: null,
-                cost_price: null,
-                tag_price: null,
-                sale_with_gold_price: null,
-            }
         }
     },
     validations() {
         return {
-            product: {
-                weight: {
-                    required: requiredIf(() => {
-                        return this.product.sale_with_gold_price
-                    })
-                }
-            },
-            line: {
-                qty: {required},
-                avg_cost_per_baht: {required},
-                cost_wage: {
-                    required: requiredIf(() => {
-                        return this.product.sale_with_gold_price
-                    })
-                },
-                tag_wage: {
-                    required: requiredIf(() => {
-                        return this.product.sale_with_gold_price
-                    })
-                },
-                cost_price: {
-                    required: requiredIf(() => {
-                        return !this.product.sale_with_gold_price
-                    })
-                },
-                tag_price: {
-                    required: requiredIf(() => {
-                        return !this.product.sale_with_gold_price
-                    })
-                }
-            },
             form: {
                 dt: {required},
                 real_cost: {required},
@@ -283,21 +211,6 @@ export default {
         }
     },
     watch: {
-        product: {
-            handler(val, oldVal) {
-                if (this.productChecked) {
-                    this.productChecked = false;
-                    this.product.product_id = null;
-                    this.product.id = null;
-                }
-
-                if (this.product.product_type)
-                    this.product.product_type_id = this.product.product_type.id;
-                if (this.product.product_design)
-                    this.product.product_design_id = this.product.product_design.id;
-            },
-            deep: true
-        },
         lines: {
             handler(val) {
                 this.updateTotal();
@@ -320,78 +233,11 @@ export default {
         createLine() {
             this.$refs.createLineDialog.show();
         },
-        checkProduct() {
+        addLine(e) {
 
-            this.v$.$reset();
-            this.v$.$touch();
+            this.updateLineTotal(e);
 
-            let query = _.pickBy(this.product)
-            let url = null;
-            if (this.form.id) {
-                url = route(route().current(), this.form.id)
-            } else {
-                url = route(route().current())
-            }
-
-            this.$inertia.get(url, {
-                ...query,
-                checkProduct: true
-            }, {
-                preserveState: true,
-                preserveScroll: true,
-                errorBag: 'lineBag',
-                only: ['searchproduct', 'errors'],
-                onSuccess: (page) => {
-                    console.log('success');
-                    if (page.props.searchproduct) {
-                        if (page.props.searchproduct.id) {
-                            this.product.id = page.props.searchproduct.id;
-                        } else {
-                            this.product.id = null;
-                        }
-                        this.product.product_id = page.props.searchproduct.product_id;
-                        this.product.name = page.props.searchproduct.name;
-                        this.product.created_at = null;
-                        this.product.updated_at = null;
-
-                    }
-                    this.$nextTick(() => {
-                        this.productChecked = true
-                    })
-                },
-                onError: (errors) => {
-                    console.log('errors')
-                    console.log(errors);
-                }
-            })
-        },
-        storeLine() {
-            let w = Weight(
-                this.product.weight ?? 0,
-                this.product.weightbaht);
-
-            let newline = _.assign({}, this.line, this.product)
-
-            newline.id = null;
-            newline.product_name = newline.name;
-            newline.product_qty = newline.qty;
-            newline.product_weight = newline.weight;
-            newline.product_weightbaht = newline.weightbaht;
-
-            newline.cost_wage = this.line.cost_wage;
-            newline.cost_price = this.line.cost_price;
-            newline.tag_wage = this.line.tag_wage;
-            newline.tag_price = this.line.tag_price;
-
-            newline.name = null;
-            newline.qty = null;
-            newline.weight = null;
-            newline.updated_at = null;
-            newline.created_at = null;
-
-            this.updateLineTotal(newline);
-
-            this.lines.push(_.pickBy(newline));
+            this.form.lines.push(_.pickBy(e));
 
         },
         removeLine(props) {

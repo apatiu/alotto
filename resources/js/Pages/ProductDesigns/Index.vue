@@ -126,7 +126,6 @@ export default {
             this.submitted = false;
             this.rowDialog = true;
             this.creating = true;
-            console.log(this.row);
         },
         hideDialog() {
             this.rowDialog = false;

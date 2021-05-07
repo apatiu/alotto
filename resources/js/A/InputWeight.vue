@@ -1,13 +1,15 @@
 <template>
-    <label for="">น้ำหนัก</label>
-    <div class="p-inputgroup">
-        <Dropdown :options="options"
-                  v-model="value.weight"
-                  @update:modelValue="emit"
-                  :editable="true"></Dropdown>
-        <Button :label="buttonLabel"
-                @click="value.weightbaht=!value.weightbaht"
-                v-bind:class="classObject"></Button>
+    <div class="p-field">
+        <label for="">น้ำหนัก</label>
+        <div class="p-inputgroup">
+            <Dropdown :options="options"
+                      v-model="value.weight"
+                      @update:modelValue="emit"
+                      :editable="true"></Dropdown>
+            <Button :label="buttonLabel"
+                    @click="value.weightbaht=!value.weightbaht"
+                    v-bind:class="classObject"></Button>
+        </div>
     </div>
 </template>
 

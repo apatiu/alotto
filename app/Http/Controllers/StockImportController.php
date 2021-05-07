@@ -293,8 +293,8 @@ class StockImportController extends Controller
 
             $product = new Product();
             $product->fill($data);
-            $product->gen_product_id();
-            $product->gen_product_name();
+            $product->getCode();
+            $product->genName();
 
             $producted = Product::find($product->product_id);
             if ($producted) {

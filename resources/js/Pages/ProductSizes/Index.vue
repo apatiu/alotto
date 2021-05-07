@@ -25,19 +25,12 @@
         </DataTable>
 
         <Dialog v-model:visible="rowDialog" :style="{width: '450px'}" header="ข้อมูลขนาดสินค้า" :modal="true">
-            <div class="p-fluid flex space-x-2">
+            <div class="p-fluid">
                 <div class="p-field">
                     <label for="name">Name</label>
                     <InputText id="name" v-model.trim="form.name" required="true" autofocus
                                :class="{'p-invalid': submitted && !form.name}"/>
                     <small class="p-error" v-if="form.errors.name">{{ form.errors.name }}</small>
-                </div>
-                <div class="p-field">
-                    <label for="code">รหัส</label>
-                    <InputText id="id" v-model.trim="form.id" required="true" autofocus
-                               :class="{'p-invalid': submitted && !form.id}"
-                               :disabled="!creating"/>
-                    <small class="p-error" v-if="form.errors.id">{{ form.errors.id }}</small>
                 </div>
             </div>
             <template #footer>

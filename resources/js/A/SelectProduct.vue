@@ -1,24 +1,29 @@
 <template>
-    <AutoComplete
-        v-model="product"
-        @update:modelValue="onSelectProduct($event)"
-        @keyup="onKeyup($event)"
-        :suggestions="filteredProducts"
-        @complete="searchProduct($event)"
-        inputClass="input-product-id">
-        <template #item="{item, index}">
-            <div class="flex">
-                <div class="w-40">{{ item.product_id }}</div>
-                <div>{{ item.name }}</div>
-            </div>
-
-        </template>
-    </AutoComplete>
+    <div class="p-field">
+        <label for="">รหัสสินค้า</label>
+        <AutoComplete
+            :model-value="modelValue"
+            @update:modelValue="onSelectProduct($event)"
+            field="code"
+            @keyup="onKeyup($event)"
+            :suggestions="filteredProducts"
+            @complete="searchProduct($event)"
+            inputClass="input-product-id"
+            optionLabel="code">
+            <template #item="{item, index}">
+                <div class="flex">
+                    <div class="w-40">{{ item.product_id }}</div>
+                    <div>{{ item.name }}</div>
+                </div>
+            </template>
+        </AutoComplete>
+    </div>
 </template>
 
 <script>
 export default {
     name: "SelectProduct",
+    props: ['modelValue'],
     data() {
         return {
             product: null,
@@ -54,6 +59,7 @@ export default {
             }
         },
         onSelectProduct(e) {
+            this.$emit('update:modelValue', e);
             if ((typeof e) === 'object') {
                 this.$emit('select', e)
                 this.filteredProducts = [];

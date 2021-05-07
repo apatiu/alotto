@@ -1,34 +1,27 @@
 <template>
     <label for="" v-if="showLabel">ประเภทสินค้า</label>
-    <AutoComplete :modelValue="modelValue"
-                  @update:modelValue="emit"
-                  :suggestions="filteredTypes"
-                  @complete="search($event)"
-                  field="name"
-                  :dropdown="true"
-                  :forceSelection="forceSelection"
-                  class="w-full"
-                  :class="{'p-invalid': errors.length}"
-                  placeholder="แบบสินค้า"
-    ></AutoComplete>
-    <small class="p-error" v-show="errors.length">เลือกแบบสินค้า</small>
-
-
+    <Dropdown :modelValue="modelValue"
+              @update:modelValue="$emit('update:modelValue',$event)"
+              :options="types" optionLabel="name"
+              placeholder="เลือกประเภท"
+              filter></Dropdown>
+    <input-error :model-value="errors"></input-error>
 </template>
 
 <script>
+import InputError from "@/Jetstream/InputError";
+
 export default {
     name: "SelectProductType",
+    components: {InputError},
     props: {
-        modelValue: {default: {}},
-        forceSelection: {default: false},
+        modelValue: {default: null},
         errors: {default: []},
         showLabel: {type: Boolean, default: true},
     },
     data() {
         return {
             types: null,
-            filteredTypes: null,
         }
     },
     created() {
@@ -38,20 +31,6 @@ export default {
             })
     },
     methods: {
-        search(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredTypes = [...this.types];
-                } else {
-                    this.filteredTypes = this.types.filter((type) => {
-                        return type.name.toLowerCase().startsWith(event.query.toLowerCase());
-                    });
-                }
-            }, 250);
-        },
-        emit(e) {
-                this.$emit('update:modelValue', e)
-        }
     }
 }
 </script>

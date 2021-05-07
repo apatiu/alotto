@@ -1,30 +1,26 @@
 <template>
-
-    <label v-if="label">{{ label }}</label>
+    <div class="p-field">
+        <label v-if="label">{{ label }}</label>
         <InputText :modelValue="modelValue"
                    @update:modelValue="$emit('update:modelValue', $event)"
                    v-bind="$attrs"
-                   :disabled="disabled"
-                   :readonly="readonly"
-                   class="p-filled"
+                   :class="{'p-invalid': errors.length}"
         ></InputText>
-    <small class="p-error">{{ error }}</small>
+        <input-error :model-value="errors"></input-error>
+    </div>
 </template>
 
 <script>
 
+import InputError from "@/Jetstream/InputError";
+
 export default {
+    components: {InputError},
     inheritAttrs: false,
     props: {
-        type: {
-            type: String,
-            default: 'text',
-        },
         modelValue: String,
         label: String,
-        error: String,
-        readonly: {type: Boolean, default: false},
-        disabled: {type: Boolean, default: false}
+        errors: {type: [Object, String], default: []},
     }
 }
 </script>

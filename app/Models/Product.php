@@ -11,12 +11,12 @@ class Product extends Model
 
     protected $fillable = [
         "team_id",
-        "product_id",
+        "code",
         "team_id",
-        "gold_percent",
+        "gold_percent_id",
         "product_type_id",
         "product_design_id",
-        "size",
+        "product_size_id",
         "name",
         "min_qty",
         "weight",
@@ -51,23 +51,23 @@ class Product extends Model
         return GoldPercent::whereId($this->attributes['gold_percent'])->first();
     }
 
-    public function gen_product_id()
+    public function getCode()
     {
-        $gold_percent = $this->attributes['gold_percent'];
+        $gold_percent_id = $this->attributes['gold_percent_id'];
         $product_type_id = $this->attributes['product_type_id'];
         $product_weight = $this->weightbaht ? $this->weight * 15.2 : $this->weight;
-        $product_design = $this->product_design_id ?? null;
-        $product_size = $this->size;
+        $product_design_id = $this->product_design_id ?? null;
+        $product_size_id = $this->product_size_id;
 
-        $product_id = $gold_percent . $product_type_id . $product_weight .
-            ($product_design ? 'D' . $product_design : '') .
-            ($product_size ? 'S' . $product_size : '');
-        $this->attributes['product_id'] = $product_id;
+        $product_id = $gold_percent_id . $product_type_id . $product_weight .
+            ($product_design_id ? 'D' . $product_design_id : '') .
+            ($product_size_id ? 'S' . $product_size_id : '');
+        $this->attributes['code'] = $product_id;
     }
 
-    public function gen_product_name()
+    public function genName()
     {
-        if (!$this->product_id)
+        if (!$this->code)
             return;
 
         $result = [];

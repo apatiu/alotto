@@ -1,34 +1,57 @@
 <template>
     <div class="p-field">
         <label for="">ดีไซน์</label>
-        <AutoComplete :modelValue="modelValue"
+        <div class="p-inputgroup">
+            <Dropdown :modelValue="modelValue"
                       @update:modelValue="$emit('update:modelValue',$event)"
-                      :suggestions="filteredItems"
-                      @complete="search($event)"
-                      field="name"
-                      :dropdown="true"
-                      forceSelection
-        ></AutoComplete>
-
+                      optionLabel="name"
+                      :options="items"
+                      filter></Dropdown>
+            <Button icon="pi pi-plus" @click="create" class="p-button-success"></Button>
+        </div>
+        <dlg-product-design
+            ref="dlgProductDesign"></dlg-product-design>
     </div>
 </template>
 
 <script>
+import DlgProductDesign from "@/Pages/ProductDesigns/dlgProductDesign";
+
 export default {
     name: "SelectProductDesign",
+    components: {DlgProductDesign},
     props: {
         modelValue: Object,
         productTypeId: {default: null}
     },
+    created() {
+        this.loading = true;
+        axios.get('/api/product-designs')
+            .then(({data}) => {
+                this.items = data
+            })
+    },
     data() {
         return {
-            items: this.$page.props.product_designs,
+            items: [],
             filteredItems: null
         }
     },
+    watch: {
+        productTypeId(val) {
+            if (val)
+                axios.get(route('api.product-designs.filter.type', val))
+                    .then(({data}) => {
+                        this.items = data
+                    })
+        }
+    },
     methods: {
+        create() {
+            this.$refs.dlgProductDesign.mode = 'create';
+            this.$refs.dlgProductDesign.show();
+        },
         search(event) {
-            console.log('search');
             setTimeout(() => {
                 if (!event.query.trim().length) {
                     this.filteredItems = this.items.filter((item) => {
