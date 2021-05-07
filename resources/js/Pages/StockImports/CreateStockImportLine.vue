@@ -70,36 +70,9 @@
                     </div>
                     <div class="p-grid">
                         <div class="p-col">
-                            <div class="p-field-radiobutton">
-                                <RadioButton v-model="line.sale_with_gold_price"
-                                             name="sale_with_gold"
-                                             :value="true"
-                                             :disabled="line.id"></RadioButton>
-                                <label>ราคาเปลี่ยนตามราคาทอง</label>
-                            </div>
-                            <div class="p-field-radiobutton">
-                                <RadioButton v-model="line.sale_with_gold_price"
-                                             name="sale_with_gold"
-                                             :value="false"></RadioButton>
-                                <label>ราคาคงที่</label>
-                            </div>
-                        </div>
-                        <div class="p-col">
-                            <div class="p-field-radiobutton">
-                                <RadioButton id="wage_by_pcs"
-                                             name="wage_type"
-                                             :value="true"
-                                             v-model="line.wage_by_pcs"
-                                             :disabled="line.sale_with_gold_price === false"/>
-                                <label for="wage_by_pcs">คิดค่าแรงต่อชิ้น</label>
-                            </div>
-                            <div class="p-field-radiobutton">
-                                <RadioButton id="wage_by_baht"
-                                             name="wage_type"
-                                             :value="false"
-                                             v-model="line.wage_by_pcs"
-                                             :disabled="line.sale_with_gold_price === false"/>
-                                <label for="wage_by_baht">คิดค่าแรงต่อบาท</label>
+                            <div class="p-field p-field-checkbox">
+                                <Checkbox v-model="line.sale_with_gold_price" :binary="true"/>
+                                <label for="">ขายตามราคาทอง</label>
                             </div>
                         </div>
                     </div>

@@ -39,7 +39,7 @@
             <Column field="qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
             </Column>
-            <Column field="product_weight" header="น้ำหนักต่อชิ้น">
+            <Column field="product_weight" header="น้ำหนัก/ชิ้น">
                 <template #body="slotProps">
                     {{
                         slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
@@ -47,11 +47,11 @@
                     }}
                 </template>
             </Column>
-            <Column field="cost_wage" header="ค่าแรงทุน"></Column>
-            <Column field="cost_wage_total" header="รวมค่าแรงทุน">
+            <Column field="cost_wage" header="ค่าแรง/ชิ้น"></Column>
+            <Column field="cost_wage_total" header="รวมค่าแรง">
                 <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
             </Column>
-            <Column field="cost_price" header="ราคาทุน"></Column>
+            <Column field="cost_price" header="ราคาทุน/ชิ้น"></Column>
             <Column field="cost_price_total" header="รวมทุน">
                 <template #footer>{{ formatNumber(form.cost_price_total) }}</template>
             </Column>
@@ -206,6 +206,7 @@ export default {
             form: {
                 dt: {required},
                 real_cost: {required},
+                lines: {required},
             }
         }
     },
