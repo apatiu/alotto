@@ -128,7 +128,7 @@
         </div>
     </div>
     <create-stock-import-line ref="createLineDialog"
-    @update:modelValue="addLine"></create-stock-import-line>
+                              @update:modelValue="addLine"></create-stock-import-line>
 </template>
 
 <script>
@@ -234,11 +234,8 @@ export default {
             this.$refs.createLineDialog.show();
         },
         addLine(e) {
-
             this.updateLineTotal(e);
-
             this.form.lines.push(_.pickBy(e));
-
         },
         removeLine(props) {
             this.lines.splice(props.index, 1)
@@ -247,9 +244,9 @@ export default {
             let w = Weight(
                 newline.product_weight ?? 0,
                 newline.product_weightbaht);
-            newline.cost_wage_total = numeral(newline.product_qty).multiply(newline.cost_wage ?? 0).value();
-            newline.product_weight_total = numeral(newline.product_qty).multiply(w.toGram()).value();
-            newline.cost_price_total = numeral(newline.product_qty).multiply(newline.cost_price ?? 0).value();
+            newline.cost_wage_total = numeral(newline.qty).multiply(newline.cost_wage ?? 0).value();
+            newline.product_weight_total = numeral(newline.qty).multiply(w.toGram()).value();
+            newline.cost_price_total = numeral(newline.qty).multiply(newline.cost_price ?? 0).value();
         },
         updateTotal() {
             this.form.product_weight_total = 0;
