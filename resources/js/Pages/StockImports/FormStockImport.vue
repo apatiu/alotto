@@ -36,7 +36,7 @@
         <DataTable :value="form.lines">
             <Column field="product_id" header="รหัสสินค้า"></Column>
             <Column field="product_name" header="ชื่อสินค้า"></Column>
-            <Column field="product_qty" header="จำนวน">
+            <Column field="qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
             </Column>
             <Column field="product_weight" header="น้ำหนักต่อชิ้น">
@@ -51,7 +51,6 @@
             <Column field="cost_wage_total" header="รวมค่าแรงทุน">
                 <template #footer>{{ formatNumber(form.cost_wage_total) }}</template>
             </Column>
-            <Column field="tag_wage" header="ค่าแรงขาย"></Column>
             <Column field="cost_price" header="ราคาทุน"></Column>
             <Column field="cost_price_total" header="รวมทุน">
                 <template #footer>{{ formatNumber(form.cost_price_total) }}</template>
@@ -211,9 +210,9 @@ export default {
         }
     },
     watch: {
-        lines: {
-            handler(val) {
-                this.updateTotal();
+        'form.lines': {
+            handler() {
+                this.updateTotal()
             },
             deep: true
         }
@@ -255,8 +254,7 @@ export default {
             this.form.product_qty_total = 0;
             this.form.cost_gold_total = 0;
 
-            _.each(this.lines, (line) => {
-                // this.updateLineTotal(line);
+            _.each(this.form.lines, (line) => {
                 this.form.product_weight_total = numeral(line.product_weight_total).add(this.form.product_weight_total).value();
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
@@ -272,8 +270,6 @@ export default {
             })
         },
         update() {
-            this.form.lines = this.lines;
-
             if (this.form.id) {
                 this.form.put(route('stock-imports.update', this.form.id), {
                     errorBag: 'stockImportBag',
@@ -287,9 +283,6 @@ export default {
                 this.form.post(route('stock-imports.store'), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
-                    onSuccess: (res) => {
-                        _.assign(this.form, res.props.item);
-                    }
                 })
             }
         },

@@ -29,12 +29,14 @@
                         <div class="p-col">
                             <select-product-design
                                 v-model="line.product_design"
+                                @update:modelValue="line.product_design_id=$event.id"
                                 :product-type-id="line.product_type_id"
                             ></select-product-design>
                         </div>
                         <div class="p-col">
                             <select-product-size
                                 v-model="line.product_size"
+                                @update:modelValue="line.product_size_id=$event.id"
                                 label="ขนาด"></select-product-size>
                         </div>
                     </div>
@@ -61,7 +63,7 @@
                                      disabled></a-input>
                         </div>
                         <div class="p-col">
-                            <a-input-currency :model-value="priceGoldTotal"
+                            <a-input-currency :model-value="line.cost_gold_total"
                                               label="ราคาทองรวม"
                                               disabled></a-input-currency>
                         </div>
@@ -151,8 +153,8 @@
                 </div>
                 <div>
                     <Button label="บันทึก" icon="pi pi-check"
-                            :disabled="v.line.$error"
-                            @click="$emit('update:modelValue',line)"/>
+                            :disabled="v.line.$invalid"
+                            @click="updateValue"/>
                 </div>
             </div>
         </template>
@@ -208,6 +210,14 @@ export default {
             }
         }
     },
+    watch: {
+        line: {
+            handler(val) {
+                this.line.product_weight_total = this.productWeightTotal
+                this.line.cost_gold_total = ((this.line.avg_cost_per_baht ?? 0) * .0656) * this.line.product_weight_total
+            }, deep: true
+        }
+    },
     validations() {
         return {
             line: {
@@ -231,20 +241,26 @@ export default {
                 },
                 cost_price: {
                     required: requiredIf(() => {
-                        return this.checked && !this.line.sale_with_gold_price
+                        return this.checked && (!this.line.sale_with_gold_price)
                     })
                 },
                 tag_price: {
                     required: requiredIf(() => {
-                        return this.checked && !this.line.sale_with_gold_price
+                        return this.checked && (!this.line.sale_with_gold_price)
                     })
                 }
             }
         }
     },
     computed: {
+        productWeightTotal() {
+            let w = this.line.product_weight;
+            if (this.line.product_weightbaht)
+                w = w * 15.2;
+            return numeral((this.line.qty ?? 0) * w).value().toFixed(2)
+        },
         priceGoldTotal() {
-            return ((this.line.avg_cost_per_baht ?? 0) * .0656) * this.line.product_weight_total
+            return ((this.line.avg_cost_per_baht ?? 0) * .0656) * this.productWeightTotal
         }
     },
     methods: {
@@ -289,7 +305,11 @@ export default {
             this.line.sale_with_gold_price = true
             this.line.wage_by_pcs = true
             this.checked = false;
-            this.v.line.$touch();
+            this.v.line.$reset()
+        },
+        updateValue() {
+            this.$emit('update:modelValue', this.line)
+            this.reset()
         }
     }
 }

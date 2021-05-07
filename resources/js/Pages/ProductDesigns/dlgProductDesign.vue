@@ -121,6 +121,8 @@ export default {
                         this.notify('บันทึกข้อมูลแล้ว')
                         this.v.$reset()
                         this.form.reset()
+
+                        this.visible = false
                     })
                     .catch((error) => {
                         this.form.errors = error.response.data.errors

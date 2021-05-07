@@ -10,7 +10,9 @@
             <Button icon="pi pi-plus" @click="create" class="p-button-success"></Button>
         </div>
         <dlg-product-design
-            ref="dlgProductDesign"></dlg-product-design>
+            ref="dlgProductDesign"
+            @hide="load"
+        ></dlg-product-design>
     </div>
 </template>
 
@@ -25,11 +27,7 @@ export default {
         productTypeId: {default: null}
     },
     created() {
-        this.loading = true;
-        axios.get('/api/product-designs')
-            .then(({data}) => {
-                this.items = data
-            })
+        this.load()
     },
     data() {
         return {
@@ -39,32 +37,21 @@ export default {
     },
     watch: {
         productTypeId(val) {
-            if (val)
-                axios.get(route('api.product-designs.filter.type', val))
-                    .then(({data}) => {
-                        this.items = data
-                    })
+            this.load()
         }
     },
     methods: {
+        load() {
+            if (this.productTypeId)
+                axios.get(route('api.product-designs.filter.type', this.productTypeId))
+                    .then(({data}) => {
+                        this.items = data
+                    })
+        },
         create() {
             this.$refs.dlgProductDesign.mode = 'create';
             this.$refs.dlgProductDesign.show();
         },
-        search(event) {
-            setTimeout(() => {
-                if (!event.query.trim().length) {
-                    this.filteredItems = this.items.filter((item) => {
-                        return item.product_type_id === this.productTypeId;
-                    });
-                } else {
-                    this.filteredItems = this.items.filter((item) => {
-                        return item.name.toLowerCase().startsWith(event.query.toLowerCase()) &&
-                            item.product_type_id === this.productTypeId;
-                    });
-                }
-            }, 250);
-        }
     }
 }
 </script>

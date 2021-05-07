@@ -54,7 +54,7 @@ class CreateStockImportsTable extends Migration
             $table->decimal('cost_price')->nullable();
             $table->decimal('tag_price')->nullable();
             $table->boolean('sale_with_gold_price')->default(true);
-            $table->decimal('product_qty');
+            $table->decimal('qty');
             $table->decimal('product_weight_total')->nullable();
             $table->decimal('avg_cost_per_baht')->nullable();
             $table->text('descriptions')->nullable();
