@@ -12,11 +12,11 @@ class ProductController extends Controller
 {
     public function search(Request $request)
     {
-        $rows = Product::orderBy('product_id');
+        $rows = Product::orderBy('code');
 
         $q = $request->input('q', '');
         if (!empty($q)) {
-            $rows->where('product_id', 'like', $q . '%');
+            $rows->where('code', 'like', $q . '%');
         } else {
             return [];
         }

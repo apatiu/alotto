@@ -34,18 +34,15 @@
             <Button @click="createLine">เพิ่มสินค้า</Button>
         </div>
         <DataTable :value="form.lines">
-            <Column field="product_id" header="รหัสสินค้า"></Column>
-            <Column field="product_name" header="ชื่อสินค้า"></Column>
+            <Column field="product_code" header="รหัส"></Column>
+            <Column field="product_name" header="ชื่อ" class="w-60"></Column>
+            <Column field="product_weight" header="นน./ชิ้น">
+                <template #body="slotProps">
+                    {{ wtGram(slotProps.data) }}
+                </template>
+            </Column>
             <Column field="qty" header="จำนวน">
                 <template #footer>{{ formatNumber(form.product_qty_total) }}</template>
-            </Column>
-            <Column field="product_weight" header="น้ำหนัก/ชิ้น">
-                <template #body="slotProps">
-                    {{
-                        slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
-                            slotProps.data.product_weight.toFixed(2)
-                    }}
-                </template>
             </Column>
             <Column field="cost_wage" header="ค่าแรง/ชิ้น"></Column>
             <Column field="cost_wage_total" header="รวมค่าแรง">
@@ -165,17 +162,6 @@ export default {
         return {v: useVuelidate()}
     },
     metaInfo: {title: 'Edit Suppliers'},
-    created() {
-        if (this.item.code) {
-            _.assign(this.form, this.item);
-            this.modeEdit = true
-        }
-
-        this.form.dt = moment(this.form.dt).toDate();
-    },
-    mounted() {
-        if (this.form.id) this.updateTotal();
-    },
     components: {
         CreateStockImportLine,
         StockImportStatus,
@@ -194,6 +180,17 @@ export default {
         LoadingButton,
         SelectInput,
         TextInput,
+    },
+    created() {
+        if (this.item.code) {
+            _.assign(this.form, this.item);
+            this.modeEdit = true
+        }
+
+        this.form.dt = moment(this.form.dt).toDate();
+    },
+    mounted() {
+        if (this.form.id) this.updateTotal();
     },
     layout: AppLayout,
     props: ['item', 'gold_percents', 'errors', 'goldprice'],
@@ -235,6 +232,9 @@ export default {
         }
     },
     watch: {
+        item(val) {
+            _.assign(this.form, this.item)
+        },
         'form.lines': {
             handler() {
                 this.updateTotal()
@@ -269,13 +269,13 @@ export default {
         removeLine(props) {
             this.form.lines.splice(props.index, 1)
         },
-        updateLineTotal(newline) {
+        updateLineTotal(line) {
             let w = Weight(
-                newline.product_weight ?? 0,
-                newline.product_weightbaht);
-            newline.cost_wage_total = numeral(newline.qty).multiply(newline.cost_wage ?? 0).value();
-            newline.product_weight_total = numeral(newline.qty).multiply(w.toGram()).value();
-            newline.cost_price_total = numeral(newline.qty).multiply(newline.cost_price ?? 0).value();
+                line.product_weight ?? 0,
+                line.product_weightbaht);
+            line.cost_wage_total = numeral(line.qty).multiply(line.cost_wage ?? 0).value();
+            line.product_weight_total = numeral(line.qty).multiply(w.toGram()).value();
+            line.cost_price_total = numeral(line.qty).multiply(line.cost_price ?? 0).value();
         },
         updateTotal() {
             this.form.product_weight_total = 0;
@@ -285,10 +285,11 @@ export default {
             this.form.cost_gold_total = 0;
 
             _.each(this.form.lines, (line) => {
+                this.updateLineTotal(line)
                 this.form.product_weight_total = numeral(line.product_weight_total).add(this.form.product_weight_total).value();
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
-                this.form.cost_gold_total += line.cost_gold_total;
+                this.form.cost_gold_total += numeral(line.cost_gold_total).value();
                 this.form.product_qty_total += line.qty;
             })
         },
@@ -318,7 +319,7 @@ export default {
                     preserveScroll: true,
                     onSuccess: (res) => {
                         this.$toast.add({severity: 'success', summary: 'บันทึกข้อมูลแล้ว', life: 3000})
-                        // _.assign(this.form, res.props.item);
+                        _.assign(this.form, res.props.item);
                     }
                 })
             } else {
@@ -342,6 +343,11 @@ export default {
                     break;
             }
             return numeral(val).format(format);
+        },
+        wtGram(e) {
+            return e.product_weightbaht ?
+                numeral(e.product_weight).multiply(15.2).value() :
+                numeral(e.product_weight).value()
         }
     }
 }

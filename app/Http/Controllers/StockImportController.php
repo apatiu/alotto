@@ -149,7 +149,7 @@ class StockImportController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param \App\Models\StockImport $this- >bill
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, StockImport $stockImport)
     {

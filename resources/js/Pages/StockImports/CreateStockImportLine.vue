@@ -203,13 +203,17 @@ export default {
             line: {
                 gold_percent_id: {required},
                 product_type_id: {required},
-                avg_cost_per_baht: {required: requiredIf(this.checked)},
                 qty: {
                     required: requiredIf(() => {
                         return this.checked
                     })
                 },
                 cost_wage: {
+                    required: requiredIf(() => {
+                        return this.checked && this.line.sale_with_gold_price
+                    })
+                },
+                avg_cost_per_baht:{
                     required: requiredIf(() => {
                         return this.checked && this.line.sale_with_gold_price
                     })
@@ -284,6 +288,7 @@ export default {
         reset() {
             this.line = _.mapValues(this.line, () => null);
             this.line.gold_percent_id = 96
+            this.line.product_weightbaht = true
             this.line.sale_with_gold_price = true
             this.line.wage_by_pcs = true
             this.checked = false;
