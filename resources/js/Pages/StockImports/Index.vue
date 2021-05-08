@@ -23,7 +23,7 @@
         </div>
         <div class="bg-white rounded-md shadow overflow-x-auto">
             <DataTable :value="items" dataKey="id" :rowHover="true" @row-click="rowClick">
-                <Column field="id" header="#"></Column>
+                <Column field="code" header="#"></Column>
                 <Column field="dt" header="วันที่"></Column>
                 <Column field="team.name" header="สาขา"></Column>
                 <Column field="cost_gold_total" header="ต้นทุนทอง"></Column>

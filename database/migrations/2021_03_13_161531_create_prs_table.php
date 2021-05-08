@@ -20,7 +20,7 @@ class CreatePrsTable extends Migration
 
             $table->foreignId('team_id');
             $table->string('emp_name')->nullable();
-            $table->date('acc_date')->nullable();
+            $table->foreignId('shift_id');
             $table->string('payment_no');
             $table->dateTime('dt');
 

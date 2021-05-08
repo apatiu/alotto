@@ -11,7 +11,8 @@ class StockCard extends Model
     use HasFactory;
 
     protected $fillable = [
-        'team_id', 'product_code', 'cost_wage', 'tag_wage',
+        'team_id',
+        'product_id', 'cost_wage', 'tag_wage',
         'cost_price', 'tag_price',
         'qty_begin', 'qty_in', 'qty_out', 'qty_end',
         'weight_begin', 'weight_in', 'weight_out', 'weight_end',

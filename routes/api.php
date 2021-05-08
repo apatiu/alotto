@@ -32,7 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/pawn-configs', function () {
         return [
-            'goldprice' => goldprice(),
+            'goldprice' => GoldPrice(),
             'pawn_life' => MetaHelper::get('pawn_life', '3'),
             'pawn_int_default_rate' => MetaHelper::get('pawn_int_default_rate', 3),
             'pawn_int_min' => MetaHelper::get('pawn_int_min', 50),
@@ -70,6 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/goldprice', function () {
                 return goldprice();
             })->name('goldprice');
+
+            Route::get('/gold-prices/now', [App\Http\Controllers\Api\GoldPriceController::class, 'now'])
+                ->name('gold-prices.now');
 
             Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
         });

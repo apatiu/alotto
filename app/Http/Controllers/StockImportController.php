@@ -112,7 +112,8 @@ class StockImportController extends Controller
         $code = 'SI' . request()->user()->currentTeam->id . '-';
         $code .= date('Ym') . '-';
 
-        $latest = StockImport::where('code', 'like', $code . '%')->select('id')->orderBy('id', 'desc')->first();
+        $latest = StockImport::where('code', 'like', $code . '%')
+            ->latest()->first();
         if (!$latest)
             $code .= '0001';
         else
@@ -187,16 +188,14 @@ class StockImportController extends Controller
 
         $this->bill->payments()->create([
             'team_id' => $this->bill->team_id,
-            'acc_date' => Shift::current()->d,
+            'shift_id' => Shift::current()->d,
+            'payment_type_id' => 'stock-import',
             'payment_no' => '',
             'dt' => $this->bill->dt,
-            'payment_type_id' => 'stock-import',
-            'detail' => 'นำเข้าสินค้า' . $this->bill->code,
+            'detail' => 'นำเข้าสินค้า',
             'pay' => $this->bill->real_cost,
             'method' => 'cash',
         ]);
-
-
     }
 
     public function line_product_processing(StockImportLine $line, $updateStock = false)
@@ -332,11 +331,12 @@ class StockImportController extends Controller
                 'dt' => $this->bill->dt,
                 'user_id' => Auth::user()->id
             ]);
+            $sc->save();
         }
 
         $new = $sc->replicate();
         $new->qty_begin = $new->qty_end;
-        $new->qty_in = $line->product_qty;
+        $new->qty_in = $line->qty;
         $new->qty_end = $new->qty_begin + $new->qty_in;
         $new->weight_begin = $new->weight_out;
         $new->weight_in = $line->product_weight_total;

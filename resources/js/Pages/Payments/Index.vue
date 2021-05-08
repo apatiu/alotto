@@ -13,11 +13,6 @@
                    class="p-datatable-sm">
             <Column field="code" header="#"></Column>
             <Column field="team.name" header="สาขา"></Column>
-            <Column field="acc_date" header="วันที่บัญชี">
-                <template #body="props">
-                    {{ $filters.date(props.data.acc_date) }}
-                </template>
-            </Column>
             <Column field="dt" header="วันทำรายการ">
                 <template #body="props">
                     {{ $filters.datetime(props.data.dt) }}
@@ -25,13 +20,9 @@
             </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
             <Column field="receive" header="รับ" class="text-right"></Column>
-            <Column field="pay" header="จ่าย" class="text-right"></Column>
-            <Column field="paymentable" header="อ้างอิง" class="py-0 text-center">
+            <Column field="pay" header="จ่าย" class="text-right">
                 <template #body="props">
-                    <cell-ref :data="props.data ?? {}"
-                              morph-name="paymentable"
-                              field-id="paymentable_id"
-                              field-type="paymentable_type"></cell-ref>
+                    {{ $filters.decimal(props.data.pay) }}
                 </template>
             </Column>
 

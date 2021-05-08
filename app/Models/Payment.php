@@ -25,7 +25,7 @@ class Payment extends Model
             $code .= date('Ymd', strtotime($payment->attributes['dt'])) . '-';
 
             $latest = Payment::where('code', 'like', $code . '%')->select('code')->orderBy('code', 'desc')->first();
-//
+
             if (!$latest)
                 $code .= '001';
             else
@@ -35,6 +35,10 @@ class Payment extends Model
         });
     }
 
+    public function shift()
+    {
+        return $this->belongsTo(Shift::class);
+    }
 
     public function team()
     {
@@ -49,6 +53,10 @@ class Payment extends Model
     public function pawn_int_receives()
     {
         return $this->morphedByMany(PawnIntReceive::class, 'paymentable');
+    }
+
+    public function stockImport() {
+        return $this->morphedByMany(StockImport::class,'paymentable');
     }
 
     public function paymentable()

@@ -53,7 +53,10 @@
                 <template #footer>{{ formatNumber(form.cost_price_total) }}</template>
             </Column>
             <Column field="product_weight_total" header="รวมน้ำหนัก">
-                <template #footer>{{ formatNumber(form.product_weight_total, 2) }}</template>
+                <template #body="{data}">
+                    {{ $filters.decimal(data.product_weight_total,2) }}
+                </template>
+                <template #footer>{{ $filters.decimal(form.product_weight_total, 2) }}</template>
             </Column>
             <Column class="w-14 p-0">
                 <template #body="slotProps">
