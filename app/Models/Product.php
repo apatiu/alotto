@@ -47,8 +47,9 @@ class Product extends Model
         return $this->hasMany(StockCard::class);
     }
 
-    public function getGoldPercentAttribute() {
-        return GoldPercent::whereId($this->attributes['gold_percent'])->first();
+    public function gold_percent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(GoldPercent::class);
     }
 
     public function getCode()

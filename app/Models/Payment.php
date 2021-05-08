@@ -12,7 +12,7 @@ class Payment extends Model
 
     protected $fillable = [
         'code',
-        'team_id', 'emp_name', 'acc_date', 'payment_no', 'dt', 'detail', 'bill_id',
+        'team_id', 'shift_id', 'emp_name', 'acc_date', 'payment_no', 'dt', 'detail', 'bill_id',
         'pay', 'receive', 'method', 'transfer_bank', 'transfer_acc_no', 'creditcard_bank',
         'creditcard_bank_no', 'creditcard_percent_fee', 'cancel_on', 'cancel_reason',
         'cancel_emp_name', 'payment_type_id', 'paymentable_id', 'paymentable_type',

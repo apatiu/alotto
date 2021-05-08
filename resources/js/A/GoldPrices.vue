@@ -5,13 +5,13 @@
                 <div class="p-field p-grid">
                     <label for="" class="p-col-fixed w-20">ขายออก</label>
                     <div class="p-col">
-                        <InputNumber v-model="goldPrices.ask"></InputNumber>
+                        <InputNumber v-model="goldPrices.ask" inputClass="w-full" disabled></InputNumber>
                     </div>
                 </div>
                 <div class="p-field p-grid">
                     <label for="" class="p-col-fixed w-20">รับซื้อ</label>
                     <div class="p-col">
-                        <InputNumber v-model="goldPrices.bid"></InputNumber>
+                        <InputNumber v-model="goldPrices.bid" inputClass="w-full" disabled></InputNumber>
                     </div>
                 </div>
         </template>

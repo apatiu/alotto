@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Payment;
 use App\Models\Sale;
+use App\Models\SaleDetail;
+use App\Models\Shift;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -49,12 +52,18 @@ class SaleController extends Controller
                 $data['status'] = 'checked';
                 $sale = Sale::create($data);
 
-                if (in_array($data['type'], ['sale', 'change']))
-                    $sale->details()->createMany([$data['sales']]);
-//                    $sale->details()->createMany($data['sales']);
+                if (in_array($data['type'], ['sale', 'change'])) {
+                    $sale->details()->createMany($data['sales']);
+                }
 
                 if (in_array($data['type'], ['buy', 'change']))
                     $sale->details()->createMany($data['buys']);
+
+                foreach ($data['payments'] as $payment) {
+                    $model = new Payment();
+                    $model->fill($payment);
+                    dd($model);
+                }
             }
             DB::commit();
         } catch (\Throwable $e) {

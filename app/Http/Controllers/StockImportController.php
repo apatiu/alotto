@@ -188,7 +188,7 @@ class StockImportController extends Controller
 
         $this->bill->payments()->create([
             'team_id' => $this->bill->team_id,
-            'shift_id' => Shift::current()->d,
+            'shift_id' => Shift::current()->id,
             'payment_type_id' => 'stock-import',
             'payment_no' => '',
             'dt' => $this->bill->dt,

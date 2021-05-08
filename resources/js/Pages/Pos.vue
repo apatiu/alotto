@@ -27,20 +27,13 @@
         </div>
         <div class="mt-2 p-grid">
             <div class="p-col-9">
-                <select-customer v-model="form.customer" class="bg-white"></select-customer>
+                <select-customer
+                    v-model="form.customer"
+                    @update:modelValue="form.customer_id = $event.id"
+                    class="bg-white"></select-customer>
             </div>
             <div class="p-col-3">
-                <Card>
-                    <template #title>ราคาทองคำแท่ง</template>
-                    <template #content>
-                        <div class="p-fluid">
-                            <div class="p-field">
-                                <label for="">ขายออก</label>
-                                <InputNumber v-model="form.gold_price"></InputNumber>
-                            </div>
-                        </div>
-                    </template>
-                </Card>
+                <gold-prices></gold-prices>
             </div>
         </div>
         <div class="p-flex-column mt-2">
@@ -51,9 +44,9 @@
                         <div class="p-flex-column">
                             <div>
                                 <select-product
+                                    v-model="product"
                                     @select="onSelectProduct($event)"
                                 ></select-product>
-                                <Button label="S"></Button>
                             </div>
                             <DataTable
                                 :value="form.sales"
@@ -61,14 +54,16 @@
                                 editMode="cell"
                                 @cellEditComplete="onSalesCellEditComplete"
                                 :scrollable="true">
-                                <Column field="product_id" header="รหัส" frozen class="w-40"></Column>
-                                <Column field="product_name" header="ชื่อสินค้า" class="w-40"></Column>
-                                <Column field="qty" header="จำนวน" class="w-20">
+                                <Column field="product_code" header="รหัส" frozen class="w-40"></Column>
+                                <Column field="product_name" header="ชื่อสินค้า" style="min-width:170px;"></Column>
+                                <Column field="qty" header="จำนวน" class="w-20 justify-center">
                                     <template #editor="slotProps">
                                         <InputNumber
                                             :modelValue="slotProps.data.qty"
                                             @update:modelValue="onSalesCellEdit($event,slotProps)"
-                                            inputClass="w-full"></InputNumber>
+                                            inputClass="w-full"
+                                            showButtons
+                                        ></InputNumber>
                                     </template>
                                     <template #footer>
                                         {{ salesQtySum }}
@@ -83,13 +78,20 @@
                                 </Column>
                                 <Column field="discount" header="ส่วนลด" class="w-20"></Column>
                                 <Column field="deposit" header="มัดจำ" class="w-20"></Column>
-                                <Column field="price_sale_total" header="รวม" class="w-20">
+                                <Column field="price_sale_total" header="รวม" class="w-20 justify-right">
+                                    <template #editor="slotProps">
+                                        <InputNumber
+                                            :modelValue="slotProps.data.price_sale_total"
+                                            @update:modelValue="onSalesCellEdit($event,slotProps)"
+                                            inputClass="w-full"
+                                        ></InputNumber>
+                                    </template>
                                     <template #footer>
                                         {{ salesPriceSaleTotalSum }}
                                     </template>
                                 </Column>
                                 <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
-                                <Column headerClass="text-center w-20">
+                                <Column headerClass="text-center" bodyClass="justify-center" style="width: 3rem">
                                     <template #body="{index}">
                                         <Button type="button"
                                                 icon="pi pi-trash"
@@ -170,6 +172,7 @@ import SelectCustomer from "@/A/SelectCustomer";
 import InputPayment from "@/A/InputPayment";
 import useVuelidate from '@vuelidate/core'
 import {required} from '@vuelidate/validators'
+import GoldPrices from "@/A/GoldPrices";
 
 export default {
     name: "Pos",
@@ -180,6 +183,7 @@ export default {
         }
     },
     components: {
+        GoldPrices,
         InputPayment,
         SelectCustomer,
         SelectProduct,
@@ -348,6 +352,7 @@ export default {
                 })
         },
         onSelectProduct(e) {
+            this.product = null;
             let sale = this.getSaleLine(e, 1)
             this.form.sales.push(sale);
         },
@@ -360,6 +365,7 @@ export default {
 
                 let wtGram = e.weightbaht ? e.weight * 15.2 : e.weight;
                 let priceSaleGold = this.getPriceSaleGold(e.gold_percent, wtGram);
+
                 sale.price_sale_gold = priceSaleGold
                 sale.product_wt = wtGram
                 sale.cost_wage = e.cost_wage
@@ -382,10 +388,13 @@ export default {
             sale.qty = qty
             sale.status = 'sale'
             sale.product_id = e.product_id
+            sale.product_code = e.code
             sale.product_type = e.product_type
             sale.product_design = e.product_design
             sale.product_size = e.product_size
-            sale.prodcut_name = e.name
+            sale.product_name = e.name
+            sale.gold_percent = e.gold_percent
+            sale.discount = sale.deposit = 0
             return sale
         },
         getPriceSaleGold(goldPercent, wtGram, goldprice = null) {
@@ -419,11 +428,34 @@ export default {
                     if (editingRow.sale_with_gold_price) {
                         editingRow.wt = numeral(editingRow.product_wt).multiply(editingRow.qty).value();
                         editingRow.price_sale_gold = this.getPriceSaleGold(editingRow.gold_percent, editingRow.wt, editingRow.gold_price);
+                        editingRow.price_sale_wage = editingRow.qty * editingRow.tag_wage;
+                        editingRow.price_sale_total =
+                            numeral(editingRow.price_sale_gold)
+                                .add(editingRow.price_sale_wage)
+                                .subtract(editingRow.discount)
+                                .subtract(editingRow.deposit).value()
+                    } else {
+                        editingRow.price_sale_total =
+                            numeral(editingRow.qty)
+                                .add(editingRow.tag_price)
+                                .subtract(editingRow.discount)
+                                .subtract(editingRow.deposit).value()
                     }
                     this.form.sales[e.index] = editingRow
                     break;
                 case 'price_sale_total':
-                    this.form.sales[e.index] = {...this.editingSalesCellRows[e.index]}
+                    if (editingRow.sale_with_gold_price) {
+                        let oldVal = numeral(editingRow.price_sale_wage).add(editingRow.price_sale_gold).value();
+                        if (editingCellValue > oldVal) {
+                            editingRow.price_sale_wage = editingCellValue - editingRow.price_sale_gold
+                            editingRow.discount = 0
+                        } else {
+                            editingRow.price_sale_wage = oldVal - editingRow.price_sale_gold
+                            editingRow.discount = oldVal - editingCellValue
+                        }
+                    }
+
+                    this.form.sales[e.index] = editingRow
                     break;
             }
         },

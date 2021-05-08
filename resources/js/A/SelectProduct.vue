@@ -1,22 +1,25 @@
 <template>
-    <div class="p-field">
-        <label for="">รหัสสินค้า</label>
-        <AutoComplete
-            :model-value="modelValue"
-            @update:modelValue="onSelectProduct($event)"
-            field="code"
-            @keyup="onKeyup($event)"
-            :suggestions="filteredProducts"
-            @complete="searchProduct($event)"
-            inputClass="input-product-id"
-            optionLabel="code">
-            <template #item="{item, index}">
-                <div class="flex">
-                    <div class="w-40">{{ item.product_id }}</div>
-                    <div>{{ item.name }}</div>
-                </div>
-            </template>
-        </AutoComplete>
+    <div class="p-fluid">
+        <div class="p-field">
+            <label for="">รหัสสินค้า</label>
+            <AutoComplete
+                :model-value="modelValue"
+                @update:modelValue="onSelectProduct($event)"
+                field="code"
+                @keyup="onKeyup($event)"
+                :suggestions="filteredProducts"
+                @complete="searchProduct($event)"
+                inputClass="input-product-id"
+                optionLabel="code">
+                <template #item="{item, index}">
+                    <div class="flex">
+                        <div class="w-28">{{ item.code }}</div>
+                        <div class="w-40">{{ item.name }}</div>
+                        <div class="w-20 text-right">{{ item.tag_wage ?? item.tag_price }}</div>
+                    </div>
+                </template>
+            </AutoComplete>
+        </div>
     </div>
 </template>
 

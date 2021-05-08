@@ -19,9 +19,9 @@ class CreateSaleDetailsTable extends Migration
             $table->enum('status',['sale','buy']);
             $table->foreignId('product_id')->nullable();
             $table->foreignId('product_percent_id')->nullable();
-            $table->string('product_type')->nullable();
-            $table->string('product_design')->nullable();
-            $table->string('product_size')->nullable();
+            $table->string('product_type_id')->nullable();
+            $table->foreignId('product_design_id')->nullable();
+            $table->foreignId('product_size_id')->nullable();
             $table->string('product_name')->nullable();
             $table->decimal('product_wt')->nullable();
             $table->decimal('cost_wage')->nullable();
@@ -36,8 +36,8 @@ class CreateSaleDetailsTable extends Migration
             $table->decimal('price_sale_wage')->nullable();
             $table->decimal('price_buy_total')->nullable();
             $table->decimal('price_buy_calc')->nullable();
-            $table->decimal('sale_with_gold_price')->nullable();
-            $table->decimal('wage_by_pcs')->nullable();
+            $table->boolean('sale_with_gold_price')->nullable();
+            $table->boolean('wage_by_pcs')->nullable();
 
             $table->decimal('profit_wage')->nullable();
             $table->decimal('profit_gold')->nullable();
