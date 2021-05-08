@@ -31,18 +31,28 @@ class Sale extends Model
         'gold_price_buy',
     ];
 
-    public function payments() {
+    public function payments()
+    {
         return $this->morphToMany(Payment::class, 'paymentable');
     }
-    public function details() {
+
+    public function details()
+    {
         return $this->hasMany(SaleDetail::class);
     }
 
-    public function sales(){
+    public function sales()
+    {
         return $this->details()->whereStatus('sale');
     }
 
-    public function buys(){
+    public function buys()
+    {
         return $this->details()->whereStatus('buy');
+    }
+
+    public function stock_card()
+    {
+        return $this->morphOne(StockCard::class, 'ref');
     }
 }

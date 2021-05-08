@@ -29,7 +29,6 @@ class StockCard extends Model
         return $this->belongsTo(Product::class);
     }
 
-
     public function ref() {
         return $this->morphTo();
     }

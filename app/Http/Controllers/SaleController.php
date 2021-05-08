@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OldGoldStockCard;
 use App\Models\Payment;
 use App\Models\Sale;
 use App\Models\SaleDetail;
@@ -13,11 +14,13 @@ use Illuminate\Support\Facades\Validator;
 
 class SaleController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         //
@@ -79,12 +82,55 @@ class SaleController extends Controller
                     $sale->payments()->save($model);
                 }
 
-                //todo stockcard work
                 foreach ($sale->details as $detail) {
-                    $stock = StockCard::whereProductId($detail->product_id)->first();
-                    $stock = $stock->replicate();
-                    $stock->fill([
-                    ]);
+                    if ($detail->status === 'sale') {
+                        $stock = StockCard::whereProductId($detail->product_id)
+                            ->latest()->first();
+                        $stock = $stock->replicate();
+                        $stock->fill([
+                            'gold_percent_id' => $detail->product_percent_id,
+                            'dt' => $sale->dt,
+                            'qty_begin' => $stock->qty_end,
+                            'qty_out' => $detail->qty,
+                            'qty_end' => $stock->qty_end - $detail->qty,
+                            'weight_begin' => $stock->weight_begin,
+                            'weight_out' => $detail->wt,
+                            'weight_end' => $stock->weight_end - $detail->wt,
+                            'user_id' => $sale->user_id,
+                            'ref_id' => $sale->id,
+                            'ref_type' => Sale::class
+                        ]);
+                    } elseif ($detail->status === 'buy') {
+
+                        $row = new OldGoldStockCard([
+                            'dt' => $sale->dt,
+                            'gold_percent_id' => $detail->product_percent_id,
+                            'team_id' => $sale->team_id,
+                            'avg_per_baht' => $detail->avg_per_baht,
+                            'ref_id' => $sale->id,
+                            'ref_type' => Sale::class,
+                            'qty_begin' => 0,
+                            'qty_in' => $detail->qty,
+                            'qty_end' => $detail->qty,
+                            'wt_begin' => 0,
+                            'wt_in' => $detail->wt,
+                            'wt_end' => $detail->wt,
+                        ]);
+
+                        if (OldGoldStockCard::whereGoldPercentId($detail->product_percent_id)
+                                ->whereTeamId($sale->team_id)
+                                ->count() === 0) {
+                            $row->save();
+                        } else {
+                            $stock = OldGoldStockCard::whereGoldPercentId($detail->product_percent_id)
+                                ->whereTeamId($sale->team_id)
+                                ->first();
+                            $row->qty_begin = $stock->qty_begin;
+                            $row->qty_end = $row->qty_begin + $row->qty_in;
+                            $row->wt_begin = $stock->wt_begin;
+                            $row->wt_end = $row->wt_begin + $row->wt_begin;
+                        }
+                    }
                 }
 
             }

@@ -229,14 +229,14 @@ export default {
 
             }),
             product: null,
-            buy:
-                {
-                    product_percent_id: 96,
-                    product_type: '',
-                    wt: 0,
-                    price_buy_calc: 0,
-                    price_buy_total: 0,
-                },
+            buy: {
+                product_percent_id: 96,
+                product_type: '',
+                wt: 0,
+                price_buy_calc: 0,
+                price_buy_total: 0,
+                avg_cost_per_baht: 0,
+            },
             paymentDialog: false,
             editingSalesCellRows: {},
             editingBuysCellRows: {},
@@ -501,7 +501,8 @@ export default {
         },
         addBuy() {
             let buy = _.assign({}, this.buy, {
-                status: 'buy'
+                status: 'buy',
+                avg_cost_per_baht: (this.buy.price_buy_total / this.buy.wt) * 15.2
             })
             buy.product_type = this.buy.product_type.name
             this.form.buys.push(buy)

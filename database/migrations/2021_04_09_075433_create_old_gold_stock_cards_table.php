@@ -15,13 +15,17 @@ class CreateOldGoldStockCardsTable extends Migration
     {
         Schema::create('old_gold_stock_cards', function (Blueprint $table) {
             $table->id();
-            $table->string('gold_percent_id');
+            $table->foreignId('gold_percent_id');
             $table->foreignId('team_id');
             $table->decimal('avg_per_bath')->default(0);
             $table->decimal('qty_begin');
-            $table->decimal('qty_in');
-            $table->decimal('qty_out');
-            $table->decimal('qty_remain');
+            $table->double('qty_in');
+            $table->double('qty_out');
+            $table->double('qty_end');
+            $table->double('wt_begin');
+            $table->double('wt_in');
+            $table->double('wt_out');
+            $table->double('wt_end');
             $table->string('description');
             $table->dateTime('dt');
             $table->foreignId('ref_id');
