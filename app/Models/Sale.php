@@ -31,6 +31,9 @@ class Sale extends Model
         'gold_price_buy',
     ];
 
+    public function payments() {
+        return $this->morphToMany(Payment::class, 'paymentable');
+    }
     public function details() {
         return $this->hasMany(SaleDetail::class);
     }

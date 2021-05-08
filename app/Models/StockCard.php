@@ -21,7 +21,7 @@ class StockCard extends Model
 
     public function team()
     {
-        return $this->belongsTo(Team::class);
+        return $this->product->team;
     }
 
     public function product()

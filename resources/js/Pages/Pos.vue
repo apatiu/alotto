@@ -154,6 +154,9 @@
                     </DataTable>
                 </div>
             </div>
+            <div>
+                {{ v.form.$errors }}
+            </div>
         </div>
 
 
@@ -171,16 +174,14 @@ import SelectProduct from "@/A/SelectProduct";
 import SelectCustomer from "@/A/SelectCustomer";
 import InputPayment from "@/A/InputPayment";
 import useVuelidate from '@vuelidate/core'
-import {required} from '@vuelidate/validators'
+import {required, requiredIf, minLength} from '@vuelidate/validators'
 import GoldPrices from "@/A/GoldPrices";
 
 export default {
     name: "Pos",
     setup() {
         const v = useVuelidate()
-        return {
-            v
-        }
+        return {v}
     },
     components: {
         GoldPrices,
@@ -224,6 +225,7 @@ export default {
                 gold_price_buy: 0,
                 sales: [],
                 buys: [],
+                payments: []
 
             }),
             product: null,
@@ -243,8 +245,21 @@ export default {
     validations() {
         return {
             form: {
+                type: {required},
                 customer: {required},
-                sales: {required}
+                sales: {
+                    required: requiredIf(() => {
+                        return this.form.type !== "buy"
+                    })
+                },
+                buys: {
+                    required: requiredIf(() => {
+                        return this.form.type !== "sale"
+                    })
+                },
+                // buys: {
+                //     minLength: minLength(this.form.type !== 'sales' ? 1 : 0)
+                // }
             }
         }
     },
@@ -492,24 +507,13 @@ export default {
             this.form.buys.push(buy)
         },
         checkout() {
-            switch (this.form.type) {
-                case 'sale' :
-                    if (this.form.sales.length === 0) {
-                        this.notify('กรุณาป้อนข้อมูลขาย', 'error')
-                        return
-                    }
-                case 'buy' :
-                    if (this.form.sales.length === 0) {
-                        this.notify('กรุณาป้อนข้อมูลซื้อ', 'error')
-                        return
-                    }
-                case 'change' :
-                    if (this.form.sales.length === 0 && this.form.buys.length === 0) {
-                        this.notify('กรุณาป้อนข้อมูลขาย และ ซื้อ', 'error')
-                        return
-                    }
-            }
-            this.paymentDialog = true;
+            this.v.form.$reset();
+            this.v.form.$touch()
+            this.$nextTick(() => {
+                if (this.v.form.$error) return
+                this.paymentDialog = true;
+            })
+
         },
         savePayments(e) {
             this.form.payments = e

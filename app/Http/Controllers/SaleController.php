@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Shift;
+use App\Models\StockCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -59,11 +60,33 @@ class SaleController extends Controller
                 if (in_array($data['type'], ['buy', 'change']))
                     $sale->details()->createMany($data['buys']);
 
+                //payment work
                 foreach ($data['payments'] as $payment) {
                     $model = new Payment();
                     $model->fill($payment);
-                    dd($model);
+                    $model->fill([
+                        'team_id' => $request->user()->currentTeam->id,
+                        'shift_id' => Shift::current()->id,
+                        'payment_no' => '',
+                        'dt' => $sale->dt,
+                        'payment_type_id' => $sale->type
+                    ]);
+                    if ($payment['amount'] < 0)
+                        $model->pay = $payment['amount'];
+                    else
+                        $model->receive = $payment['amount'];
+
+                    $sale->payments()->save($model);
                 }
+
+                //todo stockcard work
+                foreach ($sale->details as $detail) {
+                    $stock = StockCard::whereProductId($detail->product_id)->first();
+                    $stock = $stock->replicate();
+                    $stock->fill([
+                    ]);
+                }
+
             }
             DB::commit();
         } catch (\Throwable $e) {

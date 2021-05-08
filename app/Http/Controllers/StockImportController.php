@@ -307,7 +307,10 @@ class StockImportController extends Controller
     private function updateStockCard(Product $product, $line)
     {
 
-        $sc = StockCard::where('product_id', '=', $product->id)
+        $sc = StockCard::where([
+            ['team_id', '=', $product->team_id],
+            ['product_id', '=', $product->id]
+        ])
             ->orderBy('dt', 'desc')
             ->first();
 

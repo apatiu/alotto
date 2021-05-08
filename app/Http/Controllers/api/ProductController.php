@@ -12,7 +12,7 @@ class ProductController extends Controller
 {
     public function search(Request $request)
     {
-        $rows = Product::orderBy('code');
+        $rows = Product::with(['gold_percent'])->orderBy('code');
 
         $q = $request->input('q', '');
         if (!empty($q)) {

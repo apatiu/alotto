@@ -15,7 +15,6 @@ class CreateStockCardsTable extends Migration
     {
         Schema::create('stock_cards', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('team_id');
             $table->foreignId('product_id');
             $table->decimal('cost_wage')->nullable();
             $table->decimal('tag_wage')->nullable();
