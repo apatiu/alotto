@@ -90,7 +90,8 @@ class StockImportController extends Controller
         $data['status'] = 'draft';
         $data['dt'] = Carbon::create($data['dt'])->toDateTimeString();
 
-        Validator::make($data, $this->validateRules())->validateWithBag('stockImportBag');
+        Validator::make($data, $this->validateRules())
+            ->validateWithBag('stockImportBag');
 
         $this->bill = new StockImport();
 
@@ -200,14 +201,14 @@ class StockImportController extends Controller
 
     public function line_product_processing(StockImportLine $line, $updateStock = false)
     {
-        $found = Product::whereProductId($line->product_id)->exists();
+        $found = Product::whereCode($line->product_code)->exists();
         if (!$found) {
             $product = new Product();
             $product->fill([
-                'product_id' => $line->product_id,
+                'code' => $line->product_code,
                 'name' => $line->product_name,
                 'team_id' => request()->user()->currentTeam->id,
-                'gold_percent' => $line->gold_percent,
+                'gold_percent_id' => $line->gold_percent_id,
                 'product_type_id' => $line->product_type_id,
                 'product_design_id' => $line->product_design_id,
                 'size' => $line->product_size,
@@ -221,12 +222,12 @@ class StockImportController extends Controller
                 'avg_cost_per_baht' => $line->avg_cost_per_baht,
                 'sale_with_gold_price' => $line->sale_with_gold_price,
                 'wage_by_pcs' => $line->wage_by_pcs,
-                'qty' => $line->product_qty,
+                'qty' => $line->qty,
                 'description' => $line->description,
             ]);
             $product->save();
         } else {
-            $product = Product::whereProductId($line->product_id)->first();
+            $product = Product::whereProductId($line->product_code)->first();
             $product_weight = $product->qty * weightgram($product->weight, $product->weightbaht);
             $product_cost_per_gram = $product->avg_cost_per_baht / 15.2;
             $line_weight = $line->qty * weightgram($line->weight, $line->weightbaht);
@@ -296,7 +297,7 @@ class StockImportController extends Controller
             $product->getCode();
             $product->genName();
 
-            $producted = Product::find($product->product_id);
+            $producted = Product::find($product->product_code);
             if ($producted) {
                 $product = $producted;
             }

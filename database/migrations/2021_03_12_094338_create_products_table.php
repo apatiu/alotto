@@ -20,20 +20,20 @@ class CreateProductsTable extends Migration
             $table->foreignId('team_id');
 
             $table->foreignId('gold_percent_id');
-            $table->foreignId('product_type_id');
+            $table->string('product_type_id', 10);
             $table->foreignId('product_design_id')->nullable();
             $table->foreignId('product_size_id')->nullable();
             $table->string('name');
 
             $table->decimal('min_qty')->nullable();
-            $table->decimal('weight',12,3)->nullable();
+            $table->decimal('weight', 12, 3)->nullable();
             $table->boolean('weightbaht')->default(true)->nullable();
 
             $table->decimal('cost_wage')->nullable();
             $table->decimal('cost_price')->nullable();
             $table->decimal('tag_wage')->nullable();
             $table->decimal('tag_price')->nullable();
-            $table->decimal('avg_cost_per_baht')->default(0);
+            $table->decimal('avg_cost_per_baht')->nullable();
             $table->boolean('sale_with_gold_price')->default(true);
             $table->boolean('wage_by_pcs')->default(false);
 

@@ -59,10 +59,10 @@ class Product extends Model
         $product_design_id = $this->product_design_id ?? null;
         $product_size_id = $this->product_size_id;
 
-        $product_id = $gold_percent_id . $product_type_id . $product_weight .
+        $code = $gold_percent_id . $product_type_id . $product_weight .
             ($product_design_id ? 'D' . $product_design_id : '') .
             ($product_size_id ? 'S' . $product_size_id : '');
-        $this->attributes['code'] = $product_id;
+        $this->attributes['code'] = $code;
     }
 
     public function genName()

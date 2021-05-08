@@ -24,7 +24,7 @@ class ProductController extends Controller
                     return [
                         'id' => $item->id,
                         'team_name' => $item->team->name,
-                        'product_id'=> $item->product_id,
+                        'code'=> $item->code,
                         'name' => $item->name,
                         'weight_gram' => $item->weightgram,
                         'cost_wage'=> $item->cost_wage,

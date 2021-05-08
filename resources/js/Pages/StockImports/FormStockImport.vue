@@ -42,8 +42,8 @@
             <Column field="product_weight" header="น้ำหนัก/ชิ้น">
                 <template #body="slotProps">
                     {{
-                    slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
-                    slotProps.data.product_weight.toFixed(2)
+                        slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
+                            slotProps.data.product_weight.toFixed(2)
                     }}
                 </template>
             </Column>
@@ -64,6 +64,9 @@
                             @click="removeLine(slotProps)"/>
                 </template>
             </Column>
+            <template #empty>
+                <div class="w-full text-center py-8">ยังไม่มีรายการสินค้า</div>
+            </template>
         </DataTable>
 
         <div class="flex justify-end mt-6">
@@ -113,20 +116,16 @@
                 </div>
             </div>
         </div>
-
-        <div class="text-right" v-if="form.errors">
-            <input-error :model-value="v.form.lines.$errors"></input-error>
-        </div>
         <div class="pt-4 flex justify-end">
             <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
             <Button :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                    @click="save">
+                    :disabled="!saveable"
+                    @click="save(false)">
                 บันทึก
             </Button>
             <Button class="p-ml-2"
                     :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing || this.form.status==='approved'"
+                    :disabled="!saveable"
                     @click="save(true)">
                 อนุมัติ
             </Button>
@@ -167,6 +166,11 @@ export default {
     },
     metaInfo: {title: 'Edit Suppliers'},
     created() {
+        if (this.item.code) {
+            _.assign(this.form, this.item);
+            this.modeEdit = true
+        }
+
         this.form.dt = moment(this.form.dt).toDate();
     },
     mounted() {
@@ -195,16 +199,30 @@ export default {
     props: ['item', 'gold_percents', 'errors', 'goldprice'],
     data() {
         return {
+            modeEdit: false,
             form: this.$inertia.form({
                 id: null,
                 code: null,
                 dt: new Date(),
+                team_id: null,
+                supplier_id: null,
+                real_cost: null,
+                real_weight_total: null,
+                cost_price_total: null,
+                note: null,
+                cost_gold_total: null,
+                cost_wage_total: null,
+                tag_price_total: null,
+                product_weight_total: null,
+                emp_name: null,
+                tag_wage_total: null,
+                status: null,
+                product_qty_total: null,
                 lines: []
             }),
             approve: false,
             bill_goldprice: this.goldprice,
             creatingLine: false,
-
         }
     },
     validations() {
@@ -213,10 +231,7 @@ export default {
                 dt: {required},
                 real_cost: {required},
                 real_weight_total: {required},
-                lines: {
-                    required: helpers.withMessage('ยังไม่มีรายการสินค้า', required)
-                },
-            }
+            },
         }
     },
     watch: {
@@ -235,7 +250,13 @@ export default {
             return numeral((this.line.qty ?? 0) * w).value().toFixed(2)
         },
         isApproved() {
-            return this.form.status;
+            return this.form.status === 'approved';
+        },
+        saveable() {
+            return !this.form.processing
+                && !this.isApproved
+                && this.form.lines.length > 0
+                && !this.v.form.$invalid
         }
     },
     methods: {
@@ -243,11 +264,10 @@ export default {
             this.$refs.createLineDialog.show();
         },
         addLine(e) {
-            this.updateLineTotal(e);
             this.form.lines.push(_.pickBy(e));
         },
         removeLine(props) {
-            this.lines.splice(props.index, 1)
+            this.form.lines.splice(props.index, 1)
         },
         updateLineTotal(newline) {
             let w = Weight(
@@ -283,27 +303,31 @@ export default {
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
                         this.form.status = 'approve-request'
+                        this.post()
                     },
                     reject: () => {
                         return
                     }
                 });
-            }
-
+            } else this.post()
+        },
+        post() {
             if (this.form.id) {
                 this.form.put(route('stock-imports.update', this.form.id), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                     onSuccess: (res) => {
                         this.$toast.add({severity: 'success', summary: 'บันทึกข้อมูลแล้ว', life: 3000})
-                        _.assign(this.form, res.props.item);
+                        // _.assign(this.form, res.props.item);
                     }
                 })
             } else {
-                console.log('post')
                 this.form.post(route('stock-imports.store'), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
+                    onSuccess: (res) => {
+                        this.notify('บันทึกข้อมูลแล้ว')
+                    }
                 })
             }
         },
