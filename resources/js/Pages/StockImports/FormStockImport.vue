@@ -6,7 +6,7 @@
                 <stock-import-status v-model:value="form.status"></stock-import-status>
             </div>
         </div>
-        <div class="grid grid-cols-6 gap-8">
+        <div class="grid grid-cols-6 gap-2">
             <div class="p-field col-span-1">
                 <text-input
                     v-model="form.code"
@@ -17,7 +17,7 @@
             </div>
             <div class="col-start-5">
                 <label>วันที่นำเข้า</label>
-                <Calendar v-model="v$.form.dt.$model"
+                <Calendar v-model="v.form.dt.$model"
                           class="w-full"
                 ></Calendar>
                 <input-error :message="form.errors.dt"></input-error>
@@ -42,8 +42,8 @@
             <Column field="product_weight" header="น้ำหนัก/ชิ้น">
                 <template #body="slotProps">
                     {{
-                        slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
-                            slotProps.data.product_weight.toFixed(2)
+                    slotProps.data.product_weightbaht ? (slotProps.data.product_weight * 15.2).toFixed(2) :
+                    slotProps.data.product_weight.toFixed(2)
                     }}
                 </template>
             </Column>
@@ -67,7 +67,11 @@
         </DataTable>
 
         <div class="flex justify-end mt-6">
-            <div class="grid grid-cols-4 grid-rows-3 gap-4">
+            <div class="grid grid-cols-5 grid-rows-3 gap-4">
+                <div class="row-span-2">
+                    <label for="">บันทึกย่อ</label>
+                    <Textarea v-model="form.note"></Textarea>
+                </div>
                 <div class="flex items-center justify-end auto-cols-max">
                     น้ำหนักชั่งจริง
                 </div>
@@ -78,6 +82,7 @@
                         input-class="text-right"
                         :minFractionDigits="2"
                         :maxFractionDigits="2"></InputNumber>
+                    <input-error :model-value="v.form.real_weight_total.$errors"></input-error>
                 </div>
                 <div class="flex items-center justify-end">
                     ราคาทอง
@@ -96,6 +101,7 @@
                                  :maxFractionDigits="2"
                                  inputClass="text-right"
                                  class="w-full"></InputNumber>
+                    <input-error :model-value="v.form.real_cost.$errors"></input-error>
                 </div>
                 <div class="flex items-center justify-end">ค่าแรง</div>
                 <div>
@@ -109,19 +115,19 @@
         </div>
 
         <div class="text-right" v-if="form.errors">
-            <p v-for="item in form.errors" class="p-error">{{ item }}</p>
+            <input-error :model-value="v.form.lines.$errors"></input-error>
         </div>
         <div class="pt-4 flex justify-end">
             <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
             <Button :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
-                    @click="update">
-                บันทึกร่าง
+                    @click="save">
+                บันทึก
             </Button>
             <Button class="p-ml-2"
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing || this.form.status==='approved'"
-                    @click="approveClick">
+                    @click="save(true)">
                 อนุมัติ
             </Button>
         </div>
@@ -151,13 +157,13 @@ import AInputCurrency from "@/A/AInputCurrency";
 import SelectProductDesign from "@/A/SelectProductDesign";
 
 import useVuelidate from '@vuelidate/core';
-import {required, requiredIf} from '@vuelidate/validators'
+import {required, requiredIf, helpers} from '@vuelidate/validators'
 import StockImportStatus from "@/A/StockImportStatus";
 import CreateStockImportLine from "@/Pages/StockImports/CreateStockImportLine";
 
 export default {
     setup() {
-        return {v$: useVuelidate()}
+        return {v: useVuelidate()}
     },
     metaInfo: {title: 'Edit Suppliers'},
     created() {
@@ -206,7 +212,10 @@ export default {
             form: {
                 dt: {required},
                 real_cost: {required},
-                lines: {required},
+                real_weight_total: {required},
+                lines: {
+                    required: helpers.withMessage('ยังไม่มีรายการสินค้า', required)
+                },
             }
         }
     },
@@ -259,18 +268,28 @@ export default {
                 this.form.product_weight_total = numeral(line.product_weight_total).add(this.form.product_weight_total).value();
                 this.form.cost_wage_total += line.cost_wage_total;
                 this.form.cost_price_total += line.cost_price_total;
-
-                this.form.cost_gold_total =
-                    numeral(this.form.cost_gold_total).value() +
-                    numeral(line.avg_cost_per_baht)
-                        .divide(15.2)
-                        .multiply(this.form.product_weight_total)
-                        .value();
-
+                this.form.cost_gold_total += line.cost_gold_total;
                 this.form.product_qty_total += line.qty;
             })
         },
-        update() {
+        save(approve = false) {
+            this.v.form.$touch();
+            if (this.v.form.$error) return
+
+            if (approve) {
+                this.$confirm.require({
+                    message: 'อนุมัติใบรับสินค้า และตัดสต้อก หรือไม่?',
+                    header: 'กรุณายืนยัน',
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.form.status = 'approve-request'
+                    },
+                    reject: () => {
+                        return
+                    }
+                });
+            }
+
             if (this.form.id) {
                 this.form.put(route('stock-imports.update', this.form.id), {
                     errorBag: 'stockImportBag',
@@ -281,26 +300,12 @@ export default {
                     }
                 })
             } else {
+                console.log('post')
                 this.form.post(route('stock-imports.store'), {
                     errorBag: 'stockImportBag',
                     preserveScroll: true,
                 })
             }
-        },
-        approveClick() {
-            this.$confirm.require({
-                message: 'อนุมัติใบรับสินค้า และตัดสต้อก หรือไม่?',
-                header: 'กรุณายืนยัน',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.form.status = 'approve-request'
-                    this.update();
-                },
-                reject: () => {
-                }
-            });
-
-
         },
         formatNumber(val, pre = 0) {
             let format = '';

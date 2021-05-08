@@ -1,5 +1,5 @@
 <template>
-    <Tag :severity="severity" :value="status"></Tag>
+    <Tag :severity="severity" :value="status" v-if="value"></Tag>
 </template>
 
 <script>

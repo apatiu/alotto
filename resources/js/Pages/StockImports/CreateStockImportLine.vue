@@ -189,6 +189,13 @@ export default {
                 this.line.product_weight_total = this.productWeightTotal
                 this.line.cost_gold_total = ((this.line.avg_cost_per_baht ?? 0) * .0656) * this.line.product_weight_total
             }, deep: true
+        },
+        'line.sale_with_gold_price': {
+            handler(val) {
+                console.log(val);
+                this.v.$reset()
+                this.v.$touch()
+            }
         }
     },
     validations() {
@@ -245,27 +252,29 @@ export default {
             this.line.product_weightbaht = event.weightbaht
         },
         checkProduct() {
-            if (this.checked) {
-                this.v.line.$reset();
-                this.v.line.$touch();
-            } else {
-                this.v.line.$reset();
-                this.v.line.$touch();
+            this.checked = false
 
-                let query = _.pickBy(this.line)
-                query.weight = query.product_weight
-                query.weightbaht = query.product_weightbaht
+            let query = _.pickBy(this.line)
+            query.weight = query.product_weight
+            query.weightbaht = query.product_weightbaht
 
-                axios.post(route('api.check-product'), query)
-                    .then(({data}) => {
-                        _.assign(this.line, data)
-                        this.line.product_code = data.code;
-                        this.line.product_name = data.name;
-                        this.product = data;
-                        this.checked = true
-                        this.checkProduct();
-                    })
-            }
+            axios.post(route('api.check-product'), query)
+                .then(({data}) => {
+                    _.assign(this.line, data)
+                    this.line.product_code = data.code;
+                    this.line.product_name = data.name;
+                    this.product = data;
+                    this.checked = true
+                })
+                .then(() => {
+                    this.v.line.$reset();
+                    this.v.line.$touch();
+                })
+                .catch((error) => {
+                    this.notify('เกิดความผิดพลาดบางอย่าง.')
+                    return
+                })
+
 
         },
         onError: (errors) => {
