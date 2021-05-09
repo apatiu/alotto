@@ -5,7 +5,7 @@
               optionLabel="gold_percent"
               optionValue="id"
               :modelValue="modelValue"
-              @update:modelValue="$emit('update:modelValue',$event)"></Dropdown>
+              @update:modelValue="onUpdate"></Dropdown>
 
 
 </template>
@@ -24,6 +24,11 @@ export default {
             .then(e => {
                 this.items = e.data
             });
+    },
+    methods: {
+        onUpdate(e) {
+            this.$emit('update:modelValue', e)
+        }
     }
 }
 </script>

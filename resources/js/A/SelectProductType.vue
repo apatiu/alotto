@@ -2,9 +2,11 @@
     <label for="" v-if="showLabel">ประเภทสินค้า</label>
     <Dropdown :modelValue="modelValue"
               @update:modelValue="$emit('update:modelValue',$event)"
-              :options="types" optionLabel="name"
+              :options="types"
+              optionLabel="name"
               placeholder="เลือกประเภท"
-              filter></Dropdown>
+              filter
+              class="w-full"></Dropdown>
     <input-error :model-value="errors"></input-error>
 </template>
 
@@ -30,8 +32,7 @@ export default {
                 this.types = response.data
             })
     },
-    methods: {
-    }
+    methods: {}
 }
 </script>
 

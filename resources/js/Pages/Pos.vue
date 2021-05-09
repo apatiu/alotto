@@ -109,10 +109,12 @@
                     <h5>ซื้อ</h5>
                     <div class="flex space-x-1">
                         <div class="w-24">
-                            <select-gold-percent v-model="buy.product_percent_id"></select-gold-percent>
+                            <select-gold-percent v-model="buy.product_percent_id"
+                                                 @select="buy.product_percent_name = $event.gold_percent"></select-gold-percent>
                         </div>
                         <div class="w-40">
-                            <select-product-type v-model="buy.product_type"></select-product-type>
+                            <select-product-type
+                                v-model="buy.product_type"></select-product-type>
                         </div>
                         <div class="w-24">
                             <label for="">น้ำหนัก</label>
@@ -130,8 +132,8 @@
                         </div>
                     </div>
                     <DataTable :value="form.buys" class="p-datatable-sm p-mt-1">
-                        <Column field="product_percent_id" header="%" frozen footer=""></Column>
-                        <Column field="product_type" header="สินค้า" footer=""></Column>
+                        <Column field="product_percent.gold_percent" header="%" frozen footer=""></Column>
+                        <Column field="product_type_name" header="สินค้า" footer=""></Column>
                         <Column field="wt" header="นน.รวม"></Column>
                         <Column field="price_buy_calc" header="ราคาคำนวณ">
                             <template #footer>
@@ -155,7 +157,6 @@
                 </div>
             </div>
             <div>
-                {{ v.form.$errors }}
             </div>
         </div>
 
@@ -231,6 +232,7 @@ export default {
             product: null,
             buy: {
                 product_percent_id: 96,
+                product_percent: null,
                 product_type: '',
                 wt: 0,
                 price_buy_calc: 0,
@@ -402,7 +404,7 @@ export default {
 
             sale.qty = qty
             sale.status = 'sale'
-            sale.product_id = e.product_id
+            sale.product_id = e.id
             sale.product_code = e.code
             sale.product_type = e.product_type
             sale.product_design = e.product_design
@@ -489,6 +491,8 @@ export default {
         },
         async calcBuyPrice(wt) {
             let gPercent = await this.getGoldPercent(this.buy.product_percent_id)
+            this.buy.product_percent = gPercent;
+
             let o = numeral(this.form.gold_price)
                 .subtract(gPercent.deduct_buy)
                 .multiply(gPercent.percent_buy / 100);
@@ -504,7 +508,7 @@ export default {
                 status: 'buy',
                 avg_cost_per_baht: (this.buy.price_buy_total / this.buy.wt) * 15.2
             })
-            buy.product_type = this.buy.product_type.name
+            buy.product_type_name = this.buy.product_type.name
             this.form.buys.push(buy)
         },
         checkout() {

@@ -331,7 +331,7 @@ class StockImportController extends Controller
                 'weight_out' => 0,
                 'weight_end' => 0,
                 'description' => 'นำเข้า',
-                'dt' => $this->bill->dt,
+                'dt' => null,
                 'user_id' => Auth::user()->id
             ]);
             $sc->save();

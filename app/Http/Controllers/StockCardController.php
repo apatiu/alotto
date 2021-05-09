@@ -16,7 +16,7 @@ class StockCardController extends Controller
      */
     public function index()
     {
-        $rows = StockCard::with(['team','product','ref']);
+        $rows = StockCard::with(['product','ref']);
 
         $pagination = request('pagination',[
             'rowsPerPage'=> 12

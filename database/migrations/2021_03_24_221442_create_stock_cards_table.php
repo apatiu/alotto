@@ -33,6 +33,7 @@ class CreateStockCardsTable extends Migration
             $table->string('user_id')->nullable();
             $table->foreignId('ref_id')->nullable();
             $table->string('ref_type')->nullable();
+            $table->timestamps();
         });
     }
 

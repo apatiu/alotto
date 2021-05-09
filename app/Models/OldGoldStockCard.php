@@ -9,8 +9,13 @@ class OldGoldStockCard extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['gold_percent_id', 'team_id', 'avg_per_bath', 'qty_begin',
-        'qty_in', 'qty_out', 'qty_remain', 'description', 'dt'];
+    protected $fillable = [
+        'gold_percent_id', 'team_id',
+        'avg_per_bath',
+        'qty_begin', 'qty_in', 'qty_out', 'qty_end',
+        'wt_begin', 'wt_in', 'wt_out', 'wt_end',
+        'description', 'dt',
+        'ref_id','ref_type'];
 
     public function team()
     {

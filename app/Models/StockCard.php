@@ -17,11 +17,13 @@ class StockCard extends Model
         'qty_begin', 'qty_in', 'qty_out', 'qty_end',
         'weight_begin', 'weight_in', 'weight_out', 'weight_end',
         'dt', 'ref_no', 'description'];
-    public $timestamps = false;
 
-    public function team()
+    protected $appends = ['team'];
+
+    public function getTeamAttribute()
     {
-        return $this->product->team;
+        return $this->product()->first()->team;
+
     }
 
     public function product()
@@ -29,7 +31,8 @@ class StockCard extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function ref() {
+    public function ref()
+    {
         return $this->morphTo();
     }
 

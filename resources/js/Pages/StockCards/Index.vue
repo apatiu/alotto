@@ -23,16 +23,14 @@
                 Loading data. Please wait.
             </template>
 
-            <Column field="team.name" header="สาขา"></Column>
-            <Column field="dt" header="วันที่" class="justify-center">
+            <Column field="team.name" header="สาขา" style="min-width: 80px;"></Column>
+            <Column field="dt" header="วันที่" class="justify-center" style="min-width: 80px;">
                 <template #body="props">
                     {{ $filters.date(props.data.dt) }}
                 </template>
             </Column>
-            <Column field="product.product_id" header="รหัสสินค้า"></Column>
-            <Column field="product.name" header="สินค้า"></Column>
-
-
+            <Column field="product.code" header="รหัสสินค้า" style="min-width: 80px;"></Column>
+            <Column field="product.name" header="สินค้า" style="min-width: 120px;"></Column>
 
             <Column field="qty_begin" header="จำนวนเริ่มต้น" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">

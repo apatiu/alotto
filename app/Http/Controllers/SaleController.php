@@ -82,10 +82,11 @@ class SaleController extends Controller
                     $sale->payments()->save($model);
                 }
 
+                //stock work
                 foreach ($sale->details as $detail) {
                     if ($detail->status === 'sale') {
                         $stock = StockCard::whereProductId($detail->product_id)
-                            ->latest()->first();
+                            ->latest('dt')->first();
                         $stock = $stock->replicate();
                         $stock->fill([
                             'gold_percent_id' => $detail->product_percent_id,
@@ -100,10 +101,11 @@ class SaleController extends Controller
                             'ref_id' => $sale->id,
                             'ref_type' => Sale::class
                         ]);
+                        $stock->save();
                     } elseif ($detail->status === 'buy') {
 
                         $row = new OldGoldStockCard([
-                            'dt' => $sale->dt,
+                            'dt' => null,
                             'gold_percent_id' => $detail->product_percent_id,
                             'team_id' => $sale->team_id,
                             'avg_per_baht' => $detail->avg_per_baht,
