@@ -85,23 +85,26 @@ class SaleController extends Controller
                 //stock work
                 foreach ($sale->details as $detail) {
                     if ($detail->status === 'sale') {
-                        $stock = StockCard::whereProductId($detail->product_id)
+                        $latest = StockCard::whereProductId($detail->product_id)
                             ->latest('dt')->first();
-                        $stock = $stock->replicate();
-                        $stock->fill([
-                            'gold_percent_id' => $detail->product_percent_id,
-                            'dt' => $sale->dt,
-                            'qty_begin' => $stock->qty_end,
-                            'qty_out' => $detail->qty,
-                            'qty_end' => $stock->qty_end - $detail->qty,
-                            'weight_begin' => $stock->weight_begin,
-                            'weight_out' => $detail->wt,
-                            'weight_end' => $stock->weight_end - $detail->wt,
-                            'user_id' => $sale->user_id,
-                            'ref_id' => $sale->id,
-                            'ref_type' => Sale::class
-                        ]);
-                        $stock->save();
+
+                            $new = new StockCard();
+                            $new = $latest->replicate();
+                            $new->fill([
+                                'dt' => $sale->dt,
+                                'qty_begin' => $latest->qty_end,
+                                'qty_out' => $detail->qty,
+                                'qty_end' => $latest->qty_end - $detail->qty,
+                                'weight_begin' => $latest->weight_begin,
+                                'weight_out' => $detail->wt,
+                                'weight_end' => $latest->weight_end - $detail->wt,
+                                'user_id' => $sale->user_id,
+                                'ref_id' => $sale->id,
+                                'ref_type' => Sale::class,
+                                'description' => 'ขาย'
+                            ]);
+                            $new->save();
+
                     } elseif ($detail->status === 'buy') {
 
                         $row = new OldGoldStockCard([
@@ -112,8 +115,8 @@ class SaleController extends Controller
                             'ref_id' => $sale->id,
                             'ref_type' => Sale::class,
                             'qty_begin' => 0,
-                            'qty_in' => $detail->qty,
-                            'qty_end' => $detail->qty,
+                            'qty_in' => 1,
+                            'qty_end' => 1,
                             'wt_begin' => 0,
                             'wt_in' => $detail->wt,
                             'wt_end' => $detail->wt,

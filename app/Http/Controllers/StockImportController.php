@@ -307,47 +307,48 @@ class StockImportController extends Controller
     private function updateStockCard(Product $product, $line)
     {
 
-        $sc = StockCard::where([
-            ['team_id', '=', $product->team_id],
-            ['product_id', '=', $product->id]
-        ])
-            ->orderBy('dt', 'desc')
-            ->first();
+        $sc = StockCard::whereProductId($product->id)
+            ->latest('dt')->first();
 
         if ($sc === null) {
             $sc = new StockCard([
-                'team_id' => $product->team_id,
                 'product_id' => $product->id,
                 'cost_wage' => $line->cost_wage,
                 'tag_wage' => $line->tag_wage,
                 'cost_price' => $line->cost_price,
                 'tag_price' => $line->tag_price,
                 'qty_begin' => 0,
-                'qty_in' => 0,
+                'qty_in' => $line->qty,
                 'qty_out' => 0,
-                'qty_end' => 0,
+                'qty_end' => $line->qty,
                 'weight_begin' => 0,
-                'weight_in' => 0,
+                'weight_in' => $line->product_weight_total,
                 'weight_out' => 0,
-                'weight_end' => 0,
+                'weight_end' => $line->product_weight_total,
                 'description' => 'นำเข้า',
-                'dt' => null,
                 'user_id' => Auth::user()->id
             ]);
+            $sc->dt = $this->bill->dt;
+            $sc->ref_id = $this->bill->id;
+            $sc->ref_type = StockImport::class;
             $sc->save();
-        }
 
-        $new = $sc->replicate();
-        $new->qty_begin = $new->qty_end;
-        $new->qty_in = $line->qty;
-        $new->qty_end = $new->qty_begin + $new->qty_in;
-        $new->weight_begin = $new->weight_out;
-        $new->weight_in = $line->product_weight_total;
-        $new->weight_end = $new->weight_begin + $new->weight_in;
-        $new->dt = $this->bill->dt;
-        $new->ref_id = $this->bill->id;
-        $new->ref_type = StockImport::class;
-        $product->stockCards()->save($new);
+        } else {
+
+            $new = $sc->replicate();
+            $new->qty_begin = $sc->qty_end;
+            $new->qty_in = $line->qty;
+            $new->qty_end = $new->qty_begin + $new->qty_in;
+            $new->weight_begin = $sc->weight_out;
+            $new->weight_in = $line->product_weight_total;
+            $new->weight_end = $new->weight_begin + $new->weight_in;
+            $new->dt = $this->bill->dt;
+            $new->ref_id = $this->bill->id;
+            $new->ref_type = StockImport::class;
+            $new->user_id = $this->bill->user_id;
+
+            $product->stockCards()->save($new);
+        }
 
     }
 }

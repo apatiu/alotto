@@ -31,6 +31,23 @@ class Sale extends Model
         'gold_price_buy',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($payment) {
+            $code = 'IV' . substr('0' . request()->user()->currentTeam->id,-2);
+            $code .= date('Ymd', strtotime($payment->attributes['dt']));
+
+            $latest = Sale::where('code', 'like', $code . '%')->select('code')->orderBy('code', 'desc')->first();
+
+            if (!$latest)
+                $code .= '0001';
+            else
+                $code .= substr('0000' . (intval(substr($latest->attributes['code'], -4)) + 1), -4);
+
+            $payment->attributes['code'] = $code;
+        });
+    }
+
     public function payments()
     {
         return $this->morphToMany(Payment::class, 'paymentable');

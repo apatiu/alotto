@@ -21,15 +21,15 @@ class Payment extends Model
     protected static function booted()
     {
         static::creating(function ($payment) {
-            $code = 'PM' . request()->user()->currentTeam->id . '-';
+            $code = 'PM' . substr('00' . request()->user()->currentTeam->id, -2);
             $code .= date('Ymd', strtotime($payment->attributes['dt'])) . '-';
 
             $latest = Payment::where('code', 'like', $code . '%')->select('code')->orderBy('code', 'desc')->first();
 
             if (!$latest)
-                $code .= '001';
+                $code .= '0001';
             else
-                $code .= substr('00' . (intval(substr($latest->attributes['code'], -3)) + 1), -3);
+                $code .= substr('000' . (intval(substr($latest->attributes['code'], -4)) + 1), -4);
 
             $payment->attributes['code'] = $code;
         });
@@ -55,8 +55,9 @@ class Payment extends Model
         return $this->morphedByMany(PawnIntReceive::class, 'paymentable');
     }
 
-    public function stockImport() {
-        return $this->morphedByMany(StockImport::class,'paymentable');
+    public function stockImport()
+    {
+        return $this->morphedByMany(StockImport::class, 'paymentable');
     }
 
     public function paymentable()

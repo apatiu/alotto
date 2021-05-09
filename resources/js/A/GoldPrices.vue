@@ -1,21 +1,19 @@
 <template>
-    <Card>
-        <template #title>ราคาทองคำแท่ง</template>
-        <template #content>
-                <div class="p-field p-grid">
-                    <label for="" class="p-col-fixed w-20">ขายออก</label>
-                    <div class="p-col">
-                        <InputNumber v-model="goldPrices.ask" inputClass="w-full" disabled></InputNumber>
-                    </div>
-                </div>
-                <div class="p-field p-grid">
-                    <label for="" class="p-col-fixed w-20">รับซื้อ</label>
-                    <div class="p-col">
-                        <InputNumber v-model="goldPrices.bid" inputClass="w-full" disabled></InputNumber>
-                    </div>
-                </div>
-        </template>
-    </Card>
+    <div class="border p-4 bg-yellow-50 shadow">
+        <div class="font-bold mb-3">ราคาทองคำแท่ง</div>
+        <div class="p-field p-grid mb-1">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon bg-red-200 w-20 font-bold text-sm">ขายออก</span>
+                <InputNumber v-model="goldPrices.ask" inputClass="w-full text-right" disabled></InputNumber>
+            </div>
+        </div>
+        <div class="p-field p-grid mb-1">
+            <div class="p-inputgroup">
+                <span class="p-inputgroup-addon bg-green-200 w-20 font-bold text-sm">รับซื้อ</span>
+                <InputNumber v-model="goldPrices.bid" inputClass="w-full text-right" disabled></InputNumber>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>

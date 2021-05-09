@@ -75,6 +75,8 @@ Route::middleware('auth:sanctum')->group(function () {
                 ->name('gold-prices.now');
 
             Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
+
+            Route::resource('sales','SaleController');
         });
 
 

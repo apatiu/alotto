@@ -1,6 +1,6 @@
 <template>
 
-    <div class="layout-topbar type-bar">
+    <div class="layout-topbar type-bar pb-4">
         <SelectButton v-model="form.type"
                       :options="types"
                       optionLabel="label"
@@ -11,155 +11,192 @@
                 </div>
             </template>
         </SelectButton>
-        <div class="cell-bill p-4 flex flex-1 justify-end">
-            <div :class="['text-right font-bold text-5xl pr-4',classBillTotal]">{{ $filters.decimal(billTotal) }}</div>
-            <Button label="รับชำระเงิน"
-                    class="p-button-lg"
-                    :disabled="form.type===null"
-                    @click="checkout"></Button>
-        </div>
     </div>
     <div class="mt-24"></div>
+
     <template v-if="form.type">
-        <div class="p-field" v-if="form.code">
-            <label for="">รหัส</label>
-            <InputText v-model="form.code"/>
-        </div>
-        <div class="mt-2 p-grid">
+        <div class="p-grid">
             <div class="p-col-9">
-                <select-customer
-                    v-model="form.customer"
-                    @update:modelValue="form.customer_id = $event.id"
-                    class="bg-white"></select-customer>
-            </div>
-            <div class="p-col-3">
-                <gold-prices></gold-prices>
-            </div>
-        </div>
-        <div class="p-flex-column mt-2">
-            <div class="cell-sell" v-if="form.type !== 'buy'">
-                <Card>
-                    <template #title>ขาย</template>
-                    <template #content>
-                        <div class="p-flex-column">
-                            <div>
-                                <select-product
-                                    v-model="product"
-                                    @select="onSelectProduct($event)"
-                                ></select-product>
-                            </div>
-                            <DataTable
-                                :value="form.sales"
-                                class="p-datatable-sm p-mt-1"
-                                editMode="cell"
-                                @cellEditComplete="onSalesCellEditComplete"
-                                :scrollable="true">
-                                <Column field="product_code" header="รหัส" frozen class="w-40"></Column>
-                                <Column field="product_name" header="ชื่อสินค้า" style="min-width:170px;"></Column>
-                                <Column field="qty" header="จำนวน" class="w-20 justify-center">
-                                    <template #editor="slotProps">
-                                        <InputNumber
-                                            :modelValue="slotProps.data.qty"
-                                            @update:modelValue="onSalesCellEdit($event,slotProps)"
-                                            inputClass="w-full"
-                                            showButtons
-                                        ></InputNumber>
-                                    </template>
-                                    <template #footer>
-                                        {{ salesQtySum }}
-                                    </template>
-                                </Column>
-                                <Column field="wt" header="นน.รวม" class="w-20"></Column>
-                                <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
-                                <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
-                                    <template #footer>
-                                        {{ salesTagWageSum }}
-                                    </template>
-                                </Column>
-                                <Column field="discount" header="ส่วนลด" class="w-20"></Column>
-                                <Column field="deposit" header="มัดจำ" class="w-20"></Column>
-                                <Column field="price_sale_total" header="รวม" class="w-20 justify-right">
-                                    <template #editor="slotProps">
-                                        <InputNumber
-                                            :modelValue="slotProps.data.price_sale_total"
-                                            @update:modelValue="onSalesCellEdit($event,slotProps)"
-                                            inputClass="w-full"
-                                        ></InputNumber>
-                                    </template>
-                                    <template #footer>
-                                        {{ salesPriceSaleTotalSum }}
-                                    </template>
-                                </Column>
-                                <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
-                                <Column headerClass="text-center" bodyClass="justify-center" style="width: 3rem">
-                                    <template #body="{index}">
-                                        <Button type="button"
-                                                icon="pi pi-trash"
-                                                class="p-button-sm p-button-rounded p-button-text p-button-plain"
-                                                @click="removeSale(index)"></Button>
-                                    </template>
-                                </Column>
-                            </DataTable>
-                        </div>
-                    </template>
-                </Card>
-            </div>
-            <div class="cell-buy mt-2" v-if="form.type !== 'sale'">
-                <div class="card p-flex-column">
-                    <h5>ซื้อ</h5>
-                    <div class="flex space-x-1">
-                        <div class="w-24">
-                            <select-gold-percent v-model="buy.product_percent_id"
-                                                 @select="buy.product_percent_name = $event.gold_percent"></select-gold-percent>
-                        </div>
-                        <div class="w-40">
-                            <select-product-type
-                                v-model="buy.product_type"></select-product-type>
-                        </div>
-                        <div class="w-24">
-                            <label for="">น้ำหนัก</label>
-                            <InputNumber v-model="buy.wt"
-                                         :minFractionDigits="2"
-                                         input-class="w-full"></InputNumber>
-                        </div>
-                        <div class="w-40">
-                            <label for="">ราคารรับซื้อ</label>
-                            <InputNumber v-model="buy.price_buy_total"
-                                         input-class="w-full"/>
-                        </div>
-                        <div class="w-20 flex items-end">
-                            <Button icon="pi pi-plus" @click="addBuy"></Button>
-                        </div>
+                <div class="p-inputgroup" v-if="form.code">
+                    <span class="p-inputgroup-addon" for="">รหัส</span>
+                    <InputText v-model="form.code"/>
+                </div>
+                <div class="mt-2 p-grid">
+                    <div class="p-col-9">
+                        <select-customer
+                            v-model="form.customer"
+                            @update:modelValue="form.customer_id = $event.id"
+                            class="bg-white"></select-customer>
                     </div>
-                    <DataTable :value="form.buys" class="p-datatable-sm p-mt-1">
-                        <Column field="product_percent.gold_percent" header="%" frozen footer=""></Column>
-                        <Column field="product_type_name" header="สินค้า" footer=""></Column>
-                        <Column field="wt" header="นน.รวม"></Column>
-                        <Column field="price_buy_calc" header="ราคาคำนวณ">
-                            <template #footer>
-                                {{ buysPriceBuyCalcSum }}
+                    <div class="p-col-3">
+                        <gold-prices></gold-prices>
+                    </div>
+                </div>
+                <div class="p-flex-column mt-2">
+                    <div class="cell-sell" v-if="form.type !== 'buy'">
+                        <Card>
+                            <template #title><span class="text-green-800">ขาย</span></template>
+                            <template #content>
+                                <div class="p-flex-column">
+                                    <div>
+                                        <select-product
+                                            v-model="product"
+                                            @select="onSelectProduct($event)"
+                                        ></select-product>
+                                    </div>
+                                    <DataTable
+                                        :value="form.sales"
+                                        class="p-datatable-sm p-mt-1"
+                                        editMode="cell"
+                                        @cellEditComplete="onSalesCellEditComplete"
+                                        :scrollable="true">
+                                        <Column field="product_code" header="รหัส" frozen class="w-40"></Column>
+                                        <Column field="product_name" header="ชื่อสินค้า"
+                                                style="min-width:170px;"></Column>
+                                        <Column field="qty" header="จำนวน" class="w-20 justify-center">
+                                            <template #editor="slotProps">
+                                                <InputNumber
+                                                    :modelValue="slotProps.data.qty"
+                                                    @update:modelValue="onSalesCellEdit($event,slotProps)"
+                                                    inputClass="w-full"
+                                                    showButtons
+                                                ></InputNumber>
+                                            </template>
+                                            <template #footer>
+                                                {{ salesQtySum }}
+                                            </template>
+                                        </Column>
+                                        <Column field="wt" header="นน.รวม" class="w-20"></Column>
+                                        <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
+                                        <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
+                                            <template #footer>
+                                                {{ salesTagWageSum }}
+                                            </template>
+                                        </Column>
+                                        <Column field="discount" header="ส่วนลด" class="w-20"></Column>
+                                        <Column field="deposit" header="มัดจำ" class="w-20"></Column>
+                                        <Column field="price_sale_total" header="รวม" class="w-20 justify-right">
+                                            <template #editor="slotProps">
+                                                <InputNumber
+                                                    :modelValue="slotProps.data.price_sale_total"
+                                                    @update:modelValue="onSalesCellEdit($event,slotProps)"
+                                                    inputClass="w-full"
+                                                ></InputNumber>
+                                            </template>
+                                            <template #footer>
+                                                {{ salesPriceSaleTotalSum }}
+                                            </template>
+                                        </Column>
+                                        <Column field="change_price" header="ราคาเปลี่ยน" class="w-20"></Column>
+                                        <Column headerClass="text-center" bodyClass="justify-center"
+                                                style="width: 3rem">
+                                            <template #body="{index}">
+                                                <Button type="button"
+                                                        icon="pi pi-trash"
+                                                        class="p-button-sm p-button-rounded p-button-text p-button-plain"
+                                                        @click="removeSale(index)"></Button>
+                                            </template>
+                                        </Column>
+                                        <template #empty>
+                                            <InputError :model-value="v.form.sales.$errors"></InputError>
+                                        </template>
+                                    </DataTable>
+                                </div>
                             </template>
-                        </Column>
-                        <Column field="price_buy_total" header="ราคารับซื้อ">
-                            <template #footer>
-                                {{ buysPriceBuyTotalSum }}
+                        </Card>
+                    </div>
+                    <div class="cell-buy mt-2" v-if="form.type !== 'sale'">
+                        <Card>
+                            <template #title><span class="text-red-800">ซื้อ</span></template>
+                            <template #content>
+                                <div class="flex space-x-1">
+                                    <div class="w-24">
+                                        <select-gold-percent v-model="buy.product_percent_id"
+                                                             @select="buy.product_percent_name = $event.gold_percent"></select-gold-percent>
+                                    </div>
+                                    <div class="w-40">
+                                        <select-product-type
+                                            v-model="buy.product_type"></select-product-type>
+                                    </div>
+                                    <div class="w-24">
+                                        <label>น้ำหนัก</label>
+                                        <InputNumber v-model="buy.wt"
+                                                     :minFractionDigits="2"
+                                                     input-class="w-full"></InputNumber>
+                                    </div>
+                                    <div class="w-40">
+                                        <label>ราคารรับซื้อ</label>
+                                        <InputNumber v-model="buy.price_buy_total"
+                                                     input-class="w-full"/>
+                                    </div>
+                                    <div class="w-20 flex items-end">
+                                        <Button icon="pi pi-plus" @click="addBuy"></Button>
+                                    </div>
+                                </div>
+                                <DataTable :value="form.buys" class="p-datatable-sm p-mt-1">
+                                    <Column field="product_percent.gold_percent" header="%" frozen footer=""></Column>
+                                    <Column field="product_type_name" header="สินค้า" footer=""></Column>
+                                    <Column field="wt" header="นน.รวม"></Column>
+                                    <Column field="price_buy_calc" header="ราคาคำนวณ">
+                                        <template #footer>
+                                            {{ buysPriceBuyCalcSum }}
+                                        </template>
+                                    </Column>
+                                    <Column field="price_buy_total" header="ราคารับซื้อ">
+                                        <template #footer>
+                                            {{ buysPriceBuyTotalSum }}
+                                        </template>
+                                    </Column>
+                                    <Column headerClass="text-center w-20">
+                                        <template #body="{index}">
+                                            <Button type="button"
+                                                    icon="pi pi-trash"
+                                                    class="p-button-sm p-button-rounded p-button-text p-button-plain"
+                                                    @click="removeBuy(index)"></Button>
+                                        </template>
+                                    </Column>
+                                    <template #empty>
+                                        <InputError :model-value="v.form.buys.$errors"></InputError>
+                                    </template>
+                                </DataTable>
                             </template>
-                        </Column>
-                        <Column headerClass="text-center w-20">
-                            <template #body="{index}">
-                                <Button type="button"
-                                        icon="pi pi-trash"
-                                        class="p-button-sm p-button-rounded p-button-text p-button-plain"
-                                        @click="removeBuy(index)"></Button>
-                            </template>
-                        </Column>
+                        </Card>
+                    </div>
+                    <div>
+                    </div>
+                </div>
+                <div class="section-payments mt-8" v-if="form.payments.length">
+                    <h5 class="h5">รายการชำระเงิน</h5>
+                    <DataTable :value="form.payments">
+                        <Column field="method" header="ช่องทาง"></Column>
                     </DataTable>
                 </div>
             </div>
-            <div>
+            <div class="p-col-3 flex-col space-y-2">
+                <label>ยอดรวม</label>
+                <InputNumber :modelValue="billTotal"
+                             disabled
+                             :inputClass="['text-right w-full text-3xl font-bold',classBillTotal]"
+                             class="p-inputtext-lg opacity-100 border-black"></InputNumber>
+                <Button label="กำหนดค่าเปลี่ยน"
+                        v-show="form.type==='change'"
+                        class="w-full p-button-warning"
+                        @click="getChangeAmount"></Button>
+                <Button label="รับชำระเงิน"
+                        class="p-button-lg w-full"
+                        :disabled="form.type===null || form.status!=='open'"
+                        @click="checkout"></Button>
             </div>
+            <OverlayPanel ref="opChangeAmount">
+                <div class="p-fluid">
+                    <div class="p-field">
+                        <label>ค่าเปลี่ยน</label>
+                        <InputNumber autofocus v-model="form.change_price"></InputNumber>
+                    </div>
+                    <Button label="ตกลง"></Button>
+                </div>
+            </OverlayPanel>
         </div>
-
 
     </template>
     <input-payment v-model:visible="paymentDialog"
@@ -177,6 +214,7 @@ import InputPayment from "@/A/InputPayment";
 import useVuelidate from '@vuelidate/core'
 import {required, requiredIf, minLength} from '@vuelidate/validators'
 import GoldPrices from "@/A/GoldPrices";
+import InputError from "@/Jetstream/InputError";
 
 export default {
     name: "Pos",
@@ -185,6 +223,7 @@ export default {
         return {v}
     },
     components: {
+        InputError,
         GoldPrices,
         InputPayment,
         SelectCustomer,
@@ -335,26 +374,27 @@ export default {
         },
         classBillTotal() {
             return {
-                'text-blue-600': this.form.total_amount >= 0,
-                'text-red-600': this.form.total_amount < 0
+                'text-blue-700': this.form.total_amount >= 0,
+                'text-red-700': this.form.total_amount < 0
             }
         }
     },
     mounted() {
         if (!this.bill) {
             this.form.gold_price = this.getGoldPrice();
-            this.create()
+            this.reset()
         } else {
         }
     },
     methods: {
-        create() {
-            console.log('create')
+        reset() {
             this.form = _.assign(this.form, {
                 id: null,
+                type: null,
                 code: '',
                 goldprice: this.goldprice,
                 dt: new Date,
+                total_amount: 0,
                 sales: [],
                 buys: [],
                 total: 0,
@@ -511,6 +551,9 @@ export default {
             buy.product_type_name = this.buy.product_type.name
             this.form.buys.push(buy)
         },
+        getChangeAmount(e) {
+            this.$refs.opChangeAmount.toggle(e)
+        },
         checkout() {
             this.v.form.$reset();
             this.v.form.$touch()
@@ -525,14 +568,11 @@ export default {
             this.update()
         },
         update() {
-            this.setLoading();
-            this.form.post(route('sales.store'), {
-                onSuccess: (e) => {
+            axios.post(route('api.sales.store'), this.form.data())
+                .then(({data}) => {
                     this.notify('บันทึกข้อมูลเรียบร้อย')
-                    this.create()
-
-                }
-            });
+                    _.assign(this.form, data)
+                });
         }
     }
 }
