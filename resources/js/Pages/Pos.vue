@@ -181,19 +181,20 @@
                 <Button label="กำหนดค่าเปลี่ยน"
                         v-show="form.type==='change'"
                         class="w-full p-button-warning"
-                        @click="getChangeAmount"></Button>
+                        @click="getChangePrice"></Button>
                 <Button label="รับชำระเงิน"
                         class="p-button-lg w-full"
                         :disabled="form.type===null || form.status!=='open'"
                         @click="checkout"></Button>
             </div>
-            <OverlayPanel ref="opChangeAmount">
+            <OverlayPanel ref="opChangePrice"
+                          :dismissable="false">
                 <div class="p-fluid">
                     <div class="p-field">
                         <label>ค่าเปลี่ยน</label>
                         <InputNumber autofocus v-model="form.change_price"></InputNumber>
                     </div>
-                    <Button label="ตกลง"></Button>
+                    <Button label="ตกลง" @click="setChangePrice"></Button>
                 </div>
             </OverlayPanel>
         </div>
@@ -297,7 +298,7 @@ export default {
                     required: requiredIf(() => {
                         return this.form.type !== "sale"
                     })
-                },
+                }
                 // buys: {
                 //     minLength: minLength(this.form.type !== 'sales' ? 1 : 0)
                 // }
@@ -551,8 +552,11 @@ export default {
             buy.product_type_name = this.buy.product_type.name
             this.form.buys.push(buy)
         },
-        getChangeAmount(e) {
-            this.$refs.opChangeAmount.toggle(e)
+        getChangePrice(e) {
+            this.$refs.opChangePrice.show(e)
+        },
+        setChangePrice(e) {
+            this.$refs.opChangePrice.hide()
         },
         checkout() {
             this.v.form.$reset();
