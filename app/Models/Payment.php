@@ -16,6 +16,7 @@ class Payment extends Model
         'pay', 'receive', 'method', 'transfer_bank', 'transfer_acc_no', 'creditcard_bank',
         'creditcard_bank_no', 'creditcard_percent_fee', 'cancel_on', 'cancel_reason',
         'cancel_emp_name', 'payment_type_id', 'paymentable_id', 'paymentable_type',
+        'user_id'
     ];
 
     protected static function booted()
@@ -63,5 +64,9 @@ class Payment extends Model
     public function paymentable()
     {
         return $this->morphTo();
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
     }
 }

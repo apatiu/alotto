@@ -9,9 +9,5 @@ class GoldPrice extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['dt','ask','bid','diff'];
-    protected $casts = [
-        'ask' => 'decimal:2',
-        'bid' => 'decimal:2'
-    ];
+    protected $fillable = ['dt', 'gold_price_sale', 'gold_price_buy', 'gold_price_diff', 'gold_price_tax'];
 }

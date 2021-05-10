@@ -11,9 +11,9 @@
         <DataTable :value="payments"
                    dataKey="id"
                    class="p-datatable-sm">
-            <Column field="code" header="#"></Column>
             <Column field="team.name" header="สาขา"></Column>
-            <Column field="dt" header="วันทำรายการ">
+            <Column field="dt" header="วันที่">
+            <Column field="code" header="#"></Column>
                 <template #body="props">
                     {{ $filters.datetime(props.data.dt) }}
                 </template>
@@ -25,6 +25,7 @@
                     {{ $filters.decimal(props.data.pay) }}
                 </template>
             </Column>
+            <Column field="user.name" header="พนักงาน"></Column>
 
         </DataTable>
 

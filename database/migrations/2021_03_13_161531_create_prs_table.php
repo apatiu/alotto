@@ -44,6 +44,8 @@ class CreatePrsTable extends Migration
             $table->foreignId('paymentable_id')->nullable();
             $table->string('paymentable_type')->nullable();
 
+            $table->foreignId('user_id');
+
             $table->timestamps();
         });
 

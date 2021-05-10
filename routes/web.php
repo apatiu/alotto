@@ -104,6 +104,9 @@ Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
         return \App\Models\GoldPercent::all();
     });
 
+    Route::get('/rp/day/{d?}', ['\App\Http\Controllers\ReportDayController','index'])
+        ->name('rp.day');
+
 });
 
 Route::group(['middleware' => config('jetstream.middleware', ['web'])], function () {

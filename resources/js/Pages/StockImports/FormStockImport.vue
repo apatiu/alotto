@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="flex p-mt-3 justify-end">
-            <Button @click="createLine">เพิ่มสินค้า</Button>
+            <Button @click="createLine" class="mb-2">เพิ่มสินค้า</Button>
         </div>
         <DataTable :value="form.lines">
             <Column field="product_code" header="รหัส"></Column>

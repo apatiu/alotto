@@ -5,7 +5,7 @@
 
         <DataTable :value="items">
             <Column field="team_name" header="สาขา"></Column>
-            <Column field="product_id" header="รหัส"></Column>
+            <Column field="code" header="รหัส"></Column>
             <Column field="name" header="ชื่อสินค้า"></Column>
             <Column field="weight_gram" header="นน./ชิ้น"></Column>
             <Column field="cost_wage" header="ค่าแรงทุน"></Column>

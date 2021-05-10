@@ -26,9 +26,9 @@ class ProductController extends Controller
                         'team_name' => $item->team->name,
                         'code'=> $item->code,
                         'name' => $item->name,
-                        'weight_gram' => $item->weightgram,
+                        'weight_gram' => $item->wtGram,
                         'cost_wage'=> $item->cost_wage,
-                        'tag_wage'=> $item->cost_wage,
+                        'tag_wage'=> $item->tag_wage,
                         'qty' => $item->qty,
                     ];
                 }),

@@ -32,6 +32,18 @@ class Product extends Model
         "description"
     ];
 
+    protected $appends = ['qty', 'wtGram'];
+
+    public function getQtyAttribute()
+    {
+        return $this->stockCards()->latest('dt')->first()->qty_end;
+    }
+
+    public function getWtGramAttribute()
+    {
+        return $this->weightbaht ? $this->weight * 15.2 : $this->weight;
+    }
+
     public function team()
     {
         return $this->belongsTo(Team::class);

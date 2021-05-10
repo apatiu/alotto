@@ -52,7 +52,7 @@ class SaleController extends Controller
                 $this->update($request, $data['id']);
             else {
                 unset($data['id'], $data['code']);
-                $data['dt'] = jsDateToDateString($data['dt']);
+                $data['dt'] = jsDateToDateTimeString($data['dt']);
                 $data['team_id'] = $request->user()->currentTeam->id;
                 $data['status'] = 'checked';
                 $sale = Sale::create($data);
@@ -94,9 +94,11 @@ class SaleController extends Controller
                             $new->fill([
                                 'dt' => $sale->dt,
                                 'qty_begin' => $latest->qty_end,
+                                'qty_in' => 0,
                                 'qty_out' => $detail->qty,
                                 'qty_end' => $latest->qty_end - $detail->qty,
-                                'weight_begin' => $latest->weight_begin,
+                                'weight_begin' => $latest->weight_end,
+                                'weight_in' => 0,
                                 'weight_out' => $detail->wt,
                                 'weight_end' => $latest->weight_end - $detail->wt,
                                 'user_id' => $sale->user_id,
@@ -109,7 +111,7 @@ class SaleController extends Controller
                     } elseif ($detail->status === 'buy') {
 
                         $row = new OldGoldStockCard([
-                            'dt' => null,
+                            'dt' => $sale->dt,
                             'gold_percent_id' => $detail->product_percent_id,
                             'team_id' => $sale->team_id,
                             'avg_per_baht' => $detail->avg_per_baht,
@@ -131,10 +133,13 @@ class SaleController extends Controller
                             $stock = OldGoldStockCard::whereGoldPercentId($detail->product_percent_id)
                                 ->whereTeamId($sale->team_id)
                                 ->first();
-                            $row->qty_begin = $stock->qty_begin;
-                            $row->qty_end = $row->qty_begin + $row->qty_in;
-                            $row->wt_begin = $stock->wt_begin;
-                            $row->wt_end = $row->wt_begin + $row->wt_begin;
+                            $row->qty_begin = $stock->qty_end;
+                            $row->qty_in = $detail->qty;
+                            $row->qty_end = $stock->qty_end + $detail->qty;
+                            $row->wt_begin = $stock->wt_end;
+                            $row->wt_in = $detail->wt;
+                            $row->wt_end = $stock->wt_end + $detail->wt;
+                            $row->save();
                         }
                     }
                 }

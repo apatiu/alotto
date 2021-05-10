@@ -66,7 +66,11 @@
                                                 {{ salesQtySum }}
                                             </template>
                                         </Column>
-                                        <Column field="wt" header="นน.รวม" class="w-20"></Column>
+                                        <Column field="wt" header="นน.รวม" class="w-20">
+                                            <template #footer>
+                                                {{ salesWtSum }}
+                                            </template>
+                                        </Column>
                                         <Column field="price_sale_gold" header="ราคาทอง" class="w-20"></Column>
                                         <Column field="price_sale_wage" header="ค่าแรง" class="w-20">
                                             <template #footer>
@@ -173,26 +177,30 @@
                 </div>
             </div>
             <div class="p-col-3 flex-col space-y-2">
-                <label>ยอดรวม</label>
-                <InputNumber :modelValue="billTotal"
-                             disabled
-                             :inputClass="['text-right w-full text-3xl font-bold',classBillTotal]"
-                             class="p-inputtext-lg opacity-100 border-black"></InputNumber>
+                <div class="p-field">
+                    <label>ยอดรวม</label>
+                    <InputNumber :modelValue="billTotal"
+                                 disabled
+                                 :inputClass="['text-right w-full text-3xl font-bold',classBillTotal]"
+                                 class="p-inputtext-lg opacity-100 border-black"></InputNumber>
+                </div>
                 <Button label="กำหนดค่าเปลี่ยน"
                         v-show="form.type==='change'"
                         class="w-full p-button-warning"
+                        :disabled="form.status!=='open'"
                         @click="getChangePrice"></Button>
                 <Button label="รับชำระเงิน"
                         class="p-button-lg w-full"
                         :disabled="form.type===null || form.status!=='open'"
                         @click="checkout"></Button>
             </div>
-            <OverlayPanel ref="opChangePrice"
-                          :dismissable="false">
+            <OverlayPanel ref="opChangePrice">
                 <div class="p-fluid">
                     <div class="p-field">
                         <label>ค่าเปลี่ยน</label>
-                        <InputNumber autofocus v-model="form.change_price"></InputNumber>
+                        <InputNumber
+                            v-model="form.sales[0].change_price"
+                            ref="edChangePrice"></InputNumber>
                     </div>
                     <Button label="ตกลง" @click="setChangePrice"></Button>
                 </div>
@@ -237,6 +245,7 @@ export default {
     },
     data() {
         return {
+            goldprice: null,
             types: [
                 {label: 'ขาย', icon: 'pi pi-arrow-up', value: 'sale'},
                 {label: 'ซื้อ', icon: 'pi pi-arrow-up', value: 'buy'},
@@ -246,7 +255,9 @@ export default {
                 id: null,
                 code: null,
                 dt: new Date(),
-                gold_price: this.goldprice,
+                gold_price_sale: 0,
+                gold_price_buy: 0,
+                gold_price_tax: 0,
                 customer: this.customer,
                 customer_id: null,
                 customer_name: null,
@@ -263,7 +274,6 @@ export default {
                 note: null,
                 type: null,
                 status: 'open',
-                gold_price_buy: 0,
                 sales: [],
                 buys: [],
                 payments: []
@@ -330,6 +340,14 @@ export default {
             })
             return output
         },
+        salesWtSum() {
+            let o = _.sumBy(this.form.sales, (o) => {
+                return o.wt;
+            })
+
+            this.form.total_wt_sale = o
+            return o
+        },
         salesTagWageSum() {
             let o = _.sumBy(this.form.sales, (o) => {
                 return o.price_sale_wage;
@@ -382,31 +400,25 @@ export default {
     },
     mounted() {
         if (!this.bill) {
-            this.form.gold_price = this.getGoldPrice();
             this.reset()
         } else {
         }
     },
     methods: {
         reset() {
-            this.form = _.assign(this.form, {
-                id: null,
-                type: null,
-                code: '',
-                goldprice: this.goldprice,
-                dt: new Date,
-                total_amount: 0,
-                sales: [],
-                buys: [],
-                total: 0,
-                status: 'open',
-                customer: this.customer
+            this.form.reset();
+            this.$nextTick(() => {
+                this.getGoldPrice();
             })
+
         },
         getGoldPrice() {
-            axios.get(route('api.goldprice'))
+            axios.get(route('api.gold-prices.now'))
                 .then(({data}) => {
-                    this.form.gold_price = data
+                    this.goldprice = data;
+                    this.form.gold_price_sale = data.gold_price_sale;
+                    this.form.gold_price_buy = data.gold_price_buy;
+                    this.form.gold_price_tax = data.gold_price_tax;
                 })
         },
         onSelectProduct(e) {
@@ -455,8 +467,8 @@ export default {
             sale.discount = sale.deposit = 0
             return sale
         },
-        getPriceSaleGold(goldPercent, wtGram, goldprice = null) {
-            goldprice = (goldprice) ? goldprice : this.form.gold_price;
+        getPriceSaleGold(goldPercent, wtGram, gold_price_sale = null) {
+            let goldprice = gold_price_sale ?? this.form.gold_price_sale;
             let priceSaleGold = numeral(goldprice)
                 .add(goldPercent.add_sale)
                 .multiply(goldPercent.percent_sale / 100)
@@ -553,10 +565,26 @@ export default {
             this.form.buys.push(buy)
         },
         getChangePrice(e) {
-            this.$refs.opChangePrice.show(e)
+            this.v.$reset()
+            this.v.$touch()
+
+            this.$nextTick(() => {
+                if (this.v.form.sales.$error || this.v.form.buys.$error) {
+                    this.form.change_price = null
+                    return
+                }
+
+                this.form.change_price = 0;
+                this.$refs.opChangePrice.show(e)
+            })
+
         },
         setChangePrice(e) {
             this.$refs.opChangePrice.hide()
+            let diff = this.form.total_amount - this.form.sales[0].change_price;
+            this.form.sales[0].price_sale_total = numeral(this.form.sales[0].price_sale_total).subtract(diff).value()
+            this.form.sales[0].price_sale_wage = numeral(this.form.sales[0].price_sale_wage).subtract(diff).value()
+            this.form.sales[0].tag_wage = numeral(this.form.sales[0].price_sale_wage).divide(this.form.sales[0].qty).value()
         },
         checkout() {
             this.v.form.$reset();

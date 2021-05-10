@@ -21,26 +21,28 @@ class GoldPriceController extends Controller
         });
         $model = GoldPrice::latest()->first();
         if (!$model) {
-            GoldPrice::create(
+            $model = GoldPrice::create(
                 [
                     'dt' => Carbon::createFromTimestamp($update->bid)->toDateString(),
-                    'ask' => $output->ask,
-                    'bid' => $output->bid,
-                    'diff' => $output->diff
+                    'gold_price_sale' => $output->ask,
+                    'gold_price_buy' => $output->bid,
+                    'gold_price_diff' => $output->diff,
+                    'gold_price_tax' => round(($output->bid - ($output->bid * (1.8 / 100))) / 15.16) * 15.16
                 ]
             );
         } else {
-            if (floatval($model->ask) !== floatval($output->ask)) {
-                GoldPrice::create([
+            if (floatval($model->gold_price_sale) !== floatval($model->gold_price_sale)) {
+                $model = GoldPrice::create([
                     'dt' => Carbon::createFromTimestamp($update->bid)->toDateString(),
-                    'ask' => $output->ask,
-                    'bid' => $output->bid,
-                    'diff' => $output->diff
+                    'gold_price_sale' => $output->ask,
+                    'gold_price_buy' => $output->bid,
+                    'gold_price_diff' => $output->diff,
+                    'gold_price_tax' => round(($output->bid - ($output->bid * (1.8 / 100))) / 15.16) * 15.16
                 ]);
             }
         }
 
-        return ['ask' => $output->ask, 'bid' => $output->bid];
+        return $model;
     }
 
     public function loadFromOrg()

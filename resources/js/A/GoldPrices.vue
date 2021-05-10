@@ -4,13 +4,13 @@
         <div class="p-field p-grid mb-1">
             <div class="p-inputgroup">
                 <span class="p-inputgroup-addon bg-red-200 w-20 font-bold text-sm">ขายออก</span>
-                <InputNumber v-model="goldPrices.ask" inputClass="w-full text-right" disabled></InputNumber>
+                <InputNumber v-model="goldPrice.gold_price_sale" inputClass="w-full text-right" disabled></InputNumber>
             </div>
         </div>
         <div class="p-field p-grid mb-1">
             <div class="p-inputgroup">
                 <span class="p-inputgroup-addon bg-green-200 w-20 font-bold text-sm">รับซื้อ</span>
-                <InputNumber v-model="goldPrices.bid" inputClass="w-full text-right" disabled></InputNumber>
+                <InputNumber v-model="goldPrice.gold_price_buy" inputClass="w-full text-right" disabled></InputNumber>
             </div>
         </div>
     </div>
@@ -21,13 +21,13 @@ export default {
     name: "GoldPrices",
     data() {
         return {
-            goldPrices: {}
+            goldPrice: {}
         }
     },
     created() {
         axios.get(route('api.gold-prices.now'))
             .then(({data}) => {
-                this.goldPrices = data
+                this.goldPrice = data
             })
     }
 }

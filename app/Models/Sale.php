@@ -11,7 +11,9 @@ class Sale extends Model
 
     protected $fillable = [
         'code', 'dt',
-        'gold_price',
+        'gold_price_sale',
+        'gold_price_buy',
+        'gold_price_tax',
         'customer_id', 'customer_name', 'customer_phone', 'customer_tax_id',
         'total_price_sale',
         'total_price_buy',
@@ -28,7 +30,6 @@ class Sale extends Model
         'type',
         'status',
         'user_id_cancel',
-        'gold_price_buy',
     ];
 
     protected static function booted()
