@@ -11278,3 +11278,42 @@ body {
 .p-datatable {
   border: 1px solid #eee;
 }
+
+@media only screen {
+  .page {
+    background-color: white;
+    padding: 1cm;
+  }
+  .page.A4 {
+    width: 21cm;
+    max-height: 29.7cm;
+  }
+}
+@media only print {
+  .page {
+    background-color: transparent;
+    padding: 0px !important;
+  }
+
+  .page.A4 {
+    margin: 0cm;
+    size: A4 portrait;
+  }
+  .page.A4.landscape {
+    size: A4 landscape;
+  }
+
+  @page {
+    size: A4;
+    margin: 1cm;
+  }
+  .layout-topbar, .layout-sidebar {
+    display: none !important;
+    box-shadow: none;
+  }
+
+  .layout-main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}

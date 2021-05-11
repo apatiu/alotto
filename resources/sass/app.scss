@@ -18,6 +18,7 @@ body {
 .layout-topbar {
     background-color: var(--surface-a);
     display: flex;
+
     .topbar-menu {
         list-style-type: none;
         margin: 0;
@@ -29,6 +30,7 @@ body {
         display: flex;
     }
 }
+
 .p-toolbar {
     background-color: transparent;
     border: none;
@@ -37,4 +39,47 @@ body {
 
 .p-datatable {
     border: 1px solid #eee;
+}
+
+@media only screen {
+    .page {
+        background-color: white;
+        padding: 1cm;
+
+        &.A4 {
+            width: 21cm;
+            max-height: 29.7cm;
+        }
+    }
+}
+
+@media only print {
+    .page {
+        background-color: transparent;
+        padding: 0px !important;
+    }
+
+    .page.A4 {
+        margin: 0cm;
+        size: A4 portrait;
+
+        &.landscape {
+            size: A4 landscape;
+        }
+    }
+
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+
+    .layout-topbar, .layout-sidebar {
+        display: none !important;
+        box-shadow: none;
+    }
+    .layout-main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
 }
