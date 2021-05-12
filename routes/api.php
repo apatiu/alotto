@@ -77,6 +77,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
 
             Route::resource('sales','SaleController');
+            Route::get('/sales/print/guarantee-card/{sale}',
+                [\App\Http\Controllers\Api\SaleController::class, 'printGuaranteeCard'])
+            ->name('sales.print.guarantee-card');
         });
 
 

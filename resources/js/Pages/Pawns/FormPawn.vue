@@ -351,8 +351,6 @@
         </template>
         <!--        end action dialog-->
     </Dialog>
-    <div id="printable" v-html="printHtml" class="p-d-none p-d-print-block"></div>
-
 
 </template>
 
@@ -723,13 +721,7 @@ export default {
             axios.get(route('api.pawns.print', this.item.id))
                 .then(response => {
                     this.printHtml = response.data;
-                    this.$nextTick(function () {
-                        this.$htmlToPaper('printable', {
-                            styles: [
-                                '../css/app.css' // <- inject here
-                            ]
-                        });
-                    })
+                    this.$print(response.data);
 
                 })
         }

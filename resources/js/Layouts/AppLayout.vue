@@ -20,7 +20,7 @@
         <ConfirmDialog></ConfirmDialog>
         <open-shift ref="openShift"/>
     </div>
-    <div class="printable"></div>
+    <div id="printable"></div>
 </template>
 
 <script>

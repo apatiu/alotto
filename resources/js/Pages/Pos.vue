@@ -642,9 +642,9 @@ export default {
                 });
         },
         printGuaranteeCard() {
-            axios.get(route('api.sales.guarantee-card', this.form.id))
+            axios.get(route('api.sales.print.guarantee-card', this.form.id))
                 .then(({data}) => {
-                    // this.$print(data)
+                    this.$print(data)
                 })
         }
     }

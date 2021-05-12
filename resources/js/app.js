@@ -148,6 +148,11 @@ app.config.globalProperties.$filters = {
 }
 const emitter = mitt();
 app.config.globalProperties.emitter = emitter
+app.config.globalProperties.$print = function (data) {
+    document.getElementById('printable').innerHTML = data;
+    window.print();
+}
+
 
 app.mixin({
     methods: {

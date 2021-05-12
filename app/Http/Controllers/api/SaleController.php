@@ -207,4 +207,8 @@ class SaleController extends Controller
     {
         //
     }
+
+    public function printGuaranteeCard(Sale $sale) {
+        return view('sales.print.guarantee_card', compact('sale'));
+    }
 }

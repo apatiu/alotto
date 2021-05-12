@@ -11280,16 +11280,28 @@ body {
 }
 
 @media only screen {
-  .page {
+  #printable .page {
     background-color: white;
     padding: 1cm;
   }
-  .page.A4 {
+  #printable .page.A4 {
     width: 21cm;
     max-height: 29.7cm;
   }
 }
 @media only print {
+  body {
+    background-color: white !important;
+  }
+
+  .layout-wrapper, .p-dialog-mask, .p-toast {
+    display: none !important;
+  }
+
+  #printable {
+    display: block;
+  }
+
   .page {
     background-color: transparent;
     padding: 0px !important;
