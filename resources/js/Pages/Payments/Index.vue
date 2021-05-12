@@ -5,6 +5,11 @@
             <template #left>
                 <Button label="เพิ่ม" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
             </template>
+            <template #right>
+                <Calendar v-model="form.d"
+                          :manualInput="false"></Calendar>
+                <Button icon="pi pi-search" class="ml-2" @click="filter"></Button>
+            </template>
 
         </Toolbar>
 
@@ -13,13 +18,17 @@
                    class="p-datatable-sm">
             <Column field="team.name" header="สาขา"></Column>
             <Column field="dt" header="วันที่">
-            <Column field="code" header="#"></Column>
+                <Column field="code" header="#"></Column>
                 <template #body="props">
                     {{ $filters.datetime(props.data.dt) }}
                 </template>
             </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
-            <Column field="receive" header="รับ" class="text-right"></Column>
+            <Column field="receive" header="รับ" class="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.receive) }}
+                </template>
+            </Column>
             <Column field="pay" header="จ่าย" class="text-right">
                 <template #body="props">
                     {{ $filters.decimal(props.data.pay) }}
@@ -103,10 +112,12 @@ export default {
     props: ['payments'],
     data() {
         return {
+            form: this.$inertia.form({
+                d: null
+            }),
             item: {},
             itemDialog: false,
             deleteItemDialog: false,
-
         }
     },
     validations: {
@@ -116,6 +127,9 @@ export default {
             acc_no: {required, $autoDirty: true},
             acc_name: {required, $autoDirty: true},
         }
+    },
+    mounted() {
+        this.form.d = new Date()
     },
     methods: {
         openNew() {

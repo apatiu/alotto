@@ -20,6 +20,7 @@
         <ConfirmDialog></ConfirmDialog>
         <open-shift ref="openShift"/>
     </div>
+    <div class="printable"></div>
 </template>
 
 <script>
@@ -51,8 +52,13 @@ export default {
                     icon: 'pi pi-fw pi-home',
                     url: route('dashboard')
                 }, {
-                    label: 'ซื้อขาย',
+                    label: 'หน้าร้าน',
                     url: route('pos.index')
+                }, {
+                    label: 'ซื้อขายทอง',
+                    items: [
+                        {label: 'รายการ ซื้อ/ขาย/เปลี่ยน', url: route('sales.index')},
+                    ]
                 }, {
                     label: 'ขายฝาก',
                     url: route('pawns.index')
@@ -125,7 +131,7 @@ export default {
         }
     },
     mounted() {
-        if (this.$page.props.shift.status==='close') {
+        if (this.$page.props.shift.status === 'close') {
             this.$refs.openShift.show()
         }
     },

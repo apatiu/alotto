@@ -54,6 +54,7 @@ class SaleController extends Controller
                 unset($data['id'], $data['code']);
                 $data['dt'] = jsDateToDateTimeString($data['dt']);
                 $data['team_id'] = $request->user()->currentTeam->id;
+                $data['user_id'] = $request->user()->id;
                 $data['status'] = 'checked';
                 $sale = Sale::create($data);
 
@@ -64,6 +65,8 @@ class SaleController extends Controller
                 if (in_array($data['type'], ['buy', 'change']))
                     $sale->details()->createMany($data['buys']);
 
+                //relation work
+                $shift = Shift::current();
                 //payment work
                 foreach ($data['payments'] as $payment) {
                     $model = new Payment();
@@ -76,11 +79,14 @@ class SaleController extends Controller
                         'payment_type_id' => $sale->type
                     ]);
                     if ($payment['amount'] < 0)
-                        $model->pay = $payment['amount'];
+                        $model->pay = abs($payment['amount']);
                     else
                         $model->receive = $payment['amount'];
 
                     $sale->payments()->save($model);
+
+                    $shift[$payment['method_id']] += ($model->receive - $model->pay);
+                    $shift->save();
                 }
 
                 //stock work
@@ -141,6 +147,9 @@ class SaleController extends Controller
                             $row->wt_end = $stock->wt_end + $detail->wt;
                             $row->save();
                         }
+
+                        $shift['old_gold_' . $detail->product_percent_id] += $detail->wt;
+                        $shift->save();
                     }
                 }
 
@@ -151,7 +160,7 @@ class SaleController extends Controller
             throw $e;
         }
 
-        return $sale->refresh();
+        return Sale::whereId($sale->id)->with(['payments.method','payments.bank_account'])->first();
     }
 
     /**

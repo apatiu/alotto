@@ -1,7 +1,6 @@
 <template>
     <div class="border rounded p-4">
         <div class="p-field m-0 p-0">
-
             <div class="p-d-flex">
                 <div class="p-col-8">
                     <label for="" v-if="showLabel" class="mb-1">ลูกค้า:</label>

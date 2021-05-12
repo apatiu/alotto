@@ -26,22 +26,12 @@ class Shift extends Model
 
     public function payments()
     {
-        return $this->hasMany(Payment::class, 'acc_date', 'd');
+        return $this->hasMany(Payment::class);
     }
 
     public function calc()
     {
-        foreach (PaymentMethod::all() as $m) {
-            $this->attributes[$m->id] = 0;
-        }
-        foreach ($this->payments as $payment) {
-            $attr = '';
-            if ($payment->receive > 0) {
-                $this->attributes[$payment->method] += $payment->receive;
-            } else {
-                $this->attributes[$payment->method] += $payment->pay;
-            }
-        }
+
     }
 
     static function current() {

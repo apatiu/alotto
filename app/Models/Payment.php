@@ -12,8 +12,9 @@ class Payment extends Model
 
     protected $fillable = [
         'code',
-        'team_id', 'shift_id', 'emp_name', 'acc_date', 'payment_no', 'dt', 'detail', 'bill_id',
-        'pay', 'receive', 'method', 'transfer_bank', 'transfer_acc_no', 'creditcard_bank',
+        'team_id', 'shift_id', 'method_id',
+        'emp_name', 'acc_date', 'payment_no', 'dt', 'detail', 'bill_id',
+        'pay', 'receive', 'transfer_bank', 'transfer_acc_no', 'creditcard_bank',
         'creditcard_bank_no', 'creditcard_percent_fee', 'cancel_on', 'cancel_reason',
         'cancel_emp_name', 'payment_type_id', 'paymentable_id', 'paymentable_type',
         'user_id'
@@ -46,6 +47,15 @@ class Payment extends Model
         return $this->belongsTo(Team::class);
     }
 
+    public function method()
+    {
+        return $this->belongsTo(PaymentMethod::class);
+    }
+
+    public function bank_account() {
+        return $this->belongsTo(BankAccount::class);
+    }
+
     public function payment_type()
     {
         return $this->belongsTo(PaymentType::class);
@@ -66,7 +76,8 @@ class Payment extends Model
         return $this->morphTo();
     }
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

@@ -11,6 +11,7 @@ use App\Models\StockCard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class SaleController extends Controller
 {
@@ -23,7 +24,10 @@ class SaleController extends Controller
 
     public function index()
     {
-        //
+        $items = Sale::with(['team','customer','user','details'])->whereTeamId(request()->user()->currentTeam->id);
+        return Inertia::render('Sales/Index', [
+            'items' => $items->get()
+        ]);
     }
 
     /**

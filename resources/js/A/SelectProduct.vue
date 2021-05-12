@@ -3,14 +3,16 @@
         <div class="p-field">
             <label for="">รหัสสินค้า</label>
             <AutoComplete
-                :model-value="modelValue"
-                @update:modelValue="onSelectProduct($event)"
+                v-model="product"
+                @item-select="onSelectProduct($event.value)"
                 field="code"
                 @keyup="onKeyup($event)"
                 :suggestions="filteredProducts"
                 @complete="searchProduct($event)"
                 inputClass="input-product-id"
-                optionLabel="code">
+                optionLabel="code"
+                v-bind="$attrs"
+            >
                 <template #item="{item, index}">
                     <div class="flex">
                         <div class="w-28">{{ item.code }}</div>
@@ -26,6 +28,7 @@
 <script>
 export default {
     name: "SelectProduct",
+    inheritAttrs: false,
     props: ['modelValue'],
     data() {
         return {
@@ -62,12 +65,10 @@ export default {
             }
         },
         onSelectProduct(e) {
-            this.$emit('update:modelValue', e);
-            if ((typeof e) === 'object') {
                 this.$emit('select', e)
                 this.filteredProducts = [];
                 this.product = null;
-            }
+
         }
     }
 }

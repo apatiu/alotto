@@ -89,6 +89,7 @@ import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 
 import VueHtmlToPaper from "@/plugins/VueHtmlToPaper";
+import mitt from 'mitt';
 
 const el = document.getElementById('app');
 
@@ -110,7 +111,7 @@ const app = createApp({
             dayNamesShort: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
             dayNamesMin: ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อ.'],
             monthNames: ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมาษายน", "พฤษภาคม", "June", "July", "August", "September", "October", "November", "December"],
-            monthNamesShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+            monthNamesShort: ["มค.", "ก.พ.", "มี.ค.", "เม.ย", "พ.ค.", "มิ.ย", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."],
             today: 'Today',
             weekHeader: 'Wk',
             firstDayOfWeek: 0,
@@ -129,11 +130,15 @@ const app = createApp({
 app.config.globalProperties.$appState = reactive({inputStyle: 'outlined'});
 
 app.config.globalProperties.$filters = {
-    date(value) {
+    date(value, utc = true) {
+        if (utc)
+            value += ' UTC'
         return moment(value).format('DD/MM/YYYY')
     },
-    datetime(value) {
-        return moment(value).format('DD/MM/YYYY HH:mm')
+    datetime(value, utc = true) {
+        if (utc)
+            value += ' UTC'
+        return moment(value + ' UTC').format('DD/MM/YYYY HH:mm')
     },
     decimal(value, pre = 0) {
         let format = '0,0.' + _.repeat('0', pre);
@@ -141,6 +146,8 @@ app.config.globalProperties.$filters = {
         return numeral(value).format(format);
     }
 }
+const emitter = mitt();
+app.config.globalProperties.emitter = emitter
 
 app.mixin({
     methods: {

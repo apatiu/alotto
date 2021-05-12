@@ -19,17 +19,17 @@ class CreatePrsTable extends Migration
             $table->string('code')->unique();
 
             $table->foreignId('team_id');
-            $table->string('emp_name')->nullable();
             $table->foreignId('shift_id');
+            $table->string('method_id');
             $table->string('payment_no');
             $table->dateTime('dt');
 
             $table->string('detail')->nullable();
             $table->string('bill_id')->nullable();
-            $table->decimal('pay',12,2)->nullable();
-            $table->decimal('receive',12,2)->nullable();
+            $table->decimal('pay', 12, 2)->nullable();
+            $table->decimal('receive', 12, 2)->nullable();
 
-            $table->string('method');
+
             $table->string('transfer_bank')->nullable();
             $table->string('transfer_acc_no')->nullable();
             $table->string('creditcard_bank')->nullable();

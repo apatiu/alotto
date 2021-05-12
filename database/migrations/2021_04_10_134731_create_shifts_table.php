@@ -33,9 +33,12 @@ class CreateShiftsTable extends Migration
             $table->unsignedInteger('pawn_count')->default(0);
             $table->decimal('saving_amount', 10)->default(0);
             $table->unsignedInteger('saving_count')->default(0);
-            $table->double('old_gold_965')->default(0);
+            $table->double('old_gold_96')->default(0);
             $table->double('old_gold_90')->default(0);
             $table->double('old_gold_99')->default(0);
+            $table->double('real_old_gold_96')->default(0);
+            $table->double('real_old_gold_90')->default(0);
+            $table->double('real_old_gold_99')->default(0);
 
             $table->timestamps();
         });

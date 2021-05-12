@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Jetstream\HasTeams;
 
 class Sale extends Model
 {
@@ -35,7 +36,7 @@ class Sale extends Model
     protected static function booted()
     {
         static::creating(function ($payment) {
-            $code = 'IV' . substr('0' . request()->user()->currentTeam->id,-2);
+            $code = 'IV' . substr('0' . request()->user()->currentTeam->id, -2);
             $code .= date('Ymd', strtotime($payment->attributes['dt']));
 
             $latest = Sale::where('code', 'like', $code . '%')->select('code')->orderBy('code', 'desc')->first();
@@ -73,4 +74,21 @@ class Sale extends Model
     {
         return $this->morphOne(StockCard::class, 'ref');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
 }

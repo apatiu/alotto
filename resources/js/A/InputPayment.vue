@@ -8,14 +8,14 @@
             class="min-w">
         <div class="p-d-flex">
             <div class="p-mr-5 w-96 p-pt-3">
-                <SelectButton v-model="row.method"
+                <SelectButton v-model="row.method_id"
                               :options="methods"
                               dataKey="id"
                               optionValue="id"
                               optionLabel="name"
                               class="w-full"></SelectButton>
                 <div class="p-fluid p-mt-2">
-                    <div class="p-field p-grid" v-if="row.method==='bank'">
+                    <div class="p-field p-grid" v-if="row.method_id==='bank'">
                         <label for="บัญชี" class="p-col-fixed" style="width:100px;">บัญชีธนาคาร</label>
                         <div class="p-col">
                             <select-bank-account v-model="row.bank_account_id"></select-bank-account>
@@ -52,7 +52,7 @@
                 <div class="col-span-2">ยอดจ่าย</div>
                 <div class="flex justify-between w-full">
                     <template v-for="row in rows">
-                        <div>{{ row.method }}</div>
+                        <div>{{ row.method_id }}</div>
                         <div>{{ row.amount }}</div>
                     </template>
 
@@ -87,7 +87,7 @@ export default {
             methods: null,
             rows: [],
             row: {
-                method: 'cash',
+                method_id: 'cash',
                 bank_account_id: null,
                 amount: null,
                 dt: null
@@ -97,7 +97,7 @@ export default {
     watch: {
         visible(val) {
             if (val) {
-                this.row.method = 'cash'
+                this.row.method_id = 'cash'
                 this.row.dt = new Date()
                 this.row.amount = this.target;
                 this.rows = this.payments ?? [];
@@ -118,11 +118,11 @@ export default {
     validations() {
         return {
             row: {
-                method: {required},
+                method_id: {required},
                 amount: {required, $autoDirty: true},
                 bank_account_id: {
                     required: requiredIf(() => {
-                        return this.row.method === 'bank'
+                        return this.row.method_id === 'bank'
                     }),
                     $autoDirty: true
                 }
@@ -138,7 +138,7 @@ export default {
             this.row = {};
 
             if (this.remain !== 0) {
-                this.row.method = 'cash';
+                this.row.method_id = 'cash';
                 this.row.amount = this.remain
                 this.row.dt = new Date()
             } else {
