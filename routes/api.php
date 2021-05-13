@@ -57,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('product-sizes', 'ProductSizeController');
 
             Route::resource('product-percents', 'ProductPercentController');
+            Route::get('/pawns/search',[\App\Http\Controllers\Api\PawnController::class,'search'])
+                ->name('pawns.search');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
             Route::get('/pawns/today-int/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'getTodayInt'])->name('pawns.todayInt');

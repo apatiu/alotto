@@ -33,7 +33,7 @@ class PawnController extends Controller
             ];
         }
 
-        if ($filters['dt_end_over'] > 0) {
+        if ($filters['dt_end_over'] ?? 0 > 0) {
             $data->where(
                 'dt_end',
                 '<=',
