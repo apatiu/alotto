@@ -34,11 +34,10 @@
             </div>
         </div>
 
-
         <small class="p-error" v-if="errors.length">กรุณาเลือกลูกค้า</small>
     </div>
     <form-customer v-model:visible="creating"
-                   @created="select"></form-customer>
+                   @created="onUpdateValue"></form-customer>
 
 </template>
 

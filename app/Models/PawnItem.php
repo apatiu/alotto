@@ -9,7 +9,7 @@ class PawnItem extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pawn_id', 'gold_percent', 'product_type', 'weight', 'price'];
+    protected $fillable = ['pawn_id', 'gold_percent_id', 'product_type', 'weight', 'price'];
     protected $appends = ['img'];
 
     public function pawn()

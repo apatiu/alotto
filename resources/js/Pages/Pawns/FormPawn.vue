@@ -1,55 +1,56 @@
 <template>
     <Dialog :visible="visible"
             @update:visible="$emit('update:visible',$event)"
-            :header="creating ? 'รับขายฝาก' : 'ข้อมูลใบขายฝาก ' + item.code"
+            :header="creating ? 'รับขายฝาก' : 'ข้อมูลใบขายฝาก ' + form.code"
             modal
             :closeOnEscape="false"
             :closable="false"
             :class="classDialog">
-        <div class="p-grid p-fluid">
-            <div :class="classLeft">
-                <div class="flex mb-4" v-if="!creating">
-                    <div class="w-40">
-                        <Button icon="pi pi-chevron-left" v-show="item.prev_id"
-                                :label="item.prev_code"
+        <div class="p-grid">
+            <div :class="{'p-md-7':!creating,'p-col':creating}">
+                <div class="flex space-x-1" v-if="!creating">
+                    <div class="w-40" v-if="form.prev_id">
+                        <Button icon="pi pi-chevron-left"
+                                :label="form.prev_code"
                                 class="p-button-outlined p-button-secondary w-full"
-                                @click="load(item.prev_id)"></Button>
+                                @click="load(form.prev_id)"></Button>
 
                     </div>
                     <div class="flex-1">
-                        <Button class="p-button-primary w-full" :label="item.code"></Button>
+                        <Button class="p-button-primary w-full" :label="form.code" disabled></Button>
                     </div>
-                    <div class="w-40 ">
-                        <Button icon="pi pi-chevron-right" v-show="item.next_id"
-                                :label="item.next_code"
+                    <div class="w-40" v-if="form.next_id">
+                        <Button icon="pi pi-chevron-right" v-show="form.next_id"
+                                :label="form.next_code"
                                 class="p-button-outlined p-button-secondary w-full"
-                                @click="load(item.next_id)"></Button>
+                                @click="load(form.next_id)"></Button>
                     </div>
                 </div>
-
-                <select-customer v-model="item.customer"
-                                 force-selection
-                                 :errors="v$.item.customer.$errors"
-                                 :disabled="!creating"
-                                 :show-label="false"
-                ></select-customer>
+                <div class="mt-8">
+                    <select-customer v-model="customer"
+                                     @update:modelValue="($event) ? form.customer_id=$event.id ?? null : null"
+                                     :errors="v.form.customer_id.$errors"
+                                     :disabled="!creating"
+                                     :show-label="false"
+                    ></select-customer>
+                </div>
                 <div class="p-grid mt-4">
                     <div class="p-col-6">
                         <div class="p-field p-grid">
 
                             <label for="" class="p-col-fixed w-20">วันที่รับ</label>
-                            <Calendar v-model="item.dt" class="p-col"
+                            <Calendar v-model="form.dt" class="p-col"
                                       :disabled="!actionable  && !creating"></Calendar>
                         </div>
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-20">ครบอายุ</label>
-                            <Calendar v-model="item.dt_end"
+                            <Calendar v-model="form.dt_end"
                                       :disabled="!actionable  && !creating"
                                       class="p-col"></Calendar>
                         </div>
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-28">อายุสัญญา</label>
-                            <InputNumber v-model="item.life"
+                            <InputNumber v-model="form.life"
                                          showButtons
                                          :disabled="!actionable  && !creating"
                                          class="p-col"></InputNumber>
@@ -59,22 +60,22 @@
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-28">จำนวนเงิน</label>
                             <div class="p-col">
-                                <InputNumber v-model="item.price"
+                                <InputNumber v-model="form.price"
                                              @input="onPriceChange($event)"
                                              class="text-right"
                                              disabled></InputNumber>
-                                <small class="p-error" v-if="v$.item.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
+                                <small class="p-error" v-if="v.form.price.$errors.length">กรุณาใส่จำนวนเงิน</small>
                             </div>
                         </div>
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-28">อัตราดอกเบี้ย</label>
-                            <InputNumber v-model="item.int_rate"
+                            <InputNumber v-model="form.int_rate"
                                          :disabled="!actionable && !creating"
                                          class="p-col"></InputNumber>
                         </div>
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-28">ดอกเบี้ย/เดือน</label>
-                            <InputNumber v-model="item.int_per_month" disabled
+                            <InputNumber v-model="form.int_per_month" disabled
                                          class="p-col"></InputNumber>
                         </div>
                     </div>
@@ -82,12 +83,12 @@
                 <!--        add item-->
                 <div class="p-fluid p-grid mt-6" v-if="creating">
                     <div class="p-col-2">
-                        <select-gold-percent v-model="pawnItem.gold_percent"/>
+                        <select-gold-percent v-model="pawnItem.gold_percent_id"/>
                     </div>
                     <div class="p-col-4">
                         <select-product-type
                             v-model="pawnItem.product_type"
-                            :errors="v$.pawnItem.$errors"
+                            :errors="v.pawnItem.$errors"
                         />
                     </div>
                     <div class="p-col-2">
@@ -114,8 +115,8 @@
 
                 <!--        items table-->
                 <div class="w-full mt-2">
-                    <DataTable :value="item.items" class="p-datatable-sm">
-                        <Column field="gold_percent" header="% ทอง"></Column>
+                    <DataTable :value="form.items" class="p-datatable-sm">
+                        <Column field="gold_percent_id" header="% ทอง"></Column>
                         <Column field="product_type" header="ประเภท">
                             <template #body="props">
                                 {{ props.data.product_type.name ?? props.data.product_type }}
@@ -137,7 +138,7 @@
                                 <Button
                                     icon="pi pi-trash" class="p-button-rounded p-button-text"
                                     @click="removeItemItems(slotProps.index)"
-                                    v-if="(item.items.length > 0 ) && (actionable || creating)"></Button>
+                                    v-if="(form.items.length > 0 ) && (actionable || creating)"></Button>
                             </template>
                         </Column>
                     </DataTable>
@@ -147,7 +148,7 @@
             </div>
             <div class="p-md-5 p-pt-3" v-if="!creating">
                 <label for="">รายการดอกเบี้ย</label>
-                <DataTable :value="item.int_receives"
+                <DataTable :value="form.int_receives"
                            :scrollable="true"
                            scrollHeight="380px"
                            class="p-datatable-sm">
@@ -173,9 +174,8 @@
                     </Column>
                 </DataTable>
             </div>
+
         </div>
-
-
         <template #footer>
             <div class="flex items-center justify-between pt-2">
                 <div class="p-d-flex">
@@ -188,7 +188,7 @@
                         <Button label="คัดออก"
                                 class="p-button-danger ml-10"
                                 @click="actionCut"
-                                v-if="item.status === 'new' || item.status ==='int'"></Button>
+                                v-if="form.status === 'new' || form.status ==='int'"></Button>
                     </div>
                     <div>
                         <Button label="พิมพ์" icon="pi pi-print"
@@ -263,7 +263,7 @@
                         <div class="p-field p-grid">
                             <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
                             <div class="p-col">
-                                <InputNumber v-model="item.price" disabled input-class="text-right"></InputNumber>
+                                <InputNumber v-model="form.price" disabled input-class="text-right"></InputNumber>
                             </div>
                         </div>
                     </div>
@@ -294,7 +294,7 @@
                         <div class="p-field p-grid">
                             <div class="p-col-fixed" style="width: 100px;">เงินต้น</div>
                             <div class="p-col">
-                                <InputNumber v-model="item.price" disabled input-class="text-right"></InputNumber>
+                                <InputNumber v-model="form.price" disabled input-class="text-right"></InputNumber>
                             </div>
                         </div>
                         <div class="p-field p-grid">
@@ -371,7 +371,7 @@ export default {
     name: "FormPawn",
     setup() {
         return {
-            v$: useVuelidate()
+            v: useVuelidate()
         }
     },
     components: {
@@ -389,27 +389,20 @@ export default {
             printHtml: null,
             form: this.$inertia.form({
                     id: null,
-                    dt: new Date(),
-                    dt_end: new Date(),
-                    customer_id: 0,
-                    customer: {},
+                    dt: null,
+                    dt_end: null,
+                    customer_id: null,
                     price: 0,
                     status: null,
-                    life: 0,
-                    int_rate: 0,
+                    life: null,
+                    int_rate: null,
                     items: [],
                     int_receives: []
                 }
             ),
-            item: {},
-            customer: {
-                name: '',
-                phone: null,
-                addr: null,
-                tax_id: null
-            },
+            customer: null,
             pawnItem: {
-                gold_percent: '96',
+                gold_percent_id: 96,
                 product_type: null,
                 weight: 0,
                 price: 0,
@@ -431,8 +424,8 @@ export default {
     },
     validations() {
         return {
-            item: {
-                customer: {required},
+            form: {
+                customer_id: {required},
                 price: {required},
             },
             pawnItem: {
@@ -454,31 +447,32 @@ export default {
                     this.load(this.pawnId);
                 } else {
                     this.creating = true;
-                    this.item = {
+                    this.form.reset();
+                    this.form = _.assign(this.form, {
                         life: this.config.pawn_life,
                         int_rate: this.config.pawn_int_default_rate,
-                        dt: moment().toDate(),
+                        dt: new Date(),
                         dt_end: moment().add(this.config.pawn_life, 'months').toDate(),
                         items: []
-                    }
+                    })
                     this.clearDetailItem();
                 }
             } else {
                 this.$inertia.reload();
             }
         },
-        'item.int_rate': function (val) {
-            this.item.int_per_month = (this.item.price * this.item.int_rate) / 100;
+        'form.int_rate': function (val) {
+            this.form.int_per_month = (this.form.price * this.form.int_rate) / 100;
         },
         'action.months': function (val) {
             if (this.action.type === 'int') {
-                this.action.amount = ((this.item.price * this.item.int_rate) / 100) * val;
+                this.action.amount = ((this.form.price * this.form.int_rate) / 100) * val;
                 this.action.dt_end = moment(this.action.dt_start).add(val, 'months').toDate();
             }
         },
         'action.int': function (val) {
             if (this.action.type === 'red') {
-                this.action.amount = numeral(this.item.price).add(val ?? 0).value();
+                this.action.amount = numeral(this.form.price).add(val ?? 0).value();
             } else if (this.action.type === 'chg') {
                 this.updateChgAmount()
             }
@@ -496,10 +490,10 @@ export default {
     },
     computed: {
         actionable() {
-            return (this.item.status === 'new') || (this.item.status === 'int')
+            return (this.form.status === 'new') || (this.form.status === 'int')
         },
         intPerMonth() {
-            return (this.item.price * this.item.int_rate) / 100;
+            return (this.form.price * this.form.int_rate) / 100;
         },
         classDialog() {
             return {
@@ -516,81 +510,79 @@ export default {
     },
     methods: {
         load(id) {
-            this.item = {}
+            this.form.reset();
             this.creating = false;
             axios.get(route('api.pawns.show', id))
                 .then(response => {
-                    console.log(response.data)
-                    this.item = this.transformItem(response.data)
+                    this.form = _.assign(this.form, this.transformItem(response.data))
                 })
         },
         transformItem(data) {
-            data.dt = moment(data.dt).toDate()
-            data.dt_end = moment(data.dt_end).toDate()
+            data.dt = new Date(data.dt + ' UTC')
+            data.dt_end = new Date(data.dt_end + ' UTC')
+            data.dt_out = new Date(data.dt_out + ' UTC')
             return data;
         },
         pawnmax(w) {
             let max = (this.config.goldprice - 100) * .96; //24336
-            console.log(this.config.goldprice);
-            max -= (max * ((this.item.life * this.item.int_rate) / 100)) //2190.24  22145.76
-            console.log(max)
+            max -= (max * ((this.form.life * this.form.int_rate) / 100)) //2190.24  22145.76
             max = max * .0656 * w; //22081.98
             max = Math.floor(max / 100) * 100;
             return max
         },
         onDetailItemWeightChange(e) {
-            console.log(e.value);
             this.pawnItem.price = this.pawnmax(e.value)
         },
         clearDetailItem() {
             this.pawnItem = {
-                gold_percent: '96',
+                gold_percent_id: 96,
                 product_type: null,
                 weight: 0,
                 price: 0,
             }
-            this.v$.pawnItem.$reset();
+            this.v.pawnItem.$reset();
         },
         addItem() {
-            this.v$.pawnItem.$touch();
-            if (this.v$.pawnItem.$error) return
+            this.v.pawnItem.$touch();
+            if (this.v.pawnItem.$error) return
             let item = _.assign({}, this.pawnItem)
-            this.item.items.push(item);
+            this.form.items.push(item);
             this.clearDetailItem();
             this.calcPrice();
         },
         removeItemItems(i) {
-            this.item.items.splice(i, 1)
+            this.form.items.splice(i, 1)
             this.calcPrice();
         },
         calcPrice() {
             let price = 0;
-            _.each(this.item.items, (o) => {
+            _.each(this.form.items, (o) => {
                 price += o.price;
             })
-            this.item.price = price;
+            this.form.price = price;
             this.onPriceChange({value: price});
         },
         onPriceChange(e) {
-            this.item.int_per_month = e.value * this.item.int_rate / 100;
+            this.form.int_per_month = e.value * this.form.int_rate / 100;
         },
         save() {
-            if (this.item.customer) {
-                this.item.customer_id = this.item.customer.id;
+
+            this.v.form.$touch();
+            if (this.v.form.$error) {
+                console.log('v.form.$error')
+                return
             }
 
-            this.v$.item.$touch();
-            if (this.v$.item.$error) return;
-            _.assign(this.form, this.item);
-            if (!this.item.id) {
-                axios.post(route('api.pawns.store'), this.item)
+            if (!this.form.id) {
+                console.log(this.form.data())
+                axios.post(route('api.pawns.store'), this.form.data())
                     .then(res => {
                             this.notify('บันทึกข้อมูลแล้ว');
                             this.load(res.data.id);
                         }
                     )
             } else {
-                axios.put(route('api.pawns.update', this.form.id), this.item)
+                axios.put(route('api.pawns.update', this.form.id), this.form.data())
                     .then(res => {
                         this.notify('บันทึกข้อมูลแล้ว');
                         this.load(res.data.id);
@@ -601,9 +593,9 @@ export default {
             this.action.type = 'int';
             this.action.months = 1;
 
-            let dt_end = this.item.dt;
-            if (this.item.int_receives.length) {
-                dt_end = this.item.int_receives[this.item.int_receives.length - 1].dt_end;
+            let dt_end = this.form.dt;
+            if (this.form.int_receives.length) {
+                dt_end = this.form.int_receives[this.form.int_receives.length - 1].dt_end;
             }
             this.action.dt = moment().toDate();
             this.action.dt_start = moment(dt_end).toDate()
@@ -615,21 +607,21 @@ export default {
         },
         actionRed() {
             console.log('action red')
-            axios.get(route('api.pawns.todayInt', this.item.id))
+            axios.get(route('api.pawns.todayInt', this.form.id))
                 .then((res) => {
                     this.action.type = 'red';
                     this.action.dt = new Date();
                     this.action.months = res.data.months;
                     this.action.days = res.data.days;
                     this.action.int = res.data.int;
-                    this.action.amount = numeral(res.data.int).add(this.item.price).value();
+                    this.action.amount = numeral(res.data.int).add(this.form.price).value();
                     this.actionActive = 2;
                     this.payments = [];
                     this.actioning = true;
                 })
         },
         actionChg() {
-            axios.get(route('api.pawns.todayInt', this.item.id))
+            axios.get(route('api.pawns.todayInt', this.form.id))
                 .then((res) => {
                     this.action.type = 'chg';
                     this.action.dt = new Date();
@@ -651,7 +643,7 @@ export default {
                 accept: () => {
                     this.action.type = 'cut';
                     //callback to execute when user confirms the action
-                    axios.post(route('api.pawns.storeAction', this.item.id), this.action)
+                    axios.post(route('api.pawns.storeAction', this.form.id), this.action)
                         .then(response => {
                             this.actioning = false;
                             this.$toast.add({
@@ -660,7 +652,7 @@ export default {
                                 detail: 'บันทึกรายการแล้ว',
                                 life: 3000
                             })
-                            this.item = this.transformItem(response.data)
+                            this.form = _.assign(this.form, this.transformItem(response.data))
                         });
                 },
                 reject: () => {
@@ -670,10 +662,10 @@ export default {
         },
         updateChgAmount() {
             if (this.action.isMore) {
-                this.action.newPrice = numeral(this.item.price).add(this.action.amountChange).value()
+                this.action.newPrice = numeral(this.form.price).add(this.action.amountChange).value()
                 this.action.amount = numeral(this.action.amountChange).subtract(this.action.int).value();
             } else {
-                this.action.newPrice = numeral(this.item.price).subtract(this.action.amountChange).value()
+                this.action.newPrice = numeral(this.form.price).subtract(this.action.amountChange).value()
                 this.action.amount = numeral(this.action.amountChange).add(this.action.int).value();
             }
         },
@@ -683,11 +675,11 @@ export default {
         },
         saveAction(event) {
             this.action.payments = event;
-            axios.post(route('api.pawns.storeAction', this.item.id), this.action)
+            axios.post(route('api.pawns.storeAction', this.form.id), this.action)
                 .then(response => {
                     this.actioning = false;
                     this.$toast.add({severity: 'success', summary: 'สำเร็จ', detail: 'บันทึกรายการแล้ว', life: 3000})
-                    this.item = this.transformItem(response.data)
+                    this.form = _.assign(this.form, this.transformItem(response.data))
                 });
         },
         removeIntReceive(index) {
@@ -697,7 +689,7 @@ export default {
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     //callback to execute when user confirms the action
-                    axios.delete(route('api.pawn-int-receives.destroy', this.item.int_receives[index].id))
+                    axios.delete(route('api.pawn-int-receives.destroy', this.form.int_receives[index].id))
                         .then(res => {
                             this.$toast.add({
                                 severity: 'success',
@@ -705,8 +697,8 @@ export default {
                                 detail: 'บันทึกรายการแล้ว',
                                 life: 3000
                             })
-                            this.item.int_receives.splice(index, 1);
-                            this.load(this.item.id);
+                            this.form.int_receives.splice(index, 1);
+                            this.load(this.form.id);
                         })
                 },
                 reject: () => {
@@ -718,7 +710,7 @@ export default {
         },
 
         print() {
-            axios.get(route('api.pawns.print', this.item.id))
+            axios.get(route('api.pawns.print', this.form.id))
                 .then(response => {
                     this.printHtml = response.data;
                     this.$print(response.data);

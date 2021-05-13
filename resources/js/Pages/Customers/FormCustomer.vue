@@ -4,20 +4,35 @@
         header="ลูกค้า"
         modal
         :closable="false"
-        :closeOnEscape="false">
+        :closeOnEscape="false"
+        style="width:600px">
 
-        <div class="grid grid-cols-6 gap-6">
-            <div class="col-span-2">
-                <text-input
+        <div class="p-fluid">
+            <div class="p-field">
+                <a-input
                     v-model="form.id"
-                    :error="form.errors.id"
                     label="รหัสลูกค้า"
                     disabled/>
             </div>
-            <div class="col-span-6">
-                <text-input
+            <div class="p-field">
+                <a-input
                     v-model="form.name"
-                    :error="form.errors.name" label="ชื่อลูกค้า"/>
+                    :errors="v.form.name.$errors" label="ชื่อลูกค้า"/>
+            </div>
+            <div class="p-field">
+                <a-input
+                    v-model="form.address"
+                     label="ที่อยู่"/>
+            </div>
+            <div class="p-field">
+                <a-input
+                    v-model="form.tax_id"
+                     label="เลขบัตร"/>
+            </div>
+            <div class="p-field">
+                <a-input
+                    v-model="form.phone"
+                   label="เบอร์โทร"/>
             </div>
         </div>
         <template #footer>
@@ -44,8 +59,15 @@ import JetActionMessage from "@/Jetstream/ActionMessage";
 
 import Input from "@/Jetstream/Input";
 import AInput from "@/A/AInput";
+import UseVuelidate from "@vuelidate/core";
+import {required} from "@vuelidate/validators"
 
 export default {
+    setup() {
+        return {
+            v: UseVuelidate()
+        }
+    },
     metaInfo: {title: 'เพิ่มลูกค้า'},
     components: {
         AInput,
@@ -88,6 +110,13 @@ export default {
                 email: null,
                 phone: null,
             }),
+        }
+    },
+    validations() {
+        return {
+            form: {
+                name: {required}
+            }
         }
     },
     mounted() {
