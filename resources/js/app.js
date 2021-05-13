@@ -88,8 +88,9 @@ import Tree from 'primevue/tree';
 import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 
-import VueHtmlToPaper from "@/plugins/VueHtmlToPaper";
 import mitt from 'mitt';
+import VueLoading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
 
 const el = document.getElementById('app');
 
@@ -125,7 +126,9 @@ const app = createApp({
     })
     .use(ConfirmationService)
     .use(ToastService)
-    .use(VueHtmlToPaper);
+    .use(VueLoading, {
+        color: 'blue',
+    });
 
 app.config.globalProperties.$appState = reactive({inputStyle: 'outlined'});
 

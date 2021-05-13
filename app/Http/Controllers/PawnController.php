@@ -33,6 +33,12 @@ class PawnController extends Controller
             ];
         }
 
+        if ($filters['dt_end_over'] > 0) {
+            $data->where(
+                'dt_end',
+                '<=',
+                now()->addDays(0 - $filters['dt_end_over'])->toDateString());
+        }
 
         if (isset($filters['q'])) {
             $data->where(function ($q) use ($filters) {
@@ -43,10 +49,10 @@ class PawnController extends Controller
             });
         }
 
-
         if ($filters['status']) {
             $data->whereIn('status', explode(',', $filters['status']));
         }
+
 
         $pagination = request('pagination', [
             'rowsPerPage' => 12

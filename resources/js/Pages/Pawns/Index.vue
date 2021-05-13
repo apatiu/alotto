@@ -10,8 +10,17 @@
                            placeholder="ค้นหาจากชื่อ, หมายเลข"
                            @input="onSearch"></InputText>
             </div>
-            <div class="p-field mr-0">
+            <div class="p-field">
                 <select-pawn-status v-model="filter.status" @update:modelValue="onFilter"/>
+            </div>
+            <div class="p-field mr-0">
+                <div class="p-inputgroup">
+                    <InputNumber v-model="filter.dt_end_over" class="w-24"
+                                 placeholder="เกินกำหนด"
+                                 @update:modelValue="onFilter"></InputNumber>
+                    <div class="p-inputgroup-addon">วัน</div>
+                </div>
+
             </div>
             <Divider layout="vertical"/>
             <div class="p-field mr-0">

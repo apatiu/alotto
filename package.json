@@ -43,6 +43,7 @@
         "primeicons": "^4.1.0",
         "primevue": "^3.3.5",
         "vee-validate": "^4.2.2",
+        "vue-loading-overlay": "^4.0.2",
         "vue-next-select": "^1.2.1"
     }
 }

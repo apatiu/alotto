@@ -81,7 +81,7 @@ class PawnController extends Controller
                 'shift_id' => Shift::current()->id,
                 'dt' => $pawn->dt,
                 'payment_type_id' => 'paw',
-                'method' => 'cash',
+                'method_id' => 'cash',
                 'pay' => $pawn->price
             ]);
 
@@ -221,10 +221,10 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => request()->user()->currentTeam->id,
                         'payment_no' => 0,
-                        'acc_date' => Shift::current()->d,
+                        'shift_id' => Shift::current()->id,
                         'dt' => jsDateToDateTimeString($payment['dt']),
                         'receive' => $payment['amount'],
-                        'method' => $payment['method'],
+                        'method_id' => $payment['method_id'],
                         'payment_type_id' => 'int'
                     ]);
                     $pawn->payments()->save($p);
@@ -252,10 +252,10 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => $team_id,
                         'payment_no' => 0,
-                        'acc_date' => Shift::current()->d,
+                        'shift_id' => Shift::current()->id,
                         'dt' => jsDateToDateTimeString($payment['dt']),
                         'receive' => $payment['amount'],
-                        'method' => $payment['method'],
+                        'method_id' => $payment['method_id'],
                         'payment_type_id' => 'red'
                     ]);
 
@@ -283,9 +283,9 @@ class PawnController extends Controller
                     $p = new Payment([
                         'team_id' => $team_id,
                         'payment_no' => 0,
-                        'acc_date' => Shift::current()->d,
+                        'shift_id' => Shift::current()->id,
                         'dt' => jsDateToDateTimeString($payment['dt']),
-                        'method' => $payment['method'],
+                        'method_id' => $payment['method_id'],
                         'payment_type_id' => request('isMore') ? 'mor' : 'les'
                     ]);
 
@@ -341,31 +341,14 @@ class PawnController extends Controller
             $pawn->save();
 
             foreach ($pawn->items as $item) {
-                $sc = OldGoldStockCard::where('gold_percent_id', '=', $item->gold_percent)
-                    ->orderBy('dt', 'desc')
-                    ->first();
-
-                if ($sc === null) {
-                    $sc = new OldGoldStockCard([
-                        'gold_percent_id' => $item->gold_percent,
-                        'team_id' => $pawn->team_id,
-                        'avg_per_bath' => 0,
-                        'qty_begin' => 0,
-                        'qty_in' => 0,
-                        'qty_out' => 0,
-                        'qty_remain' => 0,
-                        'dt' => now(),
-                        'ref_no' => ''
-                    ]);
-                }
-
-                $new = $sc->replicate();
-                $new->description = 'คัดออก';
-                $new->qty_begin = $new->qty_remain;
-                $new->qty_in = $item->weight;
-                $new->qty_remain = $new->qty_begin + $new->qty_in;
-                $new->dt = now();
-                $pawn->oldGoldStockCard()->save($new);
+                $sc = OldGoldStockCard::add(
+                    $item->gold_percent_id,
+                    1,
+                    $item->weight,
+                    $item->price,
+                    $pawn,
+                    'คัดออก',
+                    $pawn->team_id);
             }
         });
 

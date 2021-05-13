@@ -1,17 +1,24 @@
 <template>
 
     <div class="layout-topbar type-bar pb-4">
-        <SelectButton v-model="form.type"
-                      :options="types"
-                      optionLabel="label"
-                      optionValue="value"
-                      :disabled="form.status==='checked'">
-            <template #option="slotProps">
-                <div class="type-options w-28">
-                    <div>{{ slotProps.option.label }}</div>
-                </div>
-            </template>
-        </SelectButton>
+        <div class="flex justify-between w-full">
+            <div>
+                <SelectButton v-model="form.type"
+                              :options="types"
+                              optionLabel="label"
+                              optionValue="value"
+                              :disabled="form.status==='checked'">
+                    <template #option="slotProps">
+                        <div class="type-options w-28">
+                            <div>{{ slotProps.option.label }}</div>
+                        </div>
+                    </template>
+                </SelectButton>
+            </div>
+            <div>
+                <smartbar-pawn></smartbar-pawn>
+            </div>
+        </div>
     </div>
     <div class="mt-24"></div>
 
@@ -234,6 +241,7 @@
     <input-payment v-model:visible="paymentDialog"
                    :target="form.total_amount"
                    @done="savePayments($event)"></input-payment>
+
 </template>
 
 <script>
@@ -248,6 +256,7 @@ import {required, requiredIf, minLength} from '@vuelidate/validators'
 import GoldPrices from "@/A/GoldPrices";
 import InputError from "@/Jetstream/InputError";
 import ACalendar from "@/A/ACalendar";
+import SmartbarPawn from "@/A/SmartbarPawn";
 
 export default {
     name: "Pos",
@@ -256,6 +265,7 @@ export default {
         return {v}
     },
     components: {
+        SmartbarPawn,
         ACalendar,
         InputError,
         GoldPrices,

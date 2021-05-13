@@ -6,7 +6,7 @@
             :closeOnEscape="false"
             :closable="false"
             :class="classDialog">
-        <div class="p-grid">
+        <div class="p-grid" ref="dlgFormPawn">
             <div :class="{'p-md-7':!creating,'p-col':creating}">
                 <div class="flex space-x-1" v-if="!creating">
                     <div class="w-40" v-if="form.prev_id">
@@ -27,7 +27,7 @@
                     </div>
                 </div>
                 <div class="mt-8">
-                    <select-customer v-model="customer"
+                    <select-customer v-model="form.customer"
                                      @update:modelValue="($event) ? form.customer_id=$event.id ?? null : null"
                                      :errors="v.form.customer_id.$errors"
                                      :disabled="!creating"
@@ -146,8 +146,9 @@
                 </div>
 
             </div>
-            <div class="p-md-5 p-pt-3" v-if="!creating">
-                <label for="">รายการดอกเบี้ย</label>
+            <div class="p-md-5" v-if="!creating">
+                <pawn-status v-model="form.status" class="mb-8"></pawn-status>
+                <label class="font-bold text-sm">รายการดอกเบี้ย</label>
                 <DataTable :value="form.int_receives"
                            :scrollable="true"
                            scrollHeight="380px"
@@ -392,6 +393,7 @@ export default {
                     dt: null,
                     dt_end: null,
                     customer_id: null,
+                    customer: null,
                     price: 0,
                     status: null,
                     life: null,
@@ -400,7 +402,6 @@ export default {
                     int_receives: []
                 }
             ),
-            customer: null,
             pawnItem: {
                 gold_percent_id: 96,
                 product_type: null,
@@ -461,6 +462,16 @@ export default {
                 this.$inertia.reload();
             }
         },
+        'form.dt': function(val) {
+            if (this.creating) {
+                this.form.dt_end = moment(val).add(this.form.life,'months').toDate();
+            }
+        },
+        'form.life': function(val) {
+            if (this.creating) {
+                this.form.dt_end = moment(this.form.dt).add(val,'months').toDate()
+            }
+        },
         'form.int_rate': function (val) {
             this.form.int_per_month = (this.form.price * this.form.int_rate) / 100;
         },
@@ -510,11 +521,21 @@ export default {
     },
     methods: {
         load(id) {
+            console.log('Loading Pawn data...')
+            let loader = this.$loading.show({
+                container: this.$refs.dlgFormPawn
+            })
             this.form.reset();
             this.creating = false;
             axios.get(route('api.pawns.show', id))
                 .then(response => {
                     this.form = _.assign(this.form, this.transformItem(response.data))
+                })
+                .catch((e) => {
+                    this.notify('เกิดข้อผิดพลาด');
+                })
+                .finally((e) => {
+                    loader.hide()
                 })
         },
         transformItem(data) {
