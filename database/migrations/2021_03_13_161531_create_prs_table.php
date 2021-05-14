@@ -21,7 +21,7 @@ class CreatePrsTable extends Migration
             $table->foreignId('team_id');
             $table->foreignId('shift_id');
             $table->string('method_id');
-            $table->string('payment_no');
+            $table->string('payment_no')->nullable();
             $table->dateTime('dt');
 
             $table->string('detail')->nullable();

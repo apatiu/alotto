@@ -9,4 +9,12 @@ class SavingDetail extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'saving_id',
+        'amount',
+        'dt',
+        'note',
+        'wt',
+        'gold_price_sale'
+    ];
 }

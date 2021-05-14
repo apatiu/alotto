@@ -222,23 +222,18 @@
                     <InputNumber v-model="formDeposit.amount" mode="decimal" inputClass="text-right"/>
                     <span class="p-inputgroup-addon">บาท</span>
                 </div>
-
+                <InputError :model-value="v.formDeposit.amount.$errors"></InputError>
             </div>
         </div>
-
-
-        <input-payment v-model:visible="paymentDialog"
-                       :target="formDeposit.amount"
-                       @done="saveDeposit($event)"></input-payment>
-
         <template #footer>
-
-            <Button class="p-button-text" @click="actioning=false">ยกเลิก</Button>
-            <Button @click="getPayments">บันทึก</Button>
+            <Button class="p-button-text" @click="dlgDeposit=false">ยกเลิก</Button>
+            <Button @click="getPayments(formDeposit.amount)" :disabled="v.formDeposit.amount.$error">ตกลง</Button>
         </template>
         <!--        end action dialog-->
     </Dialog>
-
+    <input-payment v-model:visible="paymentDialog"
+                   :target="paymentTarget"
+                   @done="saveDeposit($event)"></input-payment>
 </template>
 
 <script>
@@ -276,6 +271,7 @@ export default {
     data() {
         return {
             paymentDialog: false,
+            paymentTarget: null,
             saved: false,
             form: this.$inertia.form({
                 id: null,
@@ -331,6 +327,9 @@ export default {
                 dt: {required},
 
             },
+            formDeposit: {
+                amount: {required}
+            },
             newItem: {
                 product_name: {required},
                 product_wt: {required},
@@ -338,7 +337,7 @@ export default {
                 wt: {required},
                 price: {required},
                 price_total: {required},
-            }
+            },
         }
     },
     mounted() {
@@ -349,6 +348,7 @@ export default {
     },
     watch: {
         async visible(val) {
+            this.goldPriceSale = await this.$a.getGoldPriceSale()
             if (val) {
                 if (this.savingId) {
                     this.creating = false;
@@ -361,7 +361,7 @@ export default {
                         life: null,
                         dt: new Date(),
                     })
-                    this.form.gold_price_sale = await this.$a.getGoldPriceSale()
+                    this.form.gold_price_sale = this.goldPriceSale
                     this.resetNewItem();
                 }
             }
@@ -482,24 +482,28 @@ export default {
                     })
             }
         },
-        getPayments() {
+        getPayments(target = 0) {
             console.log('Get payment')
+            if (target > 0) {
+                this.paymentTarget = target
+            }
             this.payments = [];
             this.paymentDialog = true;
         },
         actionDeposit() {
             this.formDeposit.reset();
             this.formDeposit.dt = new Date()
+            this.formDeposit.amount = 0
+            this.formDeposit.gold_price_sale = this.goldPriceSale
             this.dlgDeposit = true
         },
         saveDeposit(e) {
-            axios.post(route('api.savings.action.deposit', this.form.id), {
+            axios.post(route('api.savings.actions.deposit', this.form.id), {
                 deposit: this.formDeposit.data(),
                 payments: e
             }).then(({data}) => {
                 this.load(data.id)
             })
-            console.log(e);
         },
         actionClose() {
 

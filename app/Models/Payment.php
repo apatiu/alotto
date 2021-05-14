@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Payment extends Model
 {
@@ -34,6 +35,12 @@ class Payment extends Model
                 $code .= substr('000' . (intval(substr($latest->attributes['code'], -4)) + 1), -4);
 
             $payment->attributes['code'] = $code;
+
+            if (!$payment->team_id)
+                $payment->team_id = Auth::user()->currentTeam->id;
+
+            if (!$payment->shift_id)
+                $payment->shift_id = Shift::current()->id;
         });
     }
 
@@ -52,7 +59,8 @@ class Payment extends Model
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function bank_account() {
+    public function bank_account()
+    {
         return $this->belongsTo(BankAccount::class);
     }
 

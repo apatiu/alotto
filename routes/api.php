@@ -65,6 +65,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
+            Route::post('/savings/actions/deposit/{saving}',[
+                \App\Http\Controllers\Api\SavingController::class,'deposit'
+            ])->name('savings.actions.deposit');
             Route::get('/savings/search',[\App\Http\Controllers\Api\SavingController::class,'search'])
                 ->name('savings.search');
             Route::resource('savings', 'SavingController');
