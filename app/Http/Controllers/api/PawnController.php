@@ -107,6 +107,40 @@ class PawnController extends Controller
      * @param \App\Models\Pawn $pawn
      * @return \Illuminate\Http\Response
      */
+    public function search(Request $request)
+    {
+        $data = Pawn::with(['customer', 'team']);
+        $filters = [
+            'status' => $request->input('status', 'new,int')
+        ];
+
+        if ($request->input('dt_end_over', 0) > 0) {
+            $data->where(
+                'dt_end',
+                '<=',
+                now()->addDays(0 - $filters['dt_end_over'])->toDateString());
+        }
+
+        if ($request->input('q', false)) {
+            $id = intval($request->input('q', ''));
+            $data->where(function ($q) use ($request, $id) {
+                $q->where('id', '=', $id);
+                $q->orWhereHas('customer', function ($query) use ($request) {
+                    return $query->where('name', 'like', "%{$request->input('q')}%");
+                });
+            });
+        }
+
+        $data->whereIn('status', explode(',', $request->input('status', 'new,int')));
+
+
+        $pagination = request('pagination', [
+            'rowsPerPage' => 12
+        ]);
+
+        return $data->paginate($pagination['rowsPerPage']);
+    }
+
     public function edit(Pawn $pawn)
     {
         //

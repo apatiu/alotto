@@ -149,6 +149,30 @@ app.config.globalProperties.$filters = {
         return numeral(value).format(format);
     }
 }
+
+app.config.globalProperties.$a = {
+    getGoldPrice() {
+        return axios.get(route('api.gold-prices.now'))
+            .then(({data}) => {
+                return data
+            })
+    },
+    getGoldPriceSale() {
+        return axios.get(route('api.gold-prices.now'))
+            .then(({data}) => {
+                return data.gold_price_sale
+            })
+    },
+    calcProductSalePrice(product, gold_price_sale) {
+        let priceSaleGold = numeral(gold_price_sale)
+            .add(product.gold_percent.add_sale)
+            .multiply(product.gold_percent.percent_sale / 100)
+            .multiply(product.wtGram)
+            .divide(15.2)
+            .value();
+        return Math.floor(priceSaleGold);
+    }
+}
 const emitter = mitt();
 app.config.globalProperties.emitter = emitter
 app.config.globalProperties.$print = function (data) {
@@ -158,9 +182,19 @@ app.config.globalProperties.$print = function (data) {
 
 
 app.mixin({
+    data() {
+        return {
+            oLoader: null
+        }
+    },
     methods: {
-        setLoading(val = true) {
-            this.loading = val
+        showLoader(container) {
+            this.oLoader = this.$loading.show({
+                container: container
+            })
+        },
+        hideLoader() {
+            this.oLoader.hide()
         },
         notify(summary, severity = 'success', detail = '', life = 3000) {
             this.$toast.add({severity: severity, summary: summary, detail: detail, life: life})

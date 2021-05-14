@@ -9,14 +9,19 @@
                               optionValue="value"
                               :disabled="form.status==='checked'">
                     <template #option="slotProps">
-                        <div class="type-options w-28">
+                        <div class="type-options w-24">
                             <div>{{ slotProps.option.label }}</div>
                         </div>
                     </template>
                 </SelectButton>
             </div>
-            <div>
-                <smartbar-pawn></smartbar-pawn>
+            <div class="flex space-x-2">
+                <div>
+                    <smartbar-pawn></smartbar-pawn>
+                </div>
+                <div>
+                    <smartbar-saving></smartbar-saving>
+                </div>
             </div>
         </div>
     </div>
@@ -257,6 +262,7 @@ import GoldPrices from "@/A/GoldPrices";
 import InputError from "@/Jetstream/InputError";
 import ACalendar from "@/A/ACalendar";
 import SmartbarPawn from "@/A/SmartbarPawn";
+import SmartbarSaving from "@/A/SmartbarSaving";
 
 export default {
     name: "Pos",
@@ -265,6 +271,7 @@ export default {
         return {v}
     },
     components: {
+        SmartbarSaving,
         SmartbarPawn,
         ACalendar,
         InputError,

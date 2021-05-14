@@ -63,6 +63,9 @@ export default {
                     label: 'ขายฝาก',
                     url: route('pawns.index')
                 }, {
+                    label: 'ออมทอง',
+                    url: route('savings.index')
+                }, {
                     label: 'รับจ่าย',
                     url: route('payments.index')
                 }, {

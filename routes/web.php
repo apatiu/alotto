@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
     Route::resource('stock-imports', StockImportController::class);
     Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class, 'storeConfig'])->name('pawns-config.store');
     Route::resource('pawns', \App\Http\Controllers\PawnController::class);
+    Route::resource('savings', \App\Http\Controllers\SavingController::class);
     Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
     Route::resource('payments', \App\Http\Controllers\PaymentController::class);
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);

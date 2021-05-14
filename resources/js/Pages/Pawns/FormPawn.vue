@@ -200,7 +200,7 @@
                 </div>
                 <div class="flex items-center">
                     <action-message :on="form.recentlySuccessful">บันทึกข้อมูลแล้ว</action-message>
-                    <Button label="ยกเลิก" class="p-button-text" @click="$emit('update:visible',false)"></Button>
+                    <Button label="ปิด" class="p-button-text" @click="$emit('update:visible',false)"></Button>
                     <Button label="บันทึก" icon="pi pi-check"
                             @click="save"
                             v-if="creating || actionable"></Button>

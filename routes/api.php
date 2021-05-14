@@ -65,6 +65,10 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
+            Route::get('/savings/search',[\App\Http\Controllers\Api\SavingController::class,'search'])
+                ->name('savings.search');
+            Route::resource('savings', 'SavingController');
+
             Route::get('/product-types', function () {
                 return \App\Models\ProductType::all();
             })->name('product-types.index');

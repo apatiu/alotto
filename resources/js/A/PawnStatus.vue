@@ -7,14 +7,13 @@ export default {
     name: "PawnStatus",
     props: {
         modelValue: String,
-        badge: {type: Boolean, default: false}
+        small: {type: Boolean, default: false}
     },
     computed: {
         classObject() {
             return {
-                'whitespace-nowrap rounded-3xl w-full' : true,
-                'px-6 py-2 font-bold text-center': this.badge,
-                'px-6 py-1 rounded text-center': !this.badge,
+                'whitespace-nowrap rounded-3xl w-full text-center font-bold' : true,
+                'py-1 text-sm small': this.small,
                 'bg-green-100': this.modelValue === 'new',
                 'bg-green-400 text-white': this.modelValue === 'int',
                 'bg-gray-100': this.modelValue === 'red',

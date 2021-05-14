@@ -6,7 +6,19 @@
             placeholder="ค้นหาใบขายฝาก"
             force-selection
             field="code"
-            @complete="searchPawn($event)"></AutoComplete>
+            @complete="searchPawn($event)"
+            @itemSelect="onItemSelect"
+        class="w-40">
+            <template #item="{item, index}">
+                <div class="flex">
+                    <span class="w-20">{{ item.code }}</span>
+                    <span class="w-48">{{ item.customer.name}}</span>
+                    <div class="w-20 text-right">{{ $filters.decimal(item.price)}}</div>
+                    <div class="w-20 text-center pl-4">
+                        <pawn-status :model-value="item.status" small/></div>
+                </div>
+            </template>
+        </AutoComplete>
         <Button label="รับขายฝาก" @click="createPawn"></Button>
         <form-pawn v-model:visible="visible" :pawn-id="pawnId"></form-pawn>
     </div>
@@ -14,16 +26,18 @@
 
 <script>
 import FormPawn from "@/Pages/Pawns/FormPawn";
+import PawnStatus from "@/A/PawnStatus";
 
 export default {
     name: "SmartbarPawn",
-    components: {FormPawn},
+    components: {PawnStatus, FormPawn},
     data() {
         return {
             query: null,
             visible: false,
             pawnId: null,
-            filteredPawns: null
+            filteredPawns: null,
+            selectedPawn: null,
         }
     },
     methods: {
@@ -38,6 +52,10 @@ export default {
                 .then(({data}) => {
                     this.filteredPawns = data.data
                 })
+        },
+        onItemSelect(e) {
+            this.pawnId = e.value.id
+            this.visible = true
         }
     }
 }
