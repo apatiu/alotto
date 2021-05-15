@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Payment;
 use App\Models\Saving;
+use App\Models\SavingDetail;
 use App\Models\Shift;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -31,19 +32,20 @@ class SavingController extends Controller
             $saving->status = 'open';
             $saving->save();
 
-            $saving->items()->createMany($request->input('items',[]));
+            $saving->items()->createMany($request->input('items', []));
         });
         return $saving;
     }
 
-    public function show(Saving $saving) {
-        return $saving->load('items','details','customer','team','user');
+    public function show(Saving $saving)
+    {
+        return $saving->load('items', 'details', 'customer', 'team', 'user');
     }
 
 
     public function search(Request $request)
     {
-        $data = Saving::with(['items','details','customer','team','user']);
+        $data = Saving::with(['items', 'details', 'customer', 'team', 'user']);
         $filters = [
             'status' => $request->input('status', 'open')
         ];
@@ -74,6 +76,7 @@ class SavingController extends Controller
 
         return $data->paginate($pagination['rowsPerPage']);
     }
+
     /**
      * Update the specified resource in storage.
      *
@@ -94,6 +97,34 @@ class SavingController extends Controller
      */
     public function destroy(Saving $saving)
     {
-        //
+
+    }
+
+    public function deposit(Request $request, Saving $saving)
+    {
+        DB::transaction(function () use ($saving, $request) {
+            $detail = new SavingDetail( $request->input('deposit') );
+            $detail['dt'] = jsDateToDateTimeString($detail['dt']);
+            $saving->details()->save($detail);
+
+            $payments = $request->input('payments');
+
+            foreach ($payments as $payment) {
+                $p = new Payment();
+                $p->parse($payment);
+                $p->payment_type_id = 'dep';
+                $saving->payments()->save($p);
+                $detail->payments()->save($p);
+            }
+
+            $saving->updateTotal();
+            $saving->save();
+            $saving->refresh();
+
+
+
+        });
+        return $saving->refresh();
+
     }
 }

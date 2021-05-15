@@ -167,7 +167,7 @@
                         <template #body="{index}">
                             <Button icon="pi pi-trash"
                                     class="p-button-text p-button-rounded p-button-danger p-button-sm"
-                                    @click="removeIntReceive(index)"
+                                    @click="removeDeposit(index)"
                                     v-if="actionable"></Button>
                         </template>
                     </Column>
@@ -458,6 +458,30 @@ export default {
         },
         removeItemItems(i) {
             this.form.items.splice(i, 1)
+        },
+        removeDeposit(index) {
+            this.$confirm.require({
+                message: 'Are you sure you want to proceed?',
+                header: 'Confirmation',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    //callback to execute when user confirms the action
+                    axios.delete(route('api.saving-details.destroy', this.form.details[index].id))
+                        .then(res => {
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'สำเร็จ',
+                                detail: 'บันทึกรายการแล้ว',
+                                life: 3000
+                            })
+                            this.form.details.splice(index, 1);
+                            this.load(this.form.id);
+                        })
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
         },
         save() {
             this.v.form.$touch();

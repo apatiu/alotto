@@ -44,6 +44,14 @@ class Payment extends Model
         });
     }
 
+    public function parse($data)
+    {
+        $this->fill($data);
+        $this->dt = jsDateToDateTimeString($data['dt']);
+        $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
+        $this->pay = $data['amount'] < 0 ? $data['amount'] : null;
+    }
+
     public function shift()
     {
         return $this->belongsTo(Shift::class);
@@ -77,6 +85,10 @@ class Payment extends Model
     public function stockImport()
     {
         return $this->morphedByMany(StockImport::class, 'paymentable');
+    }
+
+    public function savingDetails() {
+        return $this->morphedByMany(SaleDetail::class, 'paymentable');
     }
 
     public function paymentable()

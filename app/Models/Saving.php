@@ -92,4 +92,9 @@ class Saving extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function updateTotal() {
+        $this->price_pay = $this->loadSum('details','amount')->details_sum_amount;
+        $this->price_remain = $this->price_total-$this->price_pay;
+    }
 }

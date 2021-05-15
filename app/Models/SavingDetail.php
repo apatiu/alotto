@@ -17,4 +17,12 @@ class SavingDetail extends Model
         'wt',
         'gold_price_sale'
     ];
+
+    public function savingModel() {
+        return $this->belongsTo(Saving::class,'saving_id','id');
+    }
+    public function payments()
+    {
+        return $this->morphToMany(Payment::class, 'paymentable');
+    }
 }
