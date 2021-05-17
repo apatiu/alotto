@@ -1,5 +1,5 @@
 <template>
-    <div :class="containerClass" @click="onWrapperClick">
+    <div :class="containerClass" @click="onWrapperClick" ref="mainContainer">
         <AppTopBar @menu-toggle="onMenuToggle"></AppTopBar>
         <transition name="layout-sidebar">
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
@@ -21,6 +21,8 @@
         <open-shift ref="openShift"/>
     </div>
     <div id="printable"></div>
+
+
 </template>
 
 <script>

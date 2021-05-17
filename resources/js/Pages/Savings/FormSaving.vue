@@ -6,7 +6,7 @@
             :closeOnEscape="false"
             :closable="false"
             :class="classDialog">
-        <div class="p-grid" ref="dlgFormSaving">
+        <form class="p-grid vld-parent" ref="dlgFormSaving">
             <div :class="{'p-md-7':!creating,'p-col':creating}">
                 <div class="flex space-x-1" v-if="!creating">
                     <div class="w-40" v-if="form.prev_id">
@@ -174,15 +174,18 @@
                 </DataTable>
             </div>
 
-        </div>
+        </form>
         <template #footer>
             <div class="flex items-center justify-between pt-2">
                 <div class="p-d-flex">
                     <div v-show="actionable">
                         <Button label="ส่งออม" class="p-button-info"
                                 @click="actionDeposit"></Button>
-                        <Button label="ปิดออม" class="p-button-info"
+                        <Button label="ปิดออม" class="p-button-success ml-10"
                                 @click="actionClose"></Button>
+                        <Button label="คืนเงิน" class="p-button-danger"
+                                @click="actionRefund"
+                                :disabled="form.price_pay <= 0"></Button>
                     </div>
                     <div>
                         <Button label="พิมพ์" icon="pi pi-print"
@@ -200,6 +203,7 @@
                 </div>
             </div>
         </template>
+        <loading v-model:active="isLoading"></loading>
     </Dialog>
 
     <!--    begin action dialog -->
@@ -231,9 +235,52 @@
         </template>
         <!--        end action dialog-->
     </Dialog>
+
+    <Dialog v-model:visible="dlgClose" modal header="ปิดออม">
+        <div class="p-fluid space-y-2 mt-2">
+            <div class="flex space-x-2">
+                <div class="p-field-radiobutton w-60">
+                    <RadioButton name="closeType"
+                                 value="refund"
+                                 v-model="formClose.type"/>
+                    <label>คืนเงิน</label>
+                </div>
+                <InputBaht
+                    v-model="formClose.price_refund"
+                    :disabled="formClose.type==='forward'"></InputBaht>
+            </div>
+            <div class="flex space-x-2">
+                <div class="p-field-radiobutton w-60">
+                    <RadioButton name="closeType" value="forward" v-model="formClose.type"/>
+                    <label>ยกไปออมต่อ</label>
+                </div>
+                <InputBaht
+                    v-model="formClose.price_forward"
+                           :disabled="formClose.type==='refund'"></InputBaht>
+            </div>
+        </div>
+        <template #footer>
+            <Button class="p-button-text" @click="dlgClose=false">ยกเลิก</Button>
+            <Button @click="(formClose.type==='refund') ? getPayments(formClose.price_refund) : saveClose($event)">ตกลง</Button>
+        </template>
+    </Dialog>
+
+    <Dialog v-model:visible="dlgRefund" modal header="คืนเงิน">
+        <div class="p-fluid">
+            <div class="p-field">
+                <label>ยอดคืน</label>
+                <InputNumber v-model="form.price_refund"></InputNumber>
+            </div>
+        </div>
+        <template #footer>
+            <Button class="p-button-text" @click="cancelRefund">ยกเลิก</Button>
+            <Button @click="getPayments(form.price_refund)">ตกลง</Button>
+        </template>
+    </Dialog>
+
     <input-payment v-model:visible="paymentDialog"
                    :target="paymentTarget"
-                   @done="saveDeposit($event)"></input-payment>
+                   @done="savePayments($event)"></input-payment>
 </template>
 
 <script>
@@ -250,6 +297,7 @@ import CaptureImage from "@/A/CaptureImage";
 import InputImage from "@/A/InputImage";
 import SelectProduct from "@/A/SelectProduct";
 import InputError from "@/Jetstream/InputError";
+import InputBaht from "@/A/InputBaht";
 
 export default {
     name: "FormSaving",
@@ -259,6 +307,7 @@ export default {
         }
     },
     components: {
+        InputBaht,
         InputError,
         SelectProduct,
         InputImage,
@@ -270,6 +319,7 @@ export default {
     props: ['visible', 'savingId'],
     data() {
         return {
+            isLoading: false,
             paymentDialog: false,
             paymentTarget: null,
             saved: false,
@@ -277,7 +327,7 @@ export default {
                 id: null,
                 code: null,
                 customer_id: null,
-                customer: {},
+                customer: null,
                 dt: null,
                 dt_due: null,
                 dt_close: null,
@@ -303,6 +353,11 @@ export default {
                 wt: null,
                 gold_price_sale: null
             }),
+            formClose: this.$inertia.form({
+                type: 'forward',
+                price_refund: null,
+                price_forward: null,
+            }),
             newItem: {
                 product_id: null,
                 product_name: null,
@@ -312,11 +367,16 @@ export default {
                 price: null,
                 price_total: null
             },
-            config: {},
+            config: {
+                refund_discount_percent: 5
+            },
             creating: true,
             editingItemIndex: 0,
+            action: null,
             payments: [],
             dlgDeposit: false,
+            dlgRefund: false,
+            dlgClose: false,
             product: null,
         }
     },
@@ -325,7 +385,6 @@ export default {
             form: {
                 customer_id: {required},
                 dt: {required},
-
             },
             formDeposit: {
                 amount: {required}
@@ -378,6 +437,7 @@ export default {
         'form.items': {
             handler(val) {
                 this.form.price_total = _.sumBy(val, 'price_total')
+                this.form.price_remain = this.form.price_total - this.form.price_pay
             }, deep: true
         }
     },
@@ -401,7 +461,10 @@ export default {
     methods: {
         load(id) {
             console.log('Loading Saving data...')
-            this.showLoader();
+            this.isLoading = true;
+            // let loader = this.$loading.show({
+            //     container: this.$refs.dlgFormSaving
+            // });
             this.form.reset();
             this.formDeposit.reset();
             this.creating = false;
@@ -409,15 +472,14 @@ export default {
             axios.get(route('api.savings.show', id))
                 .then(response => {
                     this.form = _.assign(this.form, this.transformItem(response.data))
-                    setTimeout(() => {
-                        this.hideLoader()
-                    }, 500);
                 })
                 .catch((e) => {
                     this.notify('เกิดข้อผิดพลาด');
                 })
                 .finally((e) => {
-
+                    setTimeout(() => {
+                        this.isLoading = false
+                    }, 200);
                 })
         },
         transformItem(data) {
@@ -439,6 +501,8 @@ export default {
             this.v.newItem.$reset();
         },
         async onSelectProduct(e) {
+            if (!e.gold_percent) return;
+
             this.newItem.product = e
             this.newItem.product_id = e.id
             this.newItem.product_name = e.name
@@ -507,30 +571,96 @@ export default {
             }
         },
         getPayments(target = 0) {
-            console.log('Get payment')
+            console.log('Get payment: ' + target)
             if (target > 0) {
                 this.paymentTarget = target
             }
             this.payments = [];
             this.paymentDialog = true;
         },
+        savePayments(e) {
+            this.payments = e;
+            if (this.action === 'deposit')
+                this.saveDeposit()
+            else if (this.action === 'refund')
+                this.saveRefund()
+            else if (this.action === 'close')
+                this.saveClose()
+        },
         actionDeposit() {
+            this.action = 'deposit'
             this.formDeposit.reset();
             this.formDeposit.dt = new Date()
             this.formDeposit.amount = 0
             this.formDeposit.gold_price_sale = this.goldPriceSale
             this.dlgDeposit = true
         },
-        saveDeposit(e) {
+        saveDeposit() {
             axios.post(route('api.savings.actions.deposit', this.form.id), {
                 deposit: this.formDeposit.data(),
-                payments: e
+                payments: this.payments
             }).then(({data}) => {
                 this.load(data.id)
             })
         },
         actionClose() {
+            this.action = 'close'
+            this.formClose.reset()
 
+            if (this.form.items.length < 1) {
+                this.notify('ยังไม่มีรายการสินค้า', 'warn')
+                return
+            }
+            if (this.form.price_pay < this.form.price_total) {
+                this.notify('ยอดเงินออมยังไม่พอ', 'warn')
+                return
+            }
+
+            if (this.form.price_pay === this.form.price_total) {
+                this.saveClose()
+            }
+
+            if (this.form.price_pay > this.form.price_total) {
+                let diff = this.form.price_pay - this.form.price_total
+                this.formClose.price_refund = numeral(diff)
+                    .multiply(100 - this.config.refund_discount_percent)
+                    .divide(100)
+                    .value()
+                this.formClose.price_forward = diff
+                this.dlgClose = true
+            }
+        },
+        saveClose() {
+            console.log('Save close data.')
+            this.isLoading = true;
+            axios.post(route('api.savings.actions.close', this.form.id), {
+                data: this.formClose.data(),
+                payments: this.payments,
+            }).finally(() => {
+                this.load(this.form.id)
+                this.dlgClose = false
+                this.isLoading = false
+            })
+        },
+        actionRefund() {
+            this.action = 'refund'
+            this.form.price_refund = numeral(this.form.price_pay)
+                .multiply((100 - this.config.refund_discount_percent) / 100)
+                .value();
+            this.dlgRefund = true;
+        },
+        cancelRefund() {
+            this.dlgRefund = false
+            this.form.price_refund = null
+        },
+        saveRefund() {
+
+            axios.post(route('api.savings.actions.refund', this.form.id), {
+                price_refund: this.form.price_refund,
+            }).finally(() => {
+                this.load(this.form.id)
+                this.dlgRefund = false
+            })
         },
         print() {
             axios.get(route('api.savings.print', this.form.id))

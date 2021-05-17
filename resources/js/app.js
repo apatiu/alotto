@@ -88,9 +88,11 @@ import Tree from 'primevue/tree';
 import TreeTable from 'primevue/treetable';
 import TriStateCheckbox from 'primevue/tristatecheckbox';
 
-import mitt from 'mitt';
 import VueLoading from 'vue-loading-overlay';
+import Loading from 'vue-loading-overlay';
 import 'vue-loading-overlay/dist/vue-loading.css';
+
+import mitt from 'mitt';
 
 const el = document.getElementById('app');
 
@@ -127,21 +129,25 @@ const app = createApp({
     .use(ConfirmationService)
     .use(ToastService)
     .use(VueLoading, {
-        color: 'blue',
-    });
-
+        color: 'skyblue'
+    })
+app.component('loading',VueLoading)
 app.config.globalProperties.$appState = reactive({inputStyle: 'outlined'});
 
 app.config.globalProperties.$filters = {
-    date(value, utc = true) {
+    date(value, utc = false) {
+        if (!value) return '-'
+
         if (utc)
             value += ' UTC'
+
         return moment(value).format('DD/MM/YYYY')
     },
     datetime(value, utc = true) {
+        if (!value) return '-'
         if (utc)
             value += ' UTC'
-        return moment(value + ' UTC').format('DD/MM/YYYY HH:mm')
+        return moment(value).format('DD/MM/YYYY HH:mm')
     },
     decimal(value, pre = 0) {
         let format = '0,0.' + _.repeat('0', pre);
@@ -182,20 +188,7 @@ app.config.globalProperties.$print = function (data) {
 
 
 app.mixin({
-    data() {
-        return {
-            oLoader: null
-        }
-    },
     methods: {
-        showLoader(container) {
-            this.oLoader = this.$loading.show({
-                container: container
-            })
-        },
-        hideLoader() {
-            this.oLoader.hide()
-        },
         notify(summary, severity = 'success', detail = '', life = 3000) {
             this.$toast.add({severity: severity, summary: summary, detail: detail, life: life})
         }

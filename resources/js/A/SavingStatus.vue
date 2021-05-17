@@ -14,25 +14,16 @@ export default {
             return {
                 'whitespace-nowrap rounded-3xl w-full text-center font-bold' : true,
                 'py-1 text-sm small': this.small,
-                'bg-green-100': this.modelValue === 'new',
-                'bg-green-400 text-white': this.modelValue === 'int',
-                'bg-gray-100': this.modelValue === 'red',
-                'bg-yellow-100': this.modelValue === 'chg',
-                'border': this.modelValue === 'cut',
+                'bg-green-100': this.modelValue === 'open',
+                'bg-gray-100': this.modelValue === 'close',
             }
         },
         title() {
             switch (this.modelValue) {
-                case 'new':
-                    return 'ใหม่';
-                case 'int':
-                    return 'ต่อดอก';
-                case 'red':
-                    return 'ไถ่ถอน';
-                case 'chg':
-                    return 'เปลี่ยนใบ';
-                case 'cut':
-                    return 'คัดออก';
+                case 'open':
+                    return 'เปิด';
+                case 'close':
+                    return 'ปิด';
             }
         }
     }

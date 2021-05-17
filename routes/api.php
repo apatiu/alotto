@@ -65,12 +65,19 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
+            Route::post('/savings/actions/refund/{saving}',[
+                \App\Http\Controllers\Api\SavingController::class,'refund'
+            ])->name('savings.actions.refund');
+            Route::post('/savings/actions/close/{saving}',[
+                \App\Http\Controllers\Api\SavingController::class,'close'
+            ])->name('savings.actions.close');
             Route::post('/savings/actions/deposit/{saving}',[
                 \App\Http\Controllers\Api\SavingController::class,'deposit'
             ])->name('savings.actions.deposit');
             Route::get('/savings/search',[\App\Http\Controllers\Api\SavingController::class,'search'])
                 ->name('savings.search');
             Route::resource('savings', 'SavingController');
+            Route::resource('saving-details', 'SavingDetailController');
 
             Route::get('/product-types', function () {
                 return \App\Models\ProductType::all();

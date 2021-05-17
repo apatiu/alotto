@@ -11,11 +11,11 @@
                            @input="onSearch"></InputText>
             </div>
             <div class="p-field">
-                <select-saving-status v-model="filter.status" @update:modelValue="onFilter"/>
+<!--                <select-saving-status v-model="filter.status" @update:modelValue="onFilter"/>-->
             </div>
             <div class="p-field mr-0">
                 <div class="p-inputgroup">
-                    <InputNumber v-model="filter.dt_end_over" class="w-24"
+                    <InputNumber v-model="filter.dt_due_over" class="w-24"
                                  placeholder="เกินกำหนด"
                                  @update:modelValue="onFilter"></InputNumber>
                     <div class="p-inputgroup-addon">วัน</div>
@@ -24,7 +24,7 @@
             </div>
             <Divider layout="vertical"/>
             <div class="p-field mr-0">
-                <Button @click="create" icon="pi pi-circle-plus" label="รับขายฝาก" class="p-button-success"></Button>
+                <Button @click="create" icon="pi pi-circle-plus" label="เปิดออม" class="p-button-success"></Button>
             </div>
         </div>
     </div>
@@ -35,7 +35,7 @@
                    :rows="pagination.rowsPerPage"
                    ref="datatable"
                    :totalRecords="data.total"
-                   :loading="loading"
+                   :loading="isLoading"
                    @page="onPage($event)"
                    v-model:selection="selectedItems"
                    dataKey="id"
@@ -64,27 +64,17 @@
                     {{ $filters.date(props.data.dt) }}
                 </template>
             </Column>
-            <Column field="dt_end" header="วันครบกำหนด" class="justify-center">
+            <Column field="dt_due" header="วันครบกำหนด" class="justify-center">
                 <template #body="props">
                     {{ $filters.date(props.data.dt_end) }}
                 </template>
             </Column>
-            <Column field="price" header="เงินต้น" class="justify-end" headerClass="text-right" bodyClass="text-right">
+            <Column field="price_pay" header="ยอดออม" class="justify-end" headerClass="text-right" bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.price) }}
+                    {{ $filters.decimal(props.data.price_pay) }}
                 </template>
             </Column>
-            <Column field="int_rate" header="อัตราดอกเบี้ย" class="justify-end" headerClass="text-center"
-                    bodyClass="text-center">
-                <template #body="props">
-                    {{ $filters.decimal(props.data.int_rate) }} %
-                </template>
-            </Column>
-            <Column field="weight" header="น้ำหนัก" class="justify-end" headerClass="text-right" bodyClass="text-right">
-                <template #body="props">
-                    {{ $filters.decimal(props.data.weight, 2) }} ก.
-                </template>
-            </Column>
+
             <Column field="status" header="สถานะ" class="justify-center">
                 <template #body="props">
                     <saving-status v-model="props.data.status"></saving-status>
@@ -92,8 +82,10 @@
             </Column>
         </DataTable>
     </div>
-    <form-saving v-model:pawn-id="pawnId" v-model:visible="showForm"></form-saving>
+    <form-saving v-model:saving-id="savingId" v-model:visible="showForm"></form-saving>
+
 </template>
+
 
 <script>
 import AppLayout from "@/Layouts/AppLayout";
@@ -102,17 +94,18 @@ import SelectCustomer from "@/A/SelectCustomer";
 import SavingStatus from "@/A/SavingStatus";
 
 export default {
+    inheritAttrs: false,
     metaInfo: {title: 'Customers'},
     components: { SavingStatus, SelectCustomer, FormSaving},
     layout: AppLayout,
     props: ['filters', 'pagination', 'data'],
     data() {
         return {
-            pawnId: 0,
+            isLoading: false,
+            savingId: null,
             showForm: false,
             selectedItems: null,
             filter: this.filters,
-            loading: false
         }
     },
     watch: {
@@ -121,6 +114,13 @@ export default {
 
             },
             deep: true
+        },
+        showForm(val) {
+            if (!val) {
+                this.$nextTick(() => {
+                    this.onFilter()
+                })
+            }
         }
     },
     mounted() {
@@ -128,11 +128,11 @@ export default {
     },
     methods: {
         create() {
-            this.pawnId = 0
+            this.savingId = null
             this.showForm = true
         },
         open(e) {
-            this.pawnId = e.data.id;
+            this.savingId = e.data.id;
             this.showForm = true;
         },
         onSearch(e) {

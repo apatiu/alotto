@@ -62,6 +62,7 @@ class CreateSavingsTable extends Migration
             $table->string('note')->nullable();
             $table->double('wt')->nullable();
             $table->double('gold_price_sale');
+            $table->boolean('is_forward')->default(false)->nullable();
         });
     }
 

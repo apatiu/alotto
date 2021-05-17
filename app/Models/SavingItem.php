@@ -9,4 +9,19 @@ class SavingItem extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'product_id',
+        'product_name',
+        'product_wt',
+        'qty',
+        'wt',
+        'price',
+        'price_total',
+        'sale_id',
+        'saving_id',
+    ];
+
+    public function product() {
+        return $this->belongsTo(Product::class);
+    }
 }

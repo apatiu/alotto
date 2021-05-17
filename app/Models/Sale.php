@@ -47,6 +47,13 @@ class Sale extends Model
                 $code .= substr('0000' . (intval(substr($latest->attributes['code'], -4)) + 1), -4);
 
             $payment->attributes['code'] = $code;
+
+            if (!$payment->gold_price_sale || !$payment->gold_price_buy || !$payment->gold_price_tax) {
+                $gp = GoldPrice::now();
+                $payment->gold_price_sale = $gp['gold_price_sale'];
+                $payment->gold_price_buy = $gp['gold_price_buy'];
+                $payment->gold_price_tax = $gp['gold_price_tax'];
+            }
         });
     }
 

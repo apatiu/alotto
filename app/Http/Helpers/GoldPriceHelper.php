@@ -23,6 +23,20 @@ if (!function_exists('goldprice')) {
         }
     }
 }
+if (!function_exists('goldPriceOrg')) {
+    function goldPriceOrg()
+    {
+        try {
+
+            $output = file_get_contents('http://thaigold.info/RealTimeDataV2/gtdata_.txt');
+            $output = json_decode($output, false);
+            return ($output);
+
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+}
 
 if (!function_exists('weightgram')) {
     function weightgram($w, $wb)

@@ -15,7 +15,8 @@ class SavingDetail extends Model
         'dt',
         'note',
         'wt',
-        'gold_price_sale'
+        'gold_price_sale',
+        'is_forward'
     ];
 
     public function savingModel() {
