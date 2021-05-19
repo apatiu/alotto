@@ -57,6 +57,7 @@ if (!function_exists('jsDateToDateString')) {
 if (!function_exists('jsDateToDateTimeString')) {
     function jsDateToDateTimeString($dt)
     {
+        if (!$dt) return $dt;
         return \Carbon\Carbon::create($dt)
             ->timezone(config('app.timezone'))
             ->toDateTimeString();

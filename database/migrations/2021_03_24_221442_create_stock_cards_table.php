@@ -24,10 +24,10 @@ class CreateStockCardsTable extends Migration
             $table->decimal('qty_in')->nullable();
             $table->decimal('qty_out')->nullable();
             $table->decimal('qty_end')->nullable();
-            $table->decimal('weight_begin')->nullable();
-            $table->decimal('weight_in')->nullable();
-            $table->decimal('weight_out')->nullable();
-            $table->decimal('weight_end')->nullable();
+            $table->decimal('wt_begin')->nullable();
+            $table->decimal('wt_in')->nullable();
+            $table->decimal('wt_out')->nullable();
+            $table->decimal('wt_end')->nullable();
             $table->text('description')->nullable();
             $table->dateTime('dt')->nullable();
             $table->string('user_id')->nullable();

@@ -27,11 +27,12 @@ class SavingController extends Controller
             ];
         }
 
-        if ($filters['dt_end_over'] ?? 0 > 0) {
+        if ($filters['dt_due_over'] ?? 0 > 0) {
             $data->where(
                 'dt_due',
                 '<=',
-                now()->addDays(0 - $filters['dt_end_over'])->toDateString());
+                now()->addDays(0 - $filters['dt_due_over'])->toDateString())
+                ->whereNotNull('dt_due');
         }
 
         if (isset($filters['q'])) {
@@ -72,7 +73,7 @@ class SavingController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -83,7 +84,7 @@ class SavingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Saving  $saving
+     * @param \App\Models\Saving $saving
      * @return \Illuminate\Http\Response
      */
     public function show(Saving $saving)
@@ -94,7 +95,7 @@ class SavingController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Saving  $saving
+     * @param \App\Models\Saving $saving
      * @return \Illuminate\Http\Response
      */
     public function edit(Saving $saving)
@@ -105,8 +106,8 @@ class SavingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Saving  $saving
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Saving $saving
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Saving $saving)
@@ -117,7 +118,7 @@ class SavingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Saving  $saving
+     * @param \App\Models\Saving $saving
      * @return \Illuminate\Http\Response
      */
     public function destroy(Saving $saving)

@@ -421,6 +421,7 @@ export default {
                     this.form = _.assign(this.form, {
                         life: null,
                         dt: new Date(),
+                        items: []
                     })
                     this.form.gold_price_sale = this.goldPriceSale
                     this.resetNewItem();
@@ -629,6 +630,7 @@ export default {
             }
 
             if (this.form.price_pay === this.form.price_total) {
+                this.formClose.type = 'close';
                 this.saveClose()
             }
 
@@ -645,10 +647,14 @@ export default {
         saveClose() {
             console.log('Save close data.')
             this.isLoading = true;
-            this.formClose.type = 'close';
             axios.post(route('api.savings.actions.close', this.form.id), {
                 data: this.formClose.data(),
                 payments: this.payments,
+            }).then(({data}) => {
+                this.$confirm.require({
+                    message: 'ปิดออมเรียบร้อยแล้ว',
+                    rejectClass: 'hidden'
+                })
             }).finally(() => {
                 this.load(this.form.id)
                 this.dlgClose = false

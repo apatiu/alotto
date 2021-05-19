@@ -41,25 +41,25 @@
             <Column field="qty_begin" header="จำนวนเริ่มต้น" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.qty_begin,2) }}
+                    {{ $filters.decimal(props.data.qty_begin) }}
                 </template>
             </Column>
             <Column field="qty_in" header="จำนวนเข้า" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.qty_in,2) }}
+                    {{ $filters.decimal(props.data.qty_in) }}
                 </template>
             </Column>
             <Column field="qty_out" header="จำนวนออก" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.qty_out,2) }}
+                    {{ $filters.decimal(props.data.qty_out) }}
                 </template>
             </Column>
             <Column field="qty_end" header="จำนวนเหลือ" class="justify-end" headerClass="text-right"
                     bodyClass="text-right text-red-600">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.qty_out,2) }}
+                    {{ $filters.decimal(props.data.qty_end) }}
                 </template>
             </Column>
             <Column field="weight_begin"

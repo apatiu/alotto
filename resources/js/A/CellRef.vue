@@ -4,14 +4,16 @@
     </div>
     <inertia-link v-if="linkType==='link'" :href="linkUrl">{{ linkLabel }}</inertia-link>
     <form-pawn v-model:visible="pawnDialog" :pawn-id="data[fieldId]"></form-pawn>
+    <form-saving v-model:visible="savingDialog" :saving-id="data[fieldId]"></form-saving>
 </template>
 
 <script>
 import FormPawn from "@/Pages/Pawns/FormPawn";
+import FormSaving from "@/Pages/Savings/FormSaving";
 
 export default {
     name: "CellRef",
-    components: {FormPawn},
+    components: {FormSaving, FormPawn},
     props: {
         data: Object,
         morphName: {default: 'ref'},
@@ -24,7 +26,8 @@ export default {
             linkType: '',
             linkLabel: '',
             linkUrl: '',
-            pawnDialog: false
+            pawnDialog: false,
+            savingDialog: false,
         }
     },
     mounted() {
@@ -38,6 +41,10 @@ export default {
                 this.linkLabel = this.data[this.morphName][this.fieldLabel];
                 this.linkUrl = route('stock-imports.edit', this.data[this.morphName]['id'])
                 break;
+            case 'App\\Models\\Saving':
+                this.linkType = 'dialog';
+                this.linkLabel = this.data[this.morphName][this.fieldLabel];
+                break;
         }
     },
     methods: {
@@ -45,6 +52,9 @@ export default {
             switch (this.data[this.fieldType]) {
                 case 'App\\Models\\Pawn':
                     this.pawnDialog = true;
+                    break;
+                case 'App\\Models\\Saving':
+                    this.savingDialog = true;
                     break;
             }
         }

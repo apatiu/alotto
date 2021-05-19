@@ -11,9 +11,9 @@
                            @input="onSearch"></InputText>
             </div>
             <div class="p-field">
-<!--                <select-saving-status v-model="filter.status" @update:modelValue="onFilter"/>-->
+                <select-saving-status v-model="filter.status" @update:modelValue="onFilter"/>
             </div>
-            <div class="p-field mr-0">
+            <div class="p-field">
                 <div class="p-inputgroup">
                     <InputNumber v-model="filter.dt_due_over" class="w-24"
                                  placeholder="เกินกำหนด"
@@ -21,6 +21,9 @@
                     <div class="p-inputgroup-addon">วัน</div>
                 </div>
 
+            </div>
+            <div class="p-field mr-0">
+                <Button icon="pi pi-times" class="p-button-text" @click="clearFilters"></Button>
             </div>
             <Divider layout="vertical"/>
             <div class="p-field mr-0">
@@ -66,10 +69,16 @@
             </Column>
             <Column field="dt_due" header="วันครบกำหนด" class="justify-center">
                 <template #body="props">
-                    {{ $filters.date(props.data.dt_end) }}
+                    {{ $filters.date(props.data.dt_due) }}
                 </template>
             </Column>
-            <Column field="price_pay" header="ยอดออม" class="justify-end" headerClass="text-right" bodyClass="text-right">
+            <Column field="dt_close" header="วันปิดออม" class="justify-center">
+                <template #body="props">
+                    {{ $filters.date(props.data.dt_close) }}
+                </template>
+            </Column>
+            <Column field="price_pay" header="ยอดออม" class="justify-end" headerClass="text-right"
+                    bodyClass="text-right">
                 <template #body="props">
                     {{ $filters.decimal(props.data.price_pay) }}
                 </template>
@@ -92,11 +101,12 @@ import AppLayout from "@/Layouts/AppLayout";
 import FormSaving from "./FormSaving";
 import SelectCustomer from "@/A/SelectCustomer";
 import SavingStatus from "@/A/SavingStatus";
+import SelectSavingStatus from "@/A/SelectSavingStatus";
 
 export default {
     inheritAttrs: false,
     metaInfo: {title: 'Customers'},
-    components: { SavingStatus, SelectCustomer, FormSaving},
+    components: {SavingStatus, SelectCustomer, FormSaving, SelectSavingStatus},
     layout: AppLayout,
     props: ['filters', 'pagination', 'data'],
     data() {
@@ -155,6 +165,13 @@ export default {
                 }
             })
         },
+        clearFilters() {
+            this.filter = {
+                status: 'open',
+                dt_due_over: null,
+            };
+            this.onFilter()
+        }
     },
 }
 </script>
