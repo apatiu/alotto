@@ -162,14 +162,17 @@ class SavingController extends Controller
             //save saving row
             if ($data['type'] === 'forward') {
                 $saving->price_forward = $data['price_forward'];
+                $saving->dt_close = now();
                 $saving->status = 'close';
                 $saving->save();
 
                 // create new saving if forward
                 $new = new Saving();
+                $new->customer_id = $saving->customer_id;
                 $new->team_id = $saving->team_id;
                 $new->gold_price_sale = goldprice();
                 $new->dt = now();
+                $new->price_pay = $data['price_forward'];
                 $new->status = 'open';
                 $new->user_id = $request->user()->id;
                 $new->prev_id = $saving->id;

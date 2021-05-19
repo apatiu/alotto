@@ -57,7 +57,7 @@ class PawnController extends Controller
         $pagination = request('pagination', [
             'rowsPerPage' => 12
         ]);
-//        dd($data->toSql());
+
         return Inertia::render('Pawns/Index', [
             'filters' => $filters,
             'pagination' => $pagination,
