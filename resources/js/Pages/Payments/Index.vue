@@ -20,10 +20,11 @@
             <Column field="dt" header="วันที่">
                 <Column field="code" header="#"></Column>
                 <template #body="props">
-                    {{ $filters.datetime(props.data.dt) }}
+                    {{ $filters.datetime(props.data.dt, false) }}
                 </template>
             </Column>
             <Column field="payment_type.name" header="ประเภท"></Column>
+            <Column field="method.name" header="ช่องทาง"></Column>
             <Column field="receive" header="รับ" class="text-right">
                 <template #body="props">
                     {{ $filters.decimal(props.data.receive) }}
@@ -109,11 +110,11 @@ export default {
         JetLabel,
         JetSecondaryButton,
     },
-    props: ['payments'],
+    props: ['payments', 'd'],
     data() {
         return {
             form: this.$inertia.form({
-                d: null
+                d: this.d
             }),
             item: {},
             itemDialog: false,
@@ -129,13 +130,16 @@ export default {
         }
     },
     mounted() {
-        this.form.d = new Date()
+        this.form.d = new Date(this.d)
     },
     methods: {
         openNew() {
             this.item = {bank: 'BBL'};
             this.submitted = false;
             this.itemDialog = true;
+        },
+        filter() {
+            this.form.get(route('payments.index'))
         },
         hideDialog() {
             this.itemDialog = false;

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\GoldPrice;
 use App\Models\Payment;
+use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleDetail;
 use App\Models\Saving;
 use App\Models\SavingDetail;
 use App\Models\Shift;
+use App\Models\StockCard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -116,7 +119,7 @@ class SavingController extends Controller
     public function deposit(Request $request, Saving $saving)
     {
         DB::transaction(function () use ($saving, $request) {
-            $detail = new SavingDetail( $request->input('deposit') );
+            $detail = new SavingDetail($request->input('deposit'));
             $detail['dt'] = jsDateToDateTimeString($detail['dt']);
             $saving->details()->save($detail);
 
@@ -135,82 +138,113 @@ class SavingController extends Controller
             $saving->refresh();
 
 
-
         });
         return $saving->refresh();
 
     }
 
-    public function refund(Request $request, Saving $saving) {
+    public function refund(Request $request, Saving $saving)
+    {
         $saving->fill($request->all());
         $saving->status = 'close';
         $saving->save();
         return true;
     }
 
-    public function close(Request  $request, Saving $saving) {
-        $data = request('data');
-        $payments = request('payments');
+    public function close(Request $request, Saving $saving)
+    {
+        try {
+            DB::beginTransaction();
 
-        //save saving row
-        if ($data('type') == 'forward') {
-            $saving->price_forward = $data['price_forward'];
-            $saving->status = 'close';
-            $saving->save();
+            $data = request('data');
+            $payments = request('payments');
 
-            // create new saving if forward
-            $new = new Saving();
-            $new->team_id = $saving->team_id;
-            $new->gold_price_sale = goldprice();
-            $new->dt = now();
-            $new->status = 'open';
-            $new->user_id = $request->user()->id;
-            $new->prev_id = $saving->id;
-            $new->save();
+            //save saving row
+            if ($data['type'] === 'forward') {
+                $saving->price_forward = $data['price_forward'];
+                $saving->status = 'close';
+                $saving->save();
 
-            $saving->next_id = $new->id;
-            $saving->save();
+                // create new saving if forward
+                $new = new Saving();
+                $new->team_id = $saving->team_id;
+                $new->gold_price_sale = goldprice();
+                $new->dt = now();
+                $new->status = 'open';
+                $new->user_id = $request->user()->id;
+                $new->prev_id = $saving->id;
+                $new->save();
 
-            //create new sale detail
-            $new->details()->create([
-                'amount' => $data['price_forward'],
-                'dt'=> $new->dt,
-                'gold_price_sale' => $new->gold_price_sale,
-                'is_forward' => true
-            ]);
+                $saving->next_id = $new->id;
+                $saving->save();
 
-        } else {  // refund
-            $saving->price_refund = $data['price_refund'];
-            $saving->status = 'close';
-            $saving->save();
+                //create new sale detail
+                $new->details()->create([
+                    'amount' => $data['price_forward'],
+                    'dt' => $new->dt,
+                    'gold_price_sale' => $new->gold_price_sale,
+                    'is_forward' => true
+                ]);
 
-            // create new payment if refund
-            foreach ($payments as $payment) {
-                $p = new Payment();
-                $p->parse($payment);
-                $p->payment_type_id = 'refund';
-                $saving->payments()->save($p);
+            } elseif ($data['type'] === 'refund') {  // refund
+                $saving->price_refund = $data['price_refund'];
+                $saving->status = 'close';
+                $saving->save();
+
+                // create new payment if refund
+                foreach ($payments as $payment) {
+                    $p = new Payment();
+                    $p->parse($payment);
+                    $p->payment_type_id = 'refund';
+                    $saving->payments()->save($p);
+                }
+
+            } else { //close
+                $saving->status = 'close';
+                $saving->save();
             }
 
+            // create sale record
+            $sale = new Sale();
+            $sale->fill(GoldPrice::now()->toArray());
+            $sale->customer_id = $saving->customer_id;
+            $sale->team_id = $saving->team_id;
+            $sale->dt = now();
+            $sale->type = 'sale';
+            $sale->status = 'checked';
+            $sale->save();
+            $saving->sales()->save($sale);
+
+            //create sale detail record
+            $eachDeposit = $saving->price_total / $saving->items->count();
+            foreach ($saving->refresh()->items as $item) {
+                $product = Product::find($item->product_id);
+
+                $saleDetail = new SaleDetail();
+                $saleDetail->fill($product->toArray());
+                $saleDetail->qty = 1;
+                $saleDetail->deposit = $eachDeposit;
+
+                if ($saleDetail->sale_with_gold_price) {
+                    $saleDetail->price_sale_wage = $saleDetail->deposit - $saleDetail->price_sale_gold;
+                    $saleDetail->price_sale_total = $saleDetail->deposit - $saleDetail->price_sale_gold - $saleDetail->price_sale_wage;
+                }
+
+                $sale->details()->save($saleDetail);
+
+                // create stock card
+                $card = StockCard::add($item->product, 0 - $item->qty, $saving);
+
+            }
+            $sale->refresh();
+            $sale->recalcTotal();
+            $sale->createPayments();
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
         }
-
-        // create sale record
-        $sale = new Sale();
-        $sale->dt = now();
-        $sale->customer_id = $saving->customer_id;
-        $sale->team_id = $saving->team_id;
-        $sale->type = 'sale';
-        $sale->status = 'checked';
-        $sale->save();
-
-        //create sale detail record
-        foreach ($saving->refresh()->items as $item) {
-            $saleDetail = new SaleDetail($item);
-        }
-
-
-        // create sale payment records
-        // create stock card
 
 
     }

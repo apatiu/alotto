@@ -29,6 +29,7 @@ class CreatePaymentTypesTable extends Migration
             ['id' => 'sale', 'name' => 'ขาย'],
             ['id' => 'buy', 'name' => 'ซื้อ'],
             ['id' => 'change', 'name' => 'เปลี่ยน'],
+            ['id' => 'dep', 'name' => 'ฝากออม'],
         ]);
     }
 

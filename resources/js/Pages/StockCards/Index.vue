@@ -69,23 +69,23 @@
                     {{ $filters.decimal(props.data.weight_begin,2) }}
                 </template>
             </Column>
-            <Column field="weight_in" header="นน.เข้า" class="justify-end" headerClass="text-right"
+            <Column field="wt_in" header="นน.เข้า" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.weight_in,2) }}
+                    {{ $filters.decimal(props.data.wt_in,2) }}
                 </template>
             </Column>
-            <Column field="weight_out" header="นน.ออก" class="justify-end" headerClass="text-right"
+            <Column field="wt_out" header="นน.ออก" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.weight_out,2) }}
+                    {{ $filters.decimal(props.data.wt_out,2) }}
                 </template>
             </Column>
-            <Column field="weight_end" header="นน.เหลือ" class="justify-end"
+            <Column field="wt_end" header="นน.เหลือ" class="justify-end"
                     headerClass="text-right"
                     bodyClass="text-right  text-yellow-600">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.weight_end,2) }}
+                    {{ $filters.decimal(props.data.wt_end,2) }}
                 </template>
             </Column>
             <Column field="ref_id" header="อ้างอิง" class="justify-center text-center">

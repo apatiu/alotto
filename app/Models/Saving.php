@@ -38,7 +38,9 @@ class Saving extends Model
     {
         static::creating(function ($model) {
             if (is_null($model->code)) {
-                $model->code = 'S' . substr('0000' . ($model->id + 1), -5);
+                $latest = Saving::latest('code')->first();
+                $id = intval(substr($latest->code ?? 0, -5));
+                $model->code = 'S' . substr('0000' . ($id + 1), -5);
             }
 
             if (!$model->user_id) {
@@ -88,13 +90,20 @@ class Saving extends Model
     {
         return $this->belongsTo(Customer::class);
     }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function updateTotal() {
-        $this->price_pay = $this->loadSum('details','amount')->details_sum_amount;
-        $this->price_remain = $this->price_total-$this->price_pay;
+    public function updateTotal()
+    {
+        $this->price_pay = $this->loadSum('details', 'amount')->details_sum_amount;
+        $this->price_remain = $this->price_total - $this->price_pay;
     }
+
+    public function sales() {
+        return $this->morphToMany(Sale::class,'saleable');
+    }
+
 }

@@ -68,7 +68,7 @@ export default {
       }
     },
     onSelectProduct(e) {
-      this.$emit('select', e)
+      this.$emit('select-product', e)
       this.filteredProducts = [];
       if (this.resetAfterSelect)
         this.product = null;

@@ -91,7 +91,7 @@
                 <!--        add item-->
                 <div class="p-fluid p-grid mt-6">
                     <div class="p-col-2">
-                        <select-product v-model="product" @select="onSelectProduct"></select-product>
+                        <select-product v-model="product" @select-product="onSelectProduct"></select-product>
                     </div>
                     <div class="p-col-4">
                         <label>ชื่อสินค้า</label>
@@ -256,12 +256,14 @@
                 </div>
                 <InputBaht
                     v-model="formClose.price_forward"
-                           :disabled="formClose.type==='refund'"></InputBaht>
+                    :disabled="formClose.type==='refund'"></InputBaht>
             </div>
         </div>
         <template #footer>
             <Button class="p-button-text" @click="dlgClose=false">ยกเลิก</Button>
-            <Button @click="(formClose.type==='refund') ? getPayments(formClose.price_refund) : saveClose($event)">ตกลง</Button>
+            <Button @click="(formClose.type==='refund') ? getPayments(formClose.price_refund) : saveClose($event)">
+                ตกลง
+            </Button>
         </template>
     </Dialog>
 
@@ -438,6 +440,8 @@ export default {
             handler(val) {
                 this.form.price_total = _.sumBy(val, 'price_total')
                 this.form.price_remain = this.form.price_total - this.form.price_pay
+                if (this.form.id)
+                    this.save()
             }, deep: true
         }
     },
@@ -489,6 +493,7 @@ export default {
             return data;
         },
         resetNewItem() {
+            this.product = null;
             this.newItem = {
                 product_id: null,
                 product_name: null,
@@ -501,6 +506,7 @@ export default {
             this.v.newItem.$reset();
         },
         async onSelectProduct(e) {
+            console.log('Select Product');
             if (!e.gold_percent) return;
 
             this.newItem.product = e
@@ -511,13 +517,16 @@ export default {
             let gold_price = await this.$a.getGoldPrice();
             let psp = this.$a.calcProductSalePrice(e, gold_price.gold_price_sale)
             this.newItem.price = this.newItem.price_total = psp;
+
         },
         addItem() {
+            this.newItem.price_total = this.newItem.price * this.newItem.qty
             this.v.newItem.$touch();
             if (this.v.newItem.$error) return
 
             let item = _.assign({}, this.newItem)
             this.form.items.push(item);
+            this.product = null;
             this.resetNewItem();
         },
         removeItemItems(i) {
@@ -553,6 +562,7 @@ export default {
                 console.log('v.form.$error')
                 return
             }
+            this.isLoading = true;
 
             if (!this.form.id) {
                 console.log('Creating gold saving data.')
@@ -560,6 +570,7 @@ export default {
                     .then(res => {
                             this.notify('บันทึกข้อมูลแล้ว');
                             this.load(res.data.id);
+                            this.isLoading = false;
                         }
                     )
             } else {
@@ -567,6 +578,7 @@ export default {
                     .then(res => {
                         this.notify('บันทึกข้อมูลแล้ว');
                         this.load(res.data.id);
+                        this.isLoading = false;
                     })
             }
         },
@@ -633,6 +645,7 @@ export default {
         saveClose() {
             console.log('Save close data.')
             this.isLoading = true;
+            this.formClose.type = 'close';
             axios.post(route('api.savings.actions.close', this.form.id), {
                 data: this.formClose.data(),
                 payments: this.payments,

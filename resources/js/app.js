@@ -131,7 +131,7 @@ const app = createApp({
     .use(VueLoading, {
         color: 'skyblue'
     })
-app.component('loading',VueLoading)
+app.component('loading', VueLoading)
 app.config.globalProperties.$appState = reactive({inputStyle: 'outlined'});
 
 app.config.globalProperties.$filters = {
@@ -169,13 +169,23 @@ app.config.globalProperties.$a = {
                 return data.gold_price_sale
             })
     },
+
+    // ราคาขาย + ค่าแรง + ภาษี
     calcProductSalePrice(product, gold_price_sale) {
-        let priceSaleGold = numeral(gold_price_sale)
-            .add(product.gold_percent.add_sale)
-            .multiply(product.gold_percent.percent_sale / 100)
-            .multiply(product.wtGram)
-            .divide(15.2)
-            .value();
+
+        let priceSaleGold = null;
+        if (product.sale_with_gold_price) {
+            priceSaleGold = numeral(gold_price_sale)
+                .add(product.gold_percent.add_sale)
+                .multiply(product.gold_percent.percent_sale / 100)
+                .multiply(0.0656)
+                .multiply(product.wtGram)
+                .add(product.tag_wage)
+                .value()
+        } else {
+            priceSaleGold = product.tag_price;
+        }
+
         return Math.floor(priceSaleGold);
     }
 }

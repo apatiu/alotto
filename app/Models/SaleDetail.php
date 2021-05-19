@@ -31,7 +31,7 @@ class SaleDetail extends Model
         'price_sale_wage',
         'price_buy_total',
         'price_buy_calc',
-        'sale_by_baht',
+        'sale_with_gold_price',
         'wage_by_pcs',
         'profit_wage',
         'profit_gold',

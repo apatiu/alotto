@@ -97,5 +97,39 @@ class Sale extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function savings()
+    {
+        return $this->morphedByMany(Saving::class, 'saleable');
+    }
+
+    public function recalcTotal()
+    {
+        $this->total_price_sale = $this->loadSum('details', 'price_sale_total')->details_sum_price_sale_total;
+        $this->total_price_buy = $this->loadSum('details', 'price_buy_total')->details_sum_price_buy_total;
+        $this->total_amount = $this->total_price_sale - $this->total_price_buy;
+
+        $this->total_wt_sale = $this->loadSum('sales', 'wt')->sales_sum_wt;
+        $this->total_wt_buy = $this->loadSum('buys', 'wt')->buys_sum_wt;
+        $this->total_qty_sale = $this->loadSum('sales', 'qty')->sales_sum_qty;
+        $this->save();
+    }
+
+    public function createPayments($payments = null)
+    {
+        if (!$payments) {
+            $payments = [[
+                'team_id' => $this->team_id,
+                'user_id' => $this->user_id,
+                'shift_id' => Shift::current()->id,
+                'dt' => $this->dt,
+                'pay' => $this->total_price_buy,
+                'receive' => $this->total_price_sale,
+                'method_id' => 'cash',
+                'payment_type_id' => $this->type
+            ]];
+        }
+        $this->payments()->createMany($payments);
+
+    }
 
 }

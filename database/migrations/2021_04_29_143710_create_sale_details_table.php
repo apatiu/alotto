@@ -16,10 +16,10 @@ class CreateSaleDetailsTable extends Migration
         Schema::create('sale_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('sale_id');
-            $table->enum('status',['sale','buy']);
+            $table->enum('status', ['sale', 'buy']);
             $table->foreignId('product_id')->nullable();
             $table->foreignId('product_percent_id')->nullable();
-            $table->foreignId('product_type_id')->nullable();
+            $table->string('product_type_id', 10)->nullable();
             $table->string('product_type_name')->nullable();
             $table->foreignId('product_design_id')->nullable();
             $table->foreignId('product_size_id')->nullable();

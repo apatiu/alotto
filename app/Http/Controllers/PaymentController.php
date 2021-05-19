@@ -8,10 +8,18 @@ use Inertia\Inertia;
 
 class PaymentController extends Controller
 {
-    public function index() {
+    public function index()
+    {
+        $d = jsDateToDateString(urldecode(request('d', null)));
+        if (!$d)
+            $d = now();
 
-        return Inertia::render('Payments/Index',[
-            'payments'=> Payment::with('team','payment_type')->get()
+        $rows = Payment::with('team', 'payment_type','method')
+            ->orderBy('dt')
+            ->whereDate('dt', $d);
+        return Inertia::render('Payments/Index', [
+            'd' => $d,
+            'payments' => $rows->get()
         ]);
     }
 }

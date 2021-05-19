@@ -322,9 +322,9 @@ class StockImportController extends Controller
                 'qty_out' => 0,
                 'qty_end' => $line->qty,
                 'weight_begin' => 0,
-                'weight_in' => $line->product_weight_total,
-                'weight_out' => 0,
-                'weight_end' => $line->product_weight_total,
+                'wt_in' => $line->product_weight_total,
+                'wt_out' => 0,
+                'wt_end' => $line->product_weight_total,
                 'description' => 'นำเข้า',
                 'user_id' => Auth::user()->id
             ]);
@@ -339,9 +339,9 @@ class StockImportController extends Controller
             $new->qty_begin = $sc->qty_end;
             $new->qty_in = $line->qty;
             $new->qty_end = $new->qty_begin + $new->qty_in;
-            $new->weight_begin = $sc->weight_out;
-            $new->weight_in = $line->product_weight_total;
-            $new->weight_end = $new->weight_begin + $new->weight_in;
+            $new->weight_begin = $sc->wt_out;
+            $new->wt_in = $line->product_weight_total;
+            $new->wt_end = $new->weight_begin + $new->wt_in;
             $new->dt = $this->bill->dt;
             $new->ref_id = $this->bill->id;
             $new->ref_type = StockImport::class;

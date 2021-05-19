@@ -32,7 +32,7 @@ class Product extends Model
         "description"
     ];
 
-    protected $appends = ['qty', 'wtGram'];
+    protected $appends = ['qty', 'wtGram', 'price_sale_gold'];
 
     public function getQtyAttribute()
     {
@@ -112,5 +112,13 @@ class Product extends Model
 
         $this->attributes['name'] = implode(' ', $result);
 
+    }
+
+    public function getPriceSaleGoldAttribute() {
+        if ($this->sale_with_gold_price) {
+            $gp = GoldPrice::now();
+            return $gp->gold_price_sale * 0.0656 * $this->getWtGramAttribute();
+        } else
+            return 0;
     }
 }
