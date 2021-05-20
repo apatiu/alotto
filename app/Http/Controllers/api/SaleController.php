@@ -70,23 +70,9 @@ class SaleController extends Controller
                 //payment work
                 foreach ($data['payments'] as $payment) {
                     $model = new Payment();
-                    $model->fill($payment);
-                    $model->fill([
-                        'team_id' => $request->user()->currentTeam->id,
-                        'shift_id' => Shift::current()->id,
-                        'payment_no' => '',
-                        'dt' => $sale->dt,
-                        'payment_type_id' => $sale->type
-                    ]);
-                    if ($payment['amount'] < 0)
-                        $model->pay = abs($payment['amount']);
-                    else
-                        $model->receive = $payment['amount'];
-
+                    $model->parse($payment);
+                    $model->payment_type_id = $data['type'];
                     $sale->payments()->save($model);
-
-                    $shift[$payment['method_id']] += ($model->receive - $model->pay);
-                    $shift->save();
                 }
 
                 //stock work
@@ -103,7 +89,7 @@ class SaleController extends Controller
                                 'qty_in' => 0,
                                 'qty_out' => $detail->qty,
                                 'qty_end' => $latest->qty_end - $detail->qty,
-                                'weight_begin' => $latest->wt_end,
+                                'wt_begin' => $latest->wt_end,
                                 'wt_in' => 0,
                                 'wt_out' => $detail->wt,
                                 'wt_end' => $latest->wt_end - $detail->wt,

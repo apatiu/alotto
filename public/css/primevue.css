@@ -11289,6 +11289,10 @@ body {
     max-height: 29.7cm;
   }
 }
+#printable {
+  display: none;
+}
+
 @media only print {
   body {
     background-color: white !important;

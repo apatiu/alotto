@@ -22,6 +22,11 @@
                 <div>
                     <smartbar-saving></smartbar-saving>
                 </div>
+                <div>
+                    <Button class="p-button-secondary"
+                            @click="dlgBuyLottery=true">ซื้อรางวัล
+                    </Button>
+                </div>
             </div>
         </div>
     </div>
@@ -62,12 +67,10 @@
                         <template #title><span class="text-green-800">ขาย</span></template>
                         <template #content>
                             <div class="p-flex-column">
-                                <div>
-                                    <select-product
-                                        @select="onSelectProduct($event)"
-                                        :disabled="form.status==='checked'"
-                                    ></select-product>
-                                </div>
+                                <select-product
+                                    @select-product="onSelectProduct($event)"
+                                    reset-after-select
+                                    v-if="saleEditable"/>
                                 <DataTable
                                     :value="form.sales"
                                     class="p-datatable-sm p-mt-1"
@@ -77,7 +80,7 @@
                                     <Column field="product_code" header="รหัส" frozen class="w-40"></Column>
                                     <Column field="product_name" header="ชื่อสินค้า"
                                             style="min-width:170px;"></Column>
-                                    <Column field="qty" header="จำนวน" class="w-20 justify-center">
+                                    <Column field="qty" header="จำนวน" class="w-28 justify-center">
                                         <template #editor="slotProps">
                                             <InputNumber
                                                 :modelValue="slotProps.data.qty"
@@ -154,12 +157,14 @@
                                                  input-class="w-full"></InputNumber>
                                 </div>
                                 <div class="w-40">
-                                    <label>ราคารรับซื้อ</label>
+                                    <label>ราคารับซื้อ</label>
                                     <InputNumber v-model="buy.price_buy_total"
                                                  input-class="w-full"/>
                                 </div>
                                 <div class="w-20 flex items-end">
-                                    <Button icon="pi pi-plus" @click="addBuy"></Button>
+                                    <Button icon="pi pi-plus"
+                                            @click="addBuy"
+                                            :disabled="v.buy.$invalid"></Button>
                                 </div>
                             </div>
                             <DataTable :value="form.buys" class="p-datatable-sm p-mt-1">
@@ -181,7 +186,9 @@
                                         <Button type="button"
                                                 icon="pi pi-trash"
                                                 class="p-button-sm p-button-rounded p-button-text p-button-plain"
-                                                @click="removeBuy(index)"></Button>
+                                                @click="removeBuy(index)"
+                                                v-if="saleEditable"
+                                        ></Button>
                                     </template>
                                 </Column>
                                 <template #empty>
@@ -195,10 +202,15 @@
                 <div class="section-payments mt-8" v-if="form.payments.length">
                     <h5 class="h5">รายการชำระเงิน</h5>
                     <DataTable :value="form.payments">
-                        <Column field="dt" header="วันที่"></Column>
+                        <Column field="dt" header="วันที่">
+                            <template #body="props">
+                                {{ $filters.datetime(props.data.dt) }}
+                            </template>
+                        </Column>
                         <Column field="method.name" header="ช่องทาง"></Column>
                         <Column field="bank_account.name" header="บัญชี"></Column>
-                        <Column field="receive" header="จำนวนเงิน"></Column>
+                        <Column field="receive" header="รับ"></Column>
+                        <Column field="pay" header="จ่าย"></Column>
                     </DataTable>
                 </div>
             </div>
@@ -246,6 +258,7 @@
     <input-payment v-model:visible="paymentDialog"
                    :target="form.total_amount"
                    @done="savePayments($event)"></input-payment>
+    <buy-lottery v-model:visible="dlgBuyLottery"></buy-lottery>
 
 </template>
 
@@ -263,6 +276,8 @@ import InputError from "@/Jetstream/InputError";
 import ACalendar from "@/A/ACalendar";
 import SmartbarPawn from "@/A/SmartbarPawn";
 import SmartbarSaving from "@/A/SmartbarSaving";
+import {mapValues} from "lodash";
+import BuyLottery from "@/A/BuyLottery";
 
 export default {
     name: "Pos",
@@ -271,6 +286,7 @@ export default {
         return {v}
     },
     components: {
+        BuyLottery,
         SmartbarSaving,
         SmartbarPawn,
         ACalendar,
@@ -334,6 +350,7 @@ export default {
             paymentDialog: false,
             editingSalesCellRows: {},
             editingBuysCellRows: {},
+            dlgBuyLottery: false
         }
     },
     validations() {
@@ -354,6 +371,10 @@ export default {
                 // buys: {
                 //     minLength: minLength(this.form.type !== 'sales' ? 1 : 0)
                 // }
+            },
+            buy: {
+                product_type: {required},
+                wt: {required}
             }
         }
     },
@@ -378,6 +399,9 @@ export default {
     computed: {
         checked() {
             return this.form.status === 'checked'
+        },
+        saleEditable() {
+            return this.form.status === 'open'
         },
         salesQtySum() {
             let output = _.sumBy(this.form.sales, (o) => {
@@ -451,12 +475,17 @@ export default {
         }
     },
     methods: {
+        resetBuy() {
+            this.buy = mapValues(this.buy, () => null)
+            this.buy.product_percent_id = 96;
+        },
         reset() {
             this.form.reset();
             this.form.customer_id = this.customer.id
             this.form.dt = new Date();
             this.form.sales = [];
             this.form.buys = [];
+
             this.$nextTick(() => {
                 this.getGoldPrice();
             })
@@ -473,6 +502,7 @@ export default {
         },
         onSelectProduct(e) {
             this.product = null;
+            console.log('Select product : ')
             console.log(e)
             if (e) {
                 let sale = this.getSaleLine(e, 1)
@@ -596,6 +626,8 @@ export default {
             this.form.buys.splice(i, 1)
         },
         async calcBuyPrice(wt) {
+            if (!this.buy.product_percent_id && !wt) return
+
             let gPercent = await this.getGoldPercent(this.buy.product_percent_id)
             this.buy.product_percent = gPercent;
 
@@ -608,12 +640,14 @@ export default {
             return o.value()
         },
         addBuy() {
+            if (this.v.buy.$invalid) return
             let buy = _.assign({}, this.buy, {
                 status: 'buy',
                 avg_cost_per_baht: (this.buy.price_buy_total / this.buy.wt) * 15.2
             })
             buy.product_type_name = this.buy.product_type.name
             this.form.buys.push(buy)
+            this.resetBuy()
         },
         getChangePrice(e) {
             this.v.$reset()

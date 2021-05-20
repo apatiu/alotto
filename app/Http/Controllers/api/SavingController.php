@@ -128,7 +128,7 @@ class SavingController extends Controller
             foreach ($payments as $payment) {
                 $p = new Payment();
                 $p->parse($payment);
-                $p->payment_type_id = 'dep';
+                $p->payment_type_id = 'saving-dep';
                 $saving->payments()->save($p);
                 $detail->payments()->save($p);
             }
@@ -191,6 +191,7 @@ class SavingController extends Controller
 
             } elseif ($data['type'] === 'refund') {  // refund
                 $saving->price_refund = $data['price_refund'];
+                $saving->dt_close = now();
                 $saving->status = 'close';
                 $saving->save();
 
@@ -198,7 +199,7 @@ class SavingController extends Controller
                 foreach ($payments as $payment) {
                     $p = new Payment();
                     $p->parse($payment);
-                    $p->payment_type_id = 'refund';
+                    $p->payment_type_id = 'saving-refund';
                     $saving->payments()->save($p);
                 }
 

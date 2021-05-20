@@ -15,6 +15,8 @@ class CreateLotteriesTable extends Migration
     {
         Schema::create('lotteries', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('customer_id');
+            $table->date('dt_lot');
             $table->datetime('dt_buy');
             $table->datetime('dt_sale')->nullable();
             $table->string('number');

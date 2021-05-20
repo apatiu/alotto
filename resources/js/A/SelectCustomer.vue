@@ -1,5 +1,5 @@
 <template>
-    <div class="border rounded p-4">
+    <div class="border rounded p-2">
         <div class="p-field m-0 p-0">
             <div class="p-d-flex">
                 <div class="p-col-8">
@@ -26,15 +26,12 @@
                             <small>เลขบัตร: {{ modelValue.tax_id }}</small>
                             <small>ที่อยุ่: {{ modelValue.address }}</small>
                         </template>
-                        <template v-else>
-                            กรุณาเลือกลูกค้า
-                        </template>
                     </div>
                 </div>
             </div>
         </div>
 
-        <small class="p-error" v-if="errors.length">กรุณาเลือกลูกค้า</small>
+        <InputError :model-value="errors"></InputError>
     </div>
     <form-customer v-model:visible="creating"
                    @created="onUpdateValue"></form-customer>
@@ -43,10 +40,11 @@
 
 <script>
 import FormCustomer from "@/Pages/Customers/FormCustomer";
+import InputError from "@/Jetstream/InputError";
 
 export default {
     name: "SelectCustomer",
-    components: {FormCustomer},
+    components: {InputError, FormCustomer},
     props: {
         modelValue: Object,
         forceSelection: {
@@ -54,10 +52,7 @@ export default {
             default: false
         },
         disabled: {type: Boolean, default: false},
-        errors: {
-            type: Array,
-            default: []
-        },
+        errors: {default: []},
         showLabel: {type: Boolean, default: true}
     },
     data() {

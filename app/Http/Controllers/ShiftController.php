@@ -40,14 +40,7 @@ class ShiftController extends Controller
         $shift = new Shift([
             'team_id' => $request->user()->currentTeam->id,
             'cash_begin' => $request->input('cash_begin'),
-            'cash' => 0,
-            'cash_to_safe' => 0,
-            'cash_to_bank' => 0,
-            'cash_end' => 0,
-            'bank' => 0,
-            'card' => 0,
             'open_user_id' => $request->user()->id,
-            'close_user_id' => 0,
             'opened_at' => now(),
             'status' => 'open'
         ]);

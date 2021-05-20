@@ -50,7 +50,7 @@ class Payment extends Model
         $this->fill($data);
         $this->dt = jsDateToDateTimeString($data['dt']);
         $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
-        $this->pay = $data['amount'] < 0 ? $data['amount'] : null;
+        $this->pay = $data['amount'] < 0 ? abs( $data['amount'] ) : null;
     }
 
     public function shift()
@@ -101,5 +101,13 @@ class Payment extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    static function summaryByDays($d_begin,$d_end) {
+
+    }
+
+    static function summaryByShift($shift_id) {
+
     }
 }

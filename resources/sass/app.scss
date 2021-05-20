@@ -54,6 +54,9 @@ body {
         }
     }
 }
+#printable {
+    display: none;
+}
 
 @media only print {
     body {
