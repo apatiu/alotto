@@ -88,7 +88,8 @@ class Payment extends Model
         return $this->morphedByMany(StockImport::class, 'paymentable');
     }
 
-    public function savingDetails() {
+    public function savingDetails()
+    {
         return $this->morphedByMany(SaleDetail::class, 'paymentable');
     }
 
