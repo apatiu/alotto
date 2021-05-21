@@ -13,6 +13,7 @@ export default {
         classObject() {
             return {
                 'whitespace-nowrap rounded-3xl w-full text-center font-bold' : true,
+                'py-2' : true,
                 'py-1 text-sm small': this.small,
                 'bg-green-100': this.modelValue === 'open',
                 'bg-gray-100': this.modelValue === 'close',

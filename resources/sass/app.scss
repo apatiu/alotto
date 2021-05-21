@@ -37,63 +37,69 @@ body {
     padding: 4px;
 }
 
-.p-datatable {
-    border: 1px solid #eee;
-}
+.p-button {
+    &.p-button-icon-only {
+        &.p-button-xs {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
 
-@media only screen {
-    #printable {
-        .page {
-            background-color: white;
-            padding: 1cm;
+    }
 
-            &.A4 {
-                width: 21cm;
-                max-height: 29.7cm;
+    @media only screen {
+        #printable {
+            .page {
+                background-color: white;
+                padding: 1cm;
+
+                &.A4 {
+                    width: 21cm;
+                    max-height: 29.7cm;
+                }
             }
         }
     }
-}
-#printable {
-    display: none;
-}
-
-@media only print {
-    body {
-        background-color: white !important;
-    }
-    .layout-wrapper, .p-dialog-mask, .p-toast {
-        display: none !important;
-    }
     #printable {
-        display: block;
-    }
-    .page {
-        background-color: transparent;
-        padding: 0px !important;
+        display: none;
     }
 
-    .page.A4 {
-        margin: 0cm;
-        size: A4 portrait;
-
-        &.landscape {
-            size: A4 landscape;
+    @media only print {
+        body {
+            background-color: white !important;
         }
-    }
+        .layout-wrapper, .p-dialog-mask, .p-toast {
+            display: none !important;
+        }
+        #printable {
+            display: block;
+        }
+        .page {
+            background-color: transparent;
+            padding: 0px !important;
+        }
 
-    @page {
-        size: A4;
-        margin: 1cm;
-    }
+        .page.A4 {
+            margin: 0cm;
+            size: A4 portrait;
 
-    .layout-topbar, .layout-sidebar {
-        display: none !important;
-        box-shadow: none;
-    }
-    .layout-main {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
+            &.landscape {
+                size: A4 landscape;
+            }
+        }
 
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+
+        .layout-topbar, .layout-sidebar {
+            display: none !important;
+            box-shadow: none;
+        }
+        .layout-main {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+    }
 }

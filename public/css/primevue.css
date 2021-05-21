@@ -11275,60 +11275,55 @@ body {
   padding: 4px;
 }
 
-.p-datatable {
-  border: 1px solid #eee;
+.p-button.p-button-icon-only.p-button-xs {
+  height: 1.5rem;
+  width: 1.5rem;
 }
-
 @media only screen {
-  #printable .page {
+  .p-button #printable .page {
     background-color: white;
     padding: 1cm;
   }
-  #printable .page.A4 {
+  .p-button #printable .page.A4 {
     width: 21cm;
     max-height: 29.7cm;
   }
 }
-#printable {
+.p-button #printable {
   display: none;
 }
-
 @media only print {
-  body {
+  .p-button body {
     background-color: white !important;
   }
-
-  .layout-wrapper, .p-dialog-mask, .p-toast {
+  .p-button .layout-wrapper, .p-button .p-dialog-mask, .p-button .p-toast {
     display: none !important;
   }
-
-  #printable {
+  .p-button #printable {
     display: block;
   }
-
-  .page {
+  .p-button .page {
     background-color: transparent;
     padding: 0px !important;
   }
-
-  .page.A4 {
+  .p-button .page.A4 {
     margin: 0cm;
     size: A4 portrait;
   }
-  .page.A4.landscape {
+  .p-button .page.A4.landscape {
     size: A4 landscape;
   }
-
   @page {
-    size: A4;
-    margin: 1cm;
+    .p-button {
+      size: A4;
+      margin: 1cm;
+    }
   }
-  .layout-topbar, .layout-sidebar {
+  .p-button .layout-topbar, .p-button .layout-sidebar {
     display: none !important;
     box-shadow: none;
   }
-
-  .layout-main {
+  .p-button .layout-main {
     margin: 0 !important;
     padding: 0 !important;
   }

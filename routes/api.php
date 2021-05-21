@@ -45,6 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.')
         ->group(function () {
 
+            Route::get('/users',function() {
+                return \App\Models\User::all();
+            });
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
             Route::post('/check-product', [\App\Http\Controllers\Api\ProductController::class, 'check'])

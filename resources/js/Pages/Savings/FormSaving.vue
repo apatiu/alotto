@@ -166,7 +166,7 @@
                     <Column :exportable="false" style="flex: 0 0 3rem">
                         <template #body="{index}">
                             <Button icon="pi pi-trash"
-                                    class="p-button-text p-button-rounded p-button-danger p-button-sm"
+                                    class="p-button-text p-button-rounded p-button-danger p-button-xs"
                                     @click="removeDeposit(index)"
                                     v-if="actionable"></Button>
                         </template>

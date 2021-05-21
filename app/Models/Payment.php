@@ -51,6 +51,7 @@ class Payment extends Model
         $this->dt = jsDateToDateTimeString($data['dt']);
         $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
         $this->pay = $data['amount'] < 0 ? abs( $data['amount'] ) : null;
+        $this->user_id = $data['user_id'] ?? Auth::user()->id;
     }
 
     public function shift()

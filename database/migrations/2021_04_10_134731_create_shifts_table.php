@@ -19,6 +19,7 @@ class CreateShiftsTable extends Migration
             $table->double('cash_begin')->default(0);
             $table->double('cash_in')->default(0);
             $table->double('cash_out')->default(0);
+            $table->double('cash_count');
             $table->double('cash_to_safe')->default(0);
             $table->double('cash_to_bank')->default(0);
             $table->double('cash_end')->default(0);
