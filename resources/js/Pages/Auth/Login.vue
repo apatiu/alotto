@@ -12,13 +12,13 @@
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="username" value="Username"/>
+                <a-label for="username" value="Username"/>
                 <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required
                            autofocus/>
             </div>
 
             <div class="mt-4">
-                <jet-label for="password" value="Password"/>
+                <a-label for="password" value="Password"/>
                 <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
                            autocomplete="current-password"/>
             </div>
@@ -51,7 +51,7 @@ import JetAuthenticationCard from '@/Jetstream/AuthenticationCard'
 import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
 
 import JetInput from '@/Jetstream/Input'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
 export default {

@@ -11,7 +11,7 @@
         <template #form>
             <!-- Team Owner Information -->
             <div class="col-span-6">
-                <jet-label value="ผู้ดูแลสาขา" />
+                <a-label value="ผู้ดูแลสาขา" />
 
                 <div class="flex items-center mt-2">
                     <img class="w-12 h-12 rounded-full object-cover" :src="team.owner.profile_photo_url" :alt="team.owner.name">
@@ -25,7 +25,7 @@
 
             <!-- Team Name -->
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="ชื่อสาขา" />
+                <a-label for="name" value="ชื่อสาขา" />
 
                 <jet-input id="name"
                             type="text"
@@ -55,7 +55,7 @@
     import JetFormSection from '@/Jetstream/FormSection'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
+    import ALabel from "@/A/ALabel"
 
     export default {
         components: {

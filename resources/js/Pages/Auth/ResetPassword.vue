@@ -8,17 +8,17 @@
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="email" value="Email" />
+                <a-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus />
             </div>
 
             <div class="mt-4">
-                <jet-label for="password" value="Password" />
+                <a-label for="password" value="Password" />
                 <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="new-password" />
             </div>
 
             <div class="mt-4">
-                <jet-label for="password_confirmation" value="Confirm Password" />
+                <a-label for="password_confirmation" value="Confirm Password" />
                 <jet-input id="password_confirmation" type="password" class="mt-1 block w-full" v-model="form.password_confirmation" required autocomplete="new-password" />
             </div>
 
@@ -36,7 +36,7 @@
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
 
     import JetInput from '@/Jetstream/Input'
-    import JetLabel from '@/Jetstream/Label'
+    import ALabel from "@/A/ALabel"
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
     export default {

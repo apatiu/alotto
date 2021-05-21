@@ -18,12 +18,12 @@
 
         <form @submit.prevent="submit">
             <div v-if="! recovery">
-                <jet-label for="code" value="Code" />
+                <a-label for="code" value="Code" />
                 <jet-input ref="code" id="code" type="text" inputmode="numeric" class="mt-1 block w-full" v-model="form.code" autofocus autocomplete="one-time-code" />
             </div>
 
             <div v-else>
-                <jet-label for="recovery_code" value="Recovery Code" />
+                <a-label for="recovery_code" value="Recovery Code" />
                 <jet-input ref="recovery_code" id="recovery_code" type="text" class="mt-1 block w-full" v-model="form.recovery_code" autocomplete="one-time-code" />
             </div>
 
@@ -51,7 +51,7 @@
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
 
     import JetInput from '@/Jetstream/Input'
-    import JetLabel from '@/Jetstream/Label'
+    import ALabel from "@/A/ALabel"
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
     export default {

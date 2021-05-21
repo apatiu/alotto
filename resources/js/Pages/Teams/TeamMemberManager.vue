@@ -1,31 +1,31 @@
 <template>
     <div>
         <div v-if="userPermissions.canAddTeamMembers">
-            <jet-section-border/>
+            <Divider/>
 
             <!-- Add Team Member -->
             <jet-form-section @submitted="addTeamMember">
                 <template #title>
-                    Add Team Member
+                    เพิ่มพนักงาน
                 </template>
 
                 <template #description>
-                    Add a new team member to your team, allowing them to collaborate with you.
+                    สร้างพนักงานใหม่และกำหนดสิทธ์ให้พนักงาน
                 </template>
 
                 <template #form>
 
                     <!-- Member Username -->
                     <div class="col-span-6 sm:col-span-4">
-                        <jet-label for="username" value="Username"/>
+                        <a-label for="username" value="Username"/>
                         <jet-input id="username" type="text" class="mt-1 block w-full"
                                    v-model="addTeamMemberForm.username"/>
-                        <jet-input-error :message="addTeamMemberForm.errors.username" class="mt-2"/>
+                        <input-error :model-value="addTeamMemberForm.errors.username" class="mt-2"/>
                     </div>
 
                     <!-- Role -->
                     <div class="col-span-6 lg:col-span-4" v-if="availableRoles.length > 0">
-                        <jet-label for="roles" value="Role"/>
+                        <a-label for="roles" value="Role"/>
                         <jet-input-error :message="addTeamMemberForm.errors.role" class="mt-2"/>
 
                         <div class="relative z-0 mt-1 border border-gray-200 rounded-lg cursor-pointer">
@@ -68,8 +68,9 @@
                     </jet-action-message>
 
                     <Button :class="{ 'opacity-25': addTeamMemberForm.processing }"
-                                :disabled="addTeamMemberForm.processing">
-                        Add
+                            :disabled="addTeamMemberForm.processing"
+                            type="submit">
+                        เพิ่ม
                     </Button>
                 </template>
             </jet-form-section>
@@ -210,7 +211,7 @@
                 </jet-secondary-button>
 
                 <Button class="ml-2" @click="updateRole" :class="{ 'opacity-25': updateRoleForm.processing }"
-                            :disabled="updateRoleForm.processing">
+                        :disabled="updateRoleForm.processing">
                     Save
                 </Button>
             </template>
@@ -241,7 +242,7 @@
         <!-- Remove Team Member Confirmation Modal -->
         <jet-confirmation-modal :show="teamMemberBeingRemoved" @close="teamMemberBeingRemoved = null">
             <template #title>
-                Remove Team Member
+                ลบพนักงาน
             </template>
 
             <template #content>
@@ -250,13 +251,13 @@
 
             <template #footer>
                 <jet-secondary-button @click="teamMemberBeingRemoved = null">
-                    Cancel
+                    ยกเลิก
                 </jet-secondary-button>
 
                 <jet-danger-button class="ml-2" @click="removeTeamMember"
                                    :class="{ 'opacity-25': removeTeamMemberForm.processing }"
                                    :disabled="removeTeamMemberForm.processing">
-                    Remove
+                    ลบ
                 </jet-danger-button>
             </template>
         </jet-confirmation-modal>
@@ -273,15 +274,16 @@ import JetDialogModal from '@/Jetstream/DialogModal'
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
+import InputError from "@/Jetstream/InputError";
 
 export default {
     components: {
+        InputError,
         JetActionMessage,
         JetActionSection,
-
         JetConfirmationModal,
         JetDangerButton,
         JetDialogModal,
@@ -322,6 +324,7 @@ export default {
 
     methods: {
         addTeamMember() {
+            console.log('Add team member.')
             this.addTeamMemberForm.post(route('team-members.store', this.team), {
                 errorBag: 'addTeamMemberForm',
                 preserveScroll: true,

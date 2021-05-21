@@ -4,7 +4,8 @@
         <transition name="layout-sidebar">
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
                 <div class="layout-logo">
-                    <img :src="'/' + $page.props.company_logo_url" class="w-20 m-auto" alt="">
+                    <img v-if="$page.props.company_logo_url"
+                        :src="'/' + $page.props.company_logo_url" class="w-20 m-auto" alt="">
                 </div>
 
                 <AppProfile/>
@@ -122,7 +123,7 @@ export default {
                     items: [
                         {label: 'ตั้งค่าสาขา', url: route('teams.show', this.$page.props.user.current_team)},
                         {label: 'System', url: route('settings.index')},
-                        {label: 'Users', url: route('users')},
+                        {label: 'Users', url: route('users.index')},
                         {
                             label: 'API Token', url: route('api-tokens.index'),
                             visible: () => {

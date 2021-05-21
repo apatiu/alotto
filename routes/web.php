@@ -56,24 +56,7 @@ Route::middleware(['role:admin'])->group(function () {
     Route::resource('company', CompanyController::class);
     Route::resource('company-config', CompanyConfigController::class);
 
-    Route::get('users', [UserController::class, 'index'])
-        ->name('users');
-
-    Route::get('users/create', [UserController::class, 'create'])
-        ->name('users.create');
-
-    Route::post('users', [UserController::class, 'store'])
-        ->name('users.store');
-
-    Route::get('users/{user}/edit', [UserController::class, 'edit'])
-        ->name('users.edit');
-
-    Route::put('users/{user}', [UserController::class, 'update'])
-        ->name('users.update');
-
-    Route::delete('users/{user}', [UserController::class, 'destroy'])
-        ->name('users.destroy');
-
+    Route::resource('users',UserController::class);
     Route::put('users/{user}/restore', [UserController::class, 'restore'])
         ->name('users.restore');
 });

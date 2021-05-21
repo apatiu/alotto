@@ -1,5 +1,5 @@
 <template>
-    <jet-label v-if="label">{{ label }}:</jet-label>
+    <a-label v-if="label">{{ label }}:</a-label>
     <InputText :type="type"
                class="w-full"
                :value="modelValue"
@@ -12,7 +12,7 @@
 
 <script>
 import JetInput from '@/Jetstream/Input'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import InputError from "@/Jetstream/InputError";
 
 export default {

@@ -6,7 +6,6 @@
                    v-bind="$attrs"
                    :class="{'p-invalid': errors.length}"
         ></InputText>
-        <input-error :model-value="errors"></input-error>
     </div>
 </template>
 

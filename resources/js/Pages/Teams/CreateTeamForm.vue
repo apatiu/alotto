@@ -10,7 +10,7 @@
 
         <template #form>
             <div class="col-span-6">
-                <jet-label value="Team Owner" />
+                <a-label value="Team Owner" />
 
                 <div class="flex items-center mt-2">
                     <img class="w-12 h-12 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name">
@@ -23,7 +23,7 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <jet-label for="name" value="Team Name" />
+                <a-label for="name" value="Team Name" />
                 <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
                 <jet-input-error :message="form.errors.name" class="mt-2" />
             </div>
@@ -42,7 +42,7 @@
     import JetFormSection from '@/Jetstream/FormSection'
     import JetInput from '@/Jetstream/Input'
     import JetInputError from '@/Jetstream/InputError'
-    import JetLabel from '@/Jetstream/Label'
+    import ALabel from "@/A/ALabel"
 
     export default {
         components: {

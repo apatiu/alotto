@@ -75,17 +75,12 @@ class PawnController extends Controller
                 }
             }
 
-            $payment = new Payment([
-                'team_id' => $pawn->team_id,
-                'payment_no' => '',
-                'shift_id' => Shift::current()->id,
-                'dt' => $pawn->dt,
-                'payment_type_id' => 'paw',
-                'method_id' => 'cash',
-                'pay' => $pawn->price
-            ]);
-
-            $pawn->payments()->save($payment);
+            foreach (request('payments', []) as $payment) {
+                $payment['amount'] = 0 - abs($payment['amount']);
+                $pm = new Payment();
+                $pm->parse($payment, 'paw');
+                $pawn->payments()->save($pm);
+            }
         });
         return $pawn;
     }

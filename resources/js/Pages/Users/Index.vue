@@ -1,32 +1,21 @@
 <template>
-    <div class="sm:p-4">
-        <h1 class="mb-8 font-bold text-3xl">Users</h1>
-        <div class="mb-6 flex justify-between items-center">
-            <!--            <search-filter v-model="form.search" class="w-full max-w-md mr-4" @reset="reset">-->
-            <!--                <label class="block text-gray-700">Role:</label>-->
-            <!--                <select v-model="form.role" class="mt-1 w-full form-select">-->
-            <!--                    <option :value="null" />-->
-            <!--                    <option value="user">Manager</option>-->
-            <!--                    <option value="owner">Officer</option>-->
-            <!--                </select>-->
-            <!--                <label class="mt-4 block text-gray-700">Trashed:</label>-->
-            <!--                <select v-model="form.trashed" class="mt-1 w-full form-select">-->
-            <!--                    <option :value="null" />-->
-            <!--                    <option value="with">With Trashed</option>-->
-            <!--                    <option value="only">Only Trashed</option>-->
-            <!--                </select>-->
-            <!--            </search-filter>-->
-            <a-link color='primary' href="users.create">
-                <span>Create</span>
-                <span class="hidden md:inline">User</span>
-            </a-link>
+    <div>
+        <h1 class="mb-8 font-bold text-3xl">พนักงาน</h1>
+        <div class="flex space-x-2">
+            <Button @click="create">สร้างพนักงาน</Button>
         </div>
+        <DataTable :value="users" rowHover
+                   @row-click="$inertia.visit(route('users.edit',$event.data.id))">
+            <Column field="name" header="ชื่อ"></Column>
+            <Column field="email" header="อีเมล์"></Column>
+            <Column field="role" header="ตำแหน่ง"></Column>
+        </DataTable>
         <div class="bg-white rounded-md shadow overflow-x-auto">
             <table class="w-full whitespace-nowrap">
                 <tr class="text-left font-bold">
-                    <th class="px-6 pt-6 pb-4">Name</th>
-                    <th class="px-6 pt-6 pb-4">Email</th>
-                    <th class="px-6 pt-6 pb-4" colspan="2">Role</th>
+                    <th class="px-6 pt-6 pb-4">ชื่อ</th>
+                    <th class="px-6 pt-6 pb-4">อีเมล์</th>
+                    <th class="px-6 pt-6 pb-4" colspan="2">ตำแหน่ง</th>
                 </tr>
                 <tr v-for="user in users" :key="user.id" class="hover:bg-gray-100 focus-within:bg-gray-100">
                     <td class="border-t">
@@ -38,21 +27,10 @@
                         </inertia-link>
                     </td>
                     <td class="border-t">
-                        <inertia-link class="px-6 py-4 flex items-center" :href="route('users.edit', user.id)"
-                                      tabindex="-1">
-                            {{ user.email }}
-                        </inertia-link>
+                        {{ user.email }}
                     </td>
                     <td class="border-t">
-                        <inertia-link class="px-6 py-4 flex items-center" :href="route('users.edit', user.id)"
-                                      tabindex="-1">
-                            {{ user.owner ? 'Owner' : 'User' }}
-                        </inertia-link>
-                    </td>
-                    <td class="border-t w-px">
-                        <inertia-link class="px-4 flex items-center" :href="route('users.edit', user.id)" tabindex="-1">
-                            <icon name="cheveron-right" class="block w-6 h-6 fill-gray-400"/>
-                        </inertia-link>
+                        {{ user.owner ? 'Owner' : 'User' }}
                     </td>
                 </tr>
                 <tr v-if="users.length === 0">
@@ -60,63 +38,62 @@
                 </tr>
             </table>
         </div>
-        <create-user :show="showCreateModal" @close="showCreateModal=false"></create-user>
+        <form-user ref="dlgUser" v-model:visible="dlgUser"></form-user>
     </div>
 </template>
 
 <script>
-    import Icon from '@/Shared/Icon'
-    import pickBy from 'lodash/pickBy'
-    import throttle from 'lodash/throttle'
-    import mapValues from 'lodash/mapValues'
-    import SearchFilter from '@/Shared/SearchFilter'
-    import AppLayout from "@/Layouts/AppLayout";
-    import DialogModal from "@/Jetstream/DialogModal";
+import Icon from '@/Shared/Icon'
+import pickBy from 'lodash/pickBy'
+import throttle from 'lodash/throttle'
+import mapValues from 'lodash/mapValues'
+import AppLayout from "@/Layouts/AppLayout";
+import DialogModal from "@/Jetstream/DialogModal";
 
-    import CreateUser from "@/Shared/CreateUser";
-    import ALink from "@/A/ALink";
+import ALink from "@/A/ALink";
+import FormUser from "@/Pages/Users/FormUser";
 
-    export default {
-        metaInfo: {title: 'Users'},
-        components: {
-            ALink,
-            CreateUser,
-
-            DialogModal,
-            Icon,
-            SearchFilter,
-        },
-        layout: AppLayout,
-        props: {
-            users: Array,
-            filters: Object,
-        },
-        data() {
-            return {
-                form: {
-                    search: this.filters.search,
-                    role: this.filters.role,
-                    trashed: this.filters.trashed,
-                },
-                showCreateModal: false
-            }
-        },
-        watch: {
+export default {
+    metaInfo: {title: 'Users'},
+    components: {
+        FormUser,
+        ALink,
+        DialogModal,
+        Icon,
+    },
+    layout: AppLayout,
+    props: {
+        users: Array,
+        filters: Object,
+    },
+    data() {
+        return {
             form: {
-                handler: throttle(function () {
-                    let query = pickBy(this.form)
-                    this.$inertia.replace(this.route('users', Object.keys(query).length ? query : {remember: 'forget'}))
-                }, 150),
-                deep: true,
+                search: this.filters.search,
+                role: this.filters.role,
+                trashed: this.filters.trashed,
             },
+            dlgUser: false
+        }
+    },
+    watch: {
+        form: {
+            handler: throttle(function () {
+                let query = pickBy(this.form)
+                this.$inertia.replace(this.route('users', Object.keys(query).length ? query : {remember: 'forget'}))
+            }, 150),
+            deep: true,
         },
-        methods: {
-            reset() {
-                this.form = mapValues(this.form, () => null)
-            },
-            createUser() {
-                this.showCreateModal = true;
-            }
+    },
+    methods: {
+        create() {
+            this.$refs.dlgUser.create()
         },
-    }
+        reset() {
+            this.form = mapValues(this.form, () => null)
+        },
+        createUser() {
+        }
+    },
+}
 </script>

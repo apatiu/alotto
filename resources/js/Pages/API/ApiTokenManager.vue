@@ -13,7 +13,7 @@
             <template #form>
                 <!-- Token Name -->
                 <div class="col-span-6 sm:col-span-4">
-                    <jet-label for="name" value="Name"/>
+                    <a-label for="name" value="Name"/>
                     <jet-input id="name" type="text" class="mt-1 block w-full" v-model="createApiTokenForm.name"
                                autofocus/>
                     <jet-input-error :message="createApiTokenForm.errors.name" class="mt-2"/>
@@ -21,7 +21,7 @@
 
                 <!-- Token Permissions -->
                 <div class="col-span-6" v-if="availablePermissions.length > 0">
-                    <jet-label for="permissions" value="Permissions"/>
+                    <a-label for="permissions" value="Permissions"/>
 
                     <div class="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div v-for="permission in availablePermissions" :key="permission" class="p-field-checkbox">
@@ -182,7 +182,7 @@ import JetDialogModal from '@/Jetstream/DialogModal'
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 

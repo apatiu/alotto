@@ -16,7 +16,7 @@
 
         <form @submit.prevent="submit">
             <div>
-                <jet-label for="email" value="Email" />
+                <a-label for="email" value="Email" />
                 <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus />
             </div>
 
@@ -34,7 +34,7 @@
     import JetAuthenticationCardLogo from '@/Jetstream/AuthenticationCardLogo'
 
     import JetInput from '@/Jetstream/Input'
-    import JetLabel from '@/Jetstream/Label'
+    import ALabel from "@/A/ALabel"
     import JetValidationErrors from '@/Jetstream/ValidationErrors'
 
     export default {

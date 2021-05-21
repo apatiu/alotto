@@ -15,7 +15,7 @@
                        ref="photo"
                        @change="updatePhotoPreview">
 
-                <jet-label for="photo" value="โลโก้"/>
+                <a-label for="photo" value="โลโก้"/>
 
                 <!-- Current Profile Photo -->
                 <div class="mt-2" v-show="! photoPreview">
@@ -45,30 +45,30 @@
 
             <!--             Name-->
             <div class="col-span-6 sm:col-span-8 p-field mt-4">
-                <jet-label for="name" value="ชื่อบริษัท"/>
+                <a-label for="name" value="ชื่อบริษัท"/>
                 <InputText id="name"
                            v-model="form.name" autocomplete="name"/>
                 <jet-input-error :message="form.errors.name" class="mt-2"/>
             </div>
             <div class="col-span-12">
-                <jet-label for="addr" value="ที่อยู่"></jet-label>
+                <a-label for="addr" value="ที่อยู่"></a-label>
                 <jet-input id="addr" type="text" class="mt-1 block w-full" v-model="form.addr" autocomplete="addr"/>
                 <jet-input-error :message="form.errors.addr" class="mt-2"/>
             </div>
             <div class="col-span-6">
-                <jet-label for="tax_id" value="เลขผู้เสียภาษี"></jet-label>
+                <a-label for="tax_id" value="เลขผู้เสียภาษี"></a-label>
                 <jet-input id="tax_id" type="text" class="mt-1 block w-full" v-model="form.tax_id" />
                 <jet-input-error :message="form.errors.tax_id" class="mt-2"/>
             </div>
             <div class="col-span-6">
-                <jet-label for="tel" value="เบอร์โทร"></jet-label>
+                <a-label for="tel" value="เบอร์โทร"></a-label>
                 <jet-input id="tel" type="text" class="mt-1 block w-full" v-model="form.tel" />
                 <jet-input-error :message="form.errors.tel" class="mt-2"/>
             </div>
 
             <!-- Email -->
             <!--            <div class="col-span-6 sm:col-span-4">-->
-            <!--                <jet-label for="email" value="Email" />-->
+            <!--                <a-label for="email" value="Email" />-->
             <!--                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />-->
             <!--                <jet-input-error :message="form.errors.email" class="mt-2" />-->
             <!--            </div>-->
@@ -92,7 +92,7 @@
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 

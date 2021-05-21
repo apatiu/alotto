@@ -12,13 +12,13 @@
             <!-- Profile Photo -->
 
             <div class="col-span-6 sm:col-span-8">
-                <jet-label for="bullionPriceDiff" value="ส่วนต่างซื้อ-ขายราคาทองแท่ง"/>
+                <a-label for="bullionPriceDiff" value="ส่วนต่างซื้อ-ขายราคาทองแท่ง"/>
                 <jet-input id="bullionPriceDiff" type="number" step="0.01" class="mt-1 block w-full"
                            v-model="form.bullion_price_diff"/>
                 <jet-input-error :message="form.errors.bullionPriceDiff" class="mt-2"/>
             </div>
             <div class="col-span-2">
-                <jet-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
+                <a-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
                 <jet-input id="goldbahtWeight" type="number" step="0.01" class="mt-1 block w-full"
                            v-model="form.gold_baht_weight"/>
                 <jet-input-error :message="form.errors.goldbahtWeight" class="mt-2"/>
@@ -54,7 +54,7 @@
 import JetFormSection from '@/Jetstream/FormSection'
 import JetInput from '@/Jetstream/Input'
 import JetInputError from '@/Jetstream/InputError'
-import JetLabel from '@/Jetstream/Label'
+import ALabel from "@/A/ALabel"
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 

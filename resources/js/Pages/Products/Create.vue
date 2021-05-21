@@ -9,7 +9,7 @@
                     สาขา: {{ $page.props.user.current_team.name }}
                 </div>
                 <div class="col-span-3">
-                    <jet-label for="id" value="รหัสสินค้า"/>
+                    <a-label for="id" value="รหัสสินค้า"/>
                     <jet-input id="id" type="text" class="mt-1 block w-full" v-model="form.id"/>
                     <jet-input-error :message="form.errors.id" class="mt-2"/>
                 </div>
@@ -24,7 +24,7 @@
 
 <script>
 import DialogModal from "@/Jetstream/DialogModal";
-import JetLabel from "@/Jetstream/Label";
+import ALabel from "@/A/ALabel";
 import JetInput from "@/Jetstream/Input";
 import JetInputError from "@/Jetstream/InputError"
 
