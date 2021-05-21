@@ -54,11 +54,8 @@ class CustomerController extends Controller
         Validator::make($request->all(), $this->validateRules())->validateWithBag('updateCustomer');
 
         DB::transaction(function () use ($request, $id) {
-            return tap(Customer::find($id)
-                ->update($request->all()),
-                function ($result) {
-
-                });
+            $cust = Customer::find($id);
+            $cust->update($request->all());
         });
 
         return redirect()->back();

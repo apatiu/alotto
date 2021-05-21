@@ -16,21 +16,25 @@ class CreatePaymentTypesTable extends Migration
         Schema::create('payment_types', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('name');
-            $table->timestamps();
+            $table->boolean('system');
         });
 
         \App\Models\PaymentType::insert([
-            ['id' => 'paw', 'name' => 'รับขายฝาก'],
-            ['id' => 'int', 'name' => 'ต่อดอก'],
-            ['id' => 'mor', 'name' => 'เพิ่มเงิน'],
-            ['id' => 'les', 'name' => 'ตัดต้น'],
-            ['id' => 'red', 'name' => 'ไถ่ถอน'],
-            ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า'],
-            ['id' => 'sale', 'name' => 'ขาย'],
-            ['id' => 'buy', 'name' => 'ซื้อ'],
-            ['id' => 'change', 'name' => 'เปลี่ยน'],
-            ['id' => 'saving-dep', 'name' => 'ฝากออม'],
-            ['id' => 'saving-refund', 'name' => 'ฝากออม'],
+            ['id' => 'paw', 'name' => 'รับขายฝาก', 'system' => true],
+            ['id' => 'int', 'name' => 'ต่อดอก', 'system' => true],
+            ['id' => 'mor', 'name' => 'เพิ่มเงิน', 'system' => true],
+            ['id' => 'les', 'name' => 'ตัดต้น', 'system' => true],
+            ['id' => 'red', 'name' => 'ไถ่ถอน', 'system' => true],
+            ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า', 'system' => true],
+            ['id' => 'sale', 'name' => 'ขาย', 'system' => true],
+            ['id' => 'buy', 'name' => 'ซื้อ', 'system' => true],
+            ['id' => 'change', 'name' => 'เปลี่ยน', 'system' => true],
+            ['id' => 'saving-dep', 'name' => 'ฝากออม', 'system' => true],
+            ['id' => 'saving-refund', 'name' => 'คืนเงินออม', 'system' => true],
+            ['id' => 'cash-to-safe', 'name' => 'ส่งเงินเซฟ', 'system' => true],
+            ['id' => 'cash-from-safe', 'name' => 'เบิกเงินเซฟ', 'system' => true],
+            ['id' => 'cash-to-bank', 'name' => 'ส่งเข้าแบงค์', 'system' => true],
+            ['id' => 'cash-from-bank', 'name' => 'เบิกจากแบงค์', 'system' => true],
         ]);
     }
 

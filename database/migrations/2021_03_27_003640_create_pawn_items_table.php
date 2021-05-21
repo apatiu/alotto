@@ -16,7 +16,7 @@ class CreatePawnItemsTable extends Migration
         Schema::create('pawn_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pawn_id');
-            $table->string('gold_percent');
+            $table->foreignId('gold_percent_id');
             $table->string('product_type');
             $table->decimal('weight');
             $table->decimal('price');

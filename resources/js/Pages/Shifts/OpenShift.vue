@@ -21,7 +21,16 @@ export default {
         return {
             visible: false,
             form: this.$inertia.form({
-                cash_begin: 0
+                cash_begin: 0,
+                cash_in: 0,
+                cash_out: 0,
+                cash_count: 0,
+                cash_to_safe: 0,
+                cash_to_bank: 0,
+                cash_end: 0,
+                bank_transfer_in: 0,
+                bank_transfer_out: 0,
+                bank_transfer_end: 0,
             })
         }
     },

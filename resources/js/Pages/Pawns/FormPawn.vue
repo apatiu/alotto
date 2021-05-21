@@ -202,8 +202,9 @@
                     <action-message :on="form.recentlySuccessful">บันทึกข้อมูลแล้ว</action-message>
                     <Button label="ปิด" class="p-button-text" @click="$emit('update:visible',false)"></Button>
                     <Button label="บันทึก" icon="pi pi-check"
-                            @click="save"
-                            v-if="creating || actionable"></Button>
+                            @click="getPayments"
+                            v-if="creating || actionable"
+                            :disabled="v.form.$invalid"></Button>
                 </div>
             </div>
         </template>
@@ -341,17 +342,18 @@
             </div>
         </div>
 
-        <input-payment v-model:visible="paymentDialog"
-                       :target="action.amount"
-                       @done="saveAction($event)"></input-payment>
-
         <template #footer>
 
             <Button class="p-button-text" @click="actioning=false">ยกเลิก</Button>
-            <Button @click="getPayments">บันทึก</Button>
+            <Button @click="getPayments">บันทึก
+            </Button>
         </template>
         <!--        end action dialog-->
     </Dialog>
+
+    <input-payment v-model:visible="paymentDialog"
+                   :target="action.amount"
+                   @done="saveAction($event)"></input-payment>
 
 </template>
 
@@ -360,7 +362,7 @@ import SelectCustomer from "@/A/SelectCustomer";
 import SelectGoldPercent from "@/A/SelectGoldPercent";
 import SelectProductType from "@/A/SelectProductType";
 import useVuelidate from '@vuelidate/core';
-import {required} from '@vuelidate/validators'
+import {required, minValue} from '@vuelidate/validators'
 import InputWeight from "@/A/InputWeight";
 import ActionMessage from "@/Jetstream/ActionMessage";
 import InputPayment from "@/A/InputPayment";
@@ -399,7 +401,8 @@ export default {
                     life: null,
                     int_rate: null,
                     items: [],
-                    int_receives: []
+                    int_receives: [],
+                    payments: null
                 }
             ),
             pawnItem: {
@@ -427,7 +430,12 @@ export default {
         return {
             form: {
                 customer_id: {required},
-                price: {required},
+                dt: {required},
+                dt_end: {required},
+                price: {
+                    required: required,
+                    minValue: minValue(1)
+                },
             },
             pawnItem: {
                 product_type: {required},
@@ -457,23 +465,29 @@ export default {
                         items: []
                     })
                     this.clearDetailItem();
+                    this.action.type = 'create'
                 }
             } else {
                 this.$inertia.reload();
             }
         },
-        'form.dt': function(val) {
+        'form.dt': function (val) {
             if (this.creating) {
-                this.form.dt_end = moment(val).add(this.form.life,'months').toDate();
+                this.form.dt_end = moment(val).add(this.form.life, 'months').toDate();
             }
         },
-        'form.life': function(val) {
+        'form.life': function (val) {
             if (this.creating) {
-                this.form.dt_end = moment(this.form.dt).add(val,'months').toDate()
+                this.form.dt_end = moment(this.form.dt).add(val, 'months').toDate()
             }
         },
         'form.int_rate': function (val) {
             this.form.int_per_month = (this.form.price * this.form.int_rate) / 100;
+        },
+        'form.price': function (val) {
+            if (this.creating) {
+                this.action.amount = val
+            }
         },
         'action.months': function (val) {
             if (this.action.type === 'int') {
@@ -587,15 +601,12 @@ export default {
             this.form.int_per_month = e.value * this.form.int_rate / 100;
         },
         save() {
-
             this.v.form.$touch();
             if (this.v.form.$error) {
                 console.log('v.form.$error')
                 return
             }
-
             if (!this.form.id) {
-                console.log(this.form.data())
                 axios.post(route('api.pawns.store'), this.form.data())
                     .then(res => {
                             this.notify('บันทึกข้อมูลแล้ว');
@@ -696,12 +707,22 @@ export default {
         },
         saveAction(event) {
             this.action.payments = event;
-            axios.post(route('api.pawns.storeAction', this.form.id), this.action)
-                .then(response => {
-                    this.actioning = false;
-                    this.$toast.add({severity: 'success', summary: 'สำเร็จ', detail: 'บันทึกรายการแล้ว', life: 3000})
-                    this.form = _.assign(this.form, this.transformItem(response.data))
-                });
+            if (this.creating) {
+                this.form.payments = event;
+                this.save()
+            } else {
+                axios.post(route('api.pawns.storeAction', this.form.id), this.action)
+                    .then(response => {
+                        this.actioning = false;
+                        this.$toast.add({
+                            severity: 'success',
+                            summary: 'สำเร็จ',
+                            detail: 'บันทึกรายการแล้ว',
+                            life: 3000
+                        })
+                        this.form = _.assign(this.form, this.transformItem(response.data))
+                    });
+            }
         },
         removeIntReceive(index) {
             this.$confirm.require({

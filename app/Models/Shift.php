@@ -13,8 +13,9 @@ class Shift extends Model
 
     protected $fillable = [
         'team_id',
-        'cash_begin', 'cash_in', 'cash_out', 'cash_to_safe', 'cash_to_bank', 'cash_end',
-        'bank',
+        'cash_begin', 'cash_in', 'cash_out', 'cash_count',
+        'cash_to_safe', 'cash_to_bank', 'cash_end',
+        'bank_transfer_in', 'bank_transfer_out', 'bank_transfer_end',
         'card',
         'open_user_id',
         'close_user_id',

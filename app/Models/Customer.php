@@ -7,7 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    protected $fillable = ['name', 'team_id'];
+    protected $fillable = [
+        'initial',
+        'name',
+        'team_id',
+        'contact_person',
+        'birthday',
+        'tax_id',
+        'address',
+        'city',
+        'district',
+        'province',
+        'country',
+        'postal_code',
+        'idcard_start',
+        'idcard_end',
+        'idcard_place',
+        'email',
+        'phone'];
 
     protected $appends = ['id_label'];
 

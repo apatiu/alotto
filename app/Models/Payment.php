@@ -45,10 +45,11 @@ class Payment extends Model
         });
     }
 
-    public function parse($data)
+    public function parse($data,$paymentTypeId)
     {
         $this->fill($data);
         $this->dt = jsDateToDateTimeString($data['dt']);
+        $this->payment_type_id = $paymentTypeId;
         $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
         $this->pay = $data['amount'] < 0 ? abs( $data['amount'] ) : null;
         $this->user_id = $data['user_id'] ?? Auth::user()->id;

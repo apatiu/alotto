@@ -37,13 +37,15 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
-        $shift = new Shift([
+        $shift = new Shift();
+        $shift->fill(array_merge($request->all(), [
             'team_id' => $request->user()->currentTeam->id,
             'cash_begin' => $request->input('cash_begin'),
             'open_user_id' => $request->user()->id,
             'opened_at' => now(),
             'status' => 'open'
-        ]);
+        ]));
+//        dd($shift);
         $shift->save();
         return redirect()->back();
     }
@@ -57,8 +59,8 @@ class ShiftController extends Controller
     public function show(Shift $shift)
     {
         $shift->calc();
-        return Inertia::render('Shifts/Show',[
-            'shift'=> $shift->load('payments')
+        return Inertia::render('Shifts/Show', [
+            'shift' => $shift->load('payments')
         ]);
     }
 
@@ -66,12 +68,13 @@ class ShiftController extends Controller
     {
         $shift = $this->getLatestShift();
         $shift->calc();
-        return Inertia::render('Shifts/Show',[
-            'shift'=> $shift->load('payments')
+        return Inertia::render('Shifts/Show', [
+            'shift' => $shift->load('payments')
         ]);
     }
 
-    public function getLatestShift() {
+    public function getLatestShift()
+    {
         return Shift::whereTeamId(request()->user()->currentTeam->id)->latest()->first();
     }
 

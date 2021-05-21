@@ -3,14 +3,15 @@
 
         <Toolbar>
             <template #left>
-                <Button label="เพิ่ม" icon="pi pi-plus" class="p-button-success p-mr-2" @click="openNew"/>
+                <div class="p-formgroup-inline">
+
+                </div>
             </template>
             <template #right>
                 <Calendar v-model="form.d"
                           :manualInput="false"></Calendar>
                 <Button icon="pi pi-search" class="ml-2" @click="filter"></Button>
             </template>
-
         </Toolbar>
 
         <DataTable :value="payments"

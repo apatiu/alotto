@@ -15,24 +15,23 @@
                     disabled/>
             </div>
             <div class="p-field">
-                <a-input
-                    v-model="form.name"
-                    :errors="v.form.name.$errors" label="ชื่อลูกค้า"/>
+                <label>ชื่อลูกค้า</label>
+                <InputText v-model="form.name"/>
+                <InputError :model-value="v.form.name.$errors"/>
             </div>
             <div class="p-field">
-                <a-input
-                    v-model="form.address"
-                     label="ที่อยู่"/>
+                <label>ที่อยู่</label>
+                <InputText v-model="form.address"/>
             </div>
             <div class="p-field">
                 <a-input
                     v-model="form.tax_id"
-                     label="เลขบัตร"/>
+                    label="เลขบัตร"/>
             </div>
             <div class="p-field">
                 <a-input
                     v-model="form.phone"
-                   label="เบอร์โทร"/>
+                    label="เบอร์โทร"/>
             </div>
         </div>
         <template #footer>
@@ -61,8 +60,10 @@ import Input from "@/Jetstream/Input";
 import AInput from "@/A/AInput";
 import UseVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators"
+import InputError from "@/Jetstream/InputError";
 
 export default {
+    name: 'FormCustomer',
     setup() {
         return {
             v: UseVuelidate()
@@ -70,6 +71,7 @@ export default {
     },
     metaInfo: {title: 'เพิ่มลูกค้า'},
     components: {
+        InputError,
         AInput,
         Input,
         JetFormSection,
@@ -83,9 +85,9 @@ export default {
         visible: {
             type: Boolean, default: false
         },
-        record: {
+        data: {
             type: Object,
-            default: {}
+            default: null
         }
     },
     data() {
@@ -119,19 +121,34 @@ export default {
             }
         }
     },
-    mounted() {
-        _.assign(this.form, this.record);
+    watch: {
+        visible(val) {
+            if (val) {
+                this.form.reset();
+                if (this.data) {
+                    _.assign(this.form, this.data)
+                }
+            }
+        }
     },
     methods: {
         store() {
-            if (this.record.id ?? false) {
-
+            if (this.data.id ?? false) {
+                this.form.put(route('customers.update', this.data.id), {
+                    errorBag: 'customer',
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        this.$emit('updated', this.form.data());
+                        this.form.reset()
+                        this.close();
+                    }
+                })
             } else {
                 this.form.post(route('customers.store'), {
                     errorBag: 'createCustomer',
                     preserveScroll: true,
                     onSuccess: () => {
-                        this.$emit('created',this.form.data());
+                        this.$emit('created', this.form.data());
                         this.form.reset()
                         this.close();
                     }

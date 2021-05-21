@@ -101,15 +101,15 @@
 
 <script>
 import AppLayout from "@/Layouts/AppLayout";
-import FormPawn from "./FormPawn";
 import SelectCustomer from "@/A/SelectCustomer";
 import PawnStatus from "@/A/PawnStatus";
 import SelectPawnStatus from "@/A/SelectPawnStatus";
 import CellRef from "@/A/CellRef";
+import FormPawn from "@/Pages/Pawns/FormPawn";
 
 export default {
     metaInfo: {title: 'Customers'},
-    components: {CellRef, SelectPawnStatus, PawnStatus, SelectCustomer, FormPawn},
+    components: {FormPawn, CellRef, SelectPawnStatus, PawnStatus, SelectCustomer},
     layout: AppLayout,
     props: ['filters', 'pagination', 'rows'],
     data() {
