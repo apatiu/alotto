@@ -16,25 +16,27 @@ class CreatePaymentTypesTable extends Migration
         Schema::create('payment_types', function (Blueprint $table) {
             $table->string('id')->primary();
             $table->string('name');
+            $table->enum('type', ['pay', 'receive']);
             $table->boolean('system');
+            $table->boolean('refable')->default(false);
         });
 
         \App\Models\PaymentType::insert([
-            ['id' => 'paw', 'name' => 'รับขายฝาก', 'system' => true],
-            ['id' => 'int', 'name' => 'ต่อดอก', 'system' => true],
-            ['id' => 'mor', 'name' => 'เพิ่มเงิน', 'system' => true],
-            ['id' => 'les', 'name' => 'ตัดต้น', 'system' => true],
-            ['id' => 'red', 'name' => 'ไถ่ถอน', 'system' => true],
-            ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า', 'system' => true],
-            ['id' => 'sale', 'name' => 'ขาย', 'system' => true],
-            ['id' => 'buy', 'name' => 'ซื้อ', 'system' => true],
-            ['id' => 'change', 'name' => 'เปลี่ยน', 'system' => true],
-            ['id' => 'saving-dep', 'name' => 'ฝากออม', 'system' => true],
-            ['id' => 'saving-refund', 'name' => 'คืนเงินออม', 'system' => true],
-            ['id' => 'cash-to-safe', 'name' => 'ส่งเงินเซฟ', 'system' => true],
-            ['id' => 'cash-from-safe', 'name' => 'เบิกเงินเซฟ', 'system' => true],
-            ['id' => 'cash-to-bank', 'name' => 'ส่งเข้าแบงค์', 'system' => true],
-            ['id' => 'cash-from-bank', 'name' => 'เบิกจากแบงค์', 'system' => true],
+            ['id' => 'paw', 'name' => 'รับขายฝาก', 'type' => 'pay', 'system' => true, 'refable' => true],
+            ['id' => 'int', 'name' => 'ต่อดอก', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'mor', 'name' => 'เพิ่มต้น', 'type' => 'pay', 'system' => true], 'refable' => true,
+            ['id' => 'les', 'name' => 'ตัดต้น', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'red', 'name' => 'ไถ่ถอน', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า', 'type' => 'pay', 'system' => true, 'refable' => true],
+            ['id' => 'sale', 'name' => 'ขาย', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'buy', 'name' => 'ซื้อ', 'type' => 'pay', 'system' => true, 'refable' => true],
+            ['id' => 'change', 'name' => 'เปลี่ยน', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'saving-dep', 'name' => 'ฝากออม', 'type' => 'receive', 'system' => true, 'refable' => true],
+            ['id' => 'saving-refund', 'name' => 'คืนเงินออม', 'type' => 'pay', 'system' => true, 'refable' => true],
+            ['id' => 'cash-to-safe', 'name' => 'ส่งเงินเซฟ', 'type' => 'pay', 'system' => true, 'refable' => false],
+            ['id' => 'cash-from-safe', 'name' => 'เบิกเงินเซฟ', 'type' => 'receive', 'system' => true, 'refable' => false],
+            ['id' => 'cash-to-bank', 'name' => 'ส่งเข้าแบงค์', 'type' => 'pay', 'system' => true, 'refable' => false],
+            ['id' => 'cash-from-bank', 'name' => 'เบิกจากแบงค์', 'type' => 'receive', 'system' => true, 'refable' => false],
         ]);
     }
 

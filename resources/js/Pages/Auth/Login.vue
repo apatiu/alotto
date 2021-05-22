@@ -60,7 +60,7 @@ export default {
         JetAuthenticationCardLogo,
 
         JetInput,
-        JetLabel,
+        ALabel,
         JetValidationErrors
     },
 

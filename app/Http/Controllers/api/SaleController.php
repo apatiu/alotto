@@ -65,12 +65,14 @@ class SaleController extends Controller
                 if (in_array($data['type'], ['buy', 'change']))
                     $sale->details()->createMany($data['buys']);
 
+                $sale->refresh();
+
                 //relation work
                 $shift = Shift::current();
                 //payment work
                 foreach ($data['payments'] as $payment) {
                     $model = new Payment();
-                    $model->parse($payment);
+                    $model->parse($payment,$data['type']);
                     $model->payment_type_id = $data['type'];
                     $sale->payments()->save($model);
                 }
@@ -106,12 +108,12 @@ class SaleController extends Controller
                             'dt' => $sale->dt,
                             'gold_percent_id' => $detail->product_percent_id,
                             'team_id' => $sale->team_id,
-                            'avg_per_baht' => $detail->avg_per_baht,
+                            'avg_per_baht' => $detail->avg_cost_per_baht,
                             'ref_id' => $sale->id,
                             'ref_type' => Sale::class,
                             'qty_begin' => 0,
-                            'qty_in' => 1,
-                            'qty_end' => 1,
+                            'qty_in' => $detail->qty,
+                            'qty_end' => $detail->qty,
                             'wt_begin' => 0,
                             'wt_in' => $detail->wt,
                             'wt_end' => $detail->wt,
@@ -124,8 +126,8 @@ class SaleController extends Controller
                         } else {
                             $stock = OldGoldStockCard::whereGoldPercentId($detail->product_percent_id)
                                 ->whereTeamId($sale->team_id)
-                                ->first();
-                            $row->qty_begin = $stock->qty_end;
+                                ->latest()->first();
+                            $row->qty_begin = $stock->qty_end ?? 0;
                             $row->qty_in = $detail->qty;
                             $row->qty_end = $stock->qty_end + $detail->qty;
                             $row->wt_begin = $stock->wt_end;

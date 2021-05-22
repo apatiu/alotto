@@ -84,7 +84,7 @@
             JetFormSection,
             JetInput,
             JetInputError,
-            JetLabel,
+            ALabel,
             JetSecondaryButton,
         },
 

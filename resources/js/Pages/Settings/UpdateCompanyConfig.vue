@@ -61,7 +61,7 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 export default {
     name: "UpdateCompanyConfig",
     components: {
-        JetLabel,
+        ALabel,
         JetInput,
 
         JetFormSection,

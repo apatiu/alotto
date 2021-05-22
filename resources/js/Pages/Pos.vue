@@ -141,7 +141,7 @@
                     <Card>
                         <template #title><span class="text-red-800">ซื้อ</span></template>
                         <template #content>
-                            <div class="flex space-x-1">
+                            <div class="flex space-x-1" v-if="saleEditable">
                                 <div class="w-24">
                                     <select-gold-percent v-model="buy.product_percent_id"
                                                          @select="buy.product_percent_name = $event.gold_percent"></select-gold-percent>
@@ -229,7 +229,7 @@
                         @click="getChangePrice"></Button>
                 <Button label="รับชำระเงิน"
                         class="p-button-lg w-full"
-                        :disabled="form.type===null || form.status!=='open'"
+                        :disabled="!saleEditable"
                         @click="checkout"></Button>
                 <div class="pt-20" v-if="checked && form.type!=='buy'">
                     <Button label="พิมพ์ใบรับประกัน"
@@ -342,6 +342,7 @@ export default {
                 product_percent_id: 96,
                 product_percent: null,
                 product_type: '',
+                qty: 1,
                 wt: 0,
                 price_buy_calc: 0,
                 price_buy_total: 0,
@@ -626,6 +627,8 @@ export default {
             this.form.buys.splice(i, 1)
         },
         async calcBuyPrice(wt) {
+            if (!wt) return 0;
+
             if (!this.buy.product_percent_id && !wt) return
 
             let gPercent = await this.getGoldPercent(this.buy.product_percent_id)
@@ -645,6 +648,7 @@ export default {
                 status: 'buy',
                 avg_cost_per_baht: (this.buy.price_buy_total / this.buy.wt) * 15.2
             })
+            buy.qty = 1
             buy.product_type_name = this.buy.product_type.name
             this.form.buys.push(buy)
             this.resetBuy()

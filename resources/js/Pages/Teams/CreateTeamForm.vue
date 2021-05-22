@@ -50,7 +50,7 @@
             JetFormSection,
             JetInput,
             JetInputError,
-            JetLabel,
+            ALabel,
         },
 
         data() {

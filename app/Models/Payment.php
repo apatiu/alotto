@@ -45,14 +45,26 @@ class Payment extends Model
         });
     }
 
-    public function parse($data,$paymentTypeId)
+    public function parse($data, $paymentTypeId = null)
     {
         $this->fill($data);
-        $this->dt = jsDateToDateTimeString($data['dt']);
-        $this->payment_type_id = $paymentTypeId;
-        $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
-        $this->pay = $data['amount'] < 0 ? abs( $data['amount'] ) : null;
+        $dt = isset($data['dt']) ? jsDateToDateString($data['dt']) : now()->toDateTimeString();
+        $this->dt = $dt;
+
         $this->user_id = $data['user_id'] ?? Auth::user()->id;
+
+        $this->payment_type_id = $paymentTypeId;
+        if (isset($data['payment_type_id'])) {
+            if ($data['payment_type_id']) {
+                $this->payment_type_id = $data['payment_type_id'];
+            }
+        }
+
+        if ($this->payment_type->type === 'pay') {
+            $this->pay = $data['amount'] < 0 ? abs($data['amount']) : null;
+        } else {
+            $this->receive = $data['amount'] >= 0 ? $data['amount'] : null;
+        }
     }
 
     public function shift()
@@ -105,11 +117,13 @@ class Payment extends Model
         return $this->belongsTo(User::class);
     }
 
-    static function summaryByDays($d_begin,$d_end) {
+    static function summaryByDays($d_begin, $d_end)
+    {
 
     }
 
-    static function summaryByShift($shift_id) {
+    static function summaryByShift($shift_id)
+    {
 
     }
 }

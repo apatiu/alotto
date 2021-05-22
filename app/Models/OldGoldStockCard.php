@@ -12,7 +12,7 @@ class OldGoldStockCard extends Model
 
     protected $fillable = [
         'gold_percent_id', 'team_id',
-        'avg_per_bath',
+        'avg_per_baht',
         'qty_begin', 'qty_in', 'qty_out', 'qty_end',
         'wt_begin', 'wt_in', 'wt_out', 'wt_end',
         'description', 'dt',
@@ -50,7 +50,7 @@ class OldGoldStockCard extends Model
                 $sc = new OldGoldStockCard([
                     'gold_percent_id' => $gold_percent_id,
                     'team_id' => $team_id,
-                    'avg_per_bath' => $avg_per_baht,
+                    'avg_per_baht' => $avg_per_baht,
                     'qty_begin' => 0,
                     'qty_in' => $qty > 0 ? $qty : 0,
                     'qty_out' => $qty > 0 ? 0 : $qty,
@@ -64,6 +64,7 @@ class OldGoldStockCard extends Model
                     'ref_type' => get_class($ref),
                     'description' => $desc
                 ]);
+                $sc->save();
                 return $sc;
             } else {
                 $new = $sc->replicate();

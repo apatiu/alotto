@@ -129,7 +129,7 @@ import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 export default {
     name: "PawnSettings",
     components: {
-        JetLabel,
+        ALabel,
         JetInput,
         JetFormSection,
         JetInputError,

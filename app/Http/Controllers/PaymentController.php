@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Payment;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PaymentController extends Controller
@@ -21,5 +23,14 @@ class PaymentController extends Controller
             'd' => $d,
             'payments' => $rows->get()
         ]);
+    }
+
+    public function store(Request $request) {
+        DB::transaction(function() use ($request) {
+            $payment = new Payment();
+            $payment->parse($request->all());
+            $payment->save();
+        });
+        return redirect()->back();
     }
 }

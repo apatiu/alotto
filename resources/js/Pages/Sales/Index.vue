@@ -27,6 +27,11 @@
                     <sale-type-name v-model="props.data.type"></sale-type-name>
                 </template>
             </Column>
+            <Column field="total_wt_sale" header="นน.">
+                <template #body="props">
+                    {{ props.data.total_wt_sale - props.data.total_wt_buy }}
+                </template>
+            </Column>
             <Column field="total_amount" header="ยอดเงิน" class="text-right">
                 <template #body="props">
                     {{ $filters.decimal(props.data.total_amount) }}
@@ -105,7 +110,7 @@ export default {
         JetFormSection,
         JetInput,
         JetInputError,
-        JetLabel,
+        ALabel,
         JetSecondaryButton,
         SaleTypeName
     },

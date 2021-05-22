@@ -290,7 +290,7 @@ export default {
         JetFormSection,
         JetInput,
         JetInputError,
-        JetLabel,
+        ALabel,
         JetSecondaryButton,
         JetSectionBorder,
     },

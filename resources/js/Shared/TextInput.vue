@@ -16,7 +16,7 @@ import ALabel from "@/A/ALabel"
 import InputError from "@/Jetstream/InputError";
 
 export default {
-    components: {InputError, JetInput, JetLabel},
+    components: {InputError, JetInput, ALabel},
     inheritAttrs: false,
     props: {
         type: {

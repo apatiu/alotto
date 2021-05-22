@@ -194,7 +194,8 @@ class StockImportController extends Controller
             'dt' => $this->bill->dt,
             'detail' => 'นำเข้าสินค้า',
             'pay' => $this->bill->real_cost,
-            'method' => 'cash',
+            'method_id' => 'cash',
+            'user_id' => Auth::user()->id
         ]);
     }
 
@@ -321,7 +322,7 @@ class StockImportController extends Controller
                 'qty_in' => $line->qty,
                 'qty_out' => 0,
                 'qty_end' => $line->qty,
-                'weight_begin' => 0,
+                'wt_begin' => 0,
                 'wt_in' => $line->product_weight_total,
                 'wt_out' => 0,
                 'wt_end' => $line->product_weight_total,

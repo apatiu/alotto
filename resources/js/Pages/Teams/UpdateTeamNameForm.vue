@@ -64,7 +64,7 @@
             JetFormSection,
             JetInput,
             JetInputError,
-            JetLabel,
+            ALabel,
         },
 
         props: ['team', 'permissions'],

@@ -29,7 +29,7 @@
                 </template>
             </Column>
 
-            <Column field="gold_percent_id" header="จำนวนเริ่มต้น" class="justify-end" headerClass="text-right"
+            <Column field="gold_percent_id" header="เปอร์เซ็นท์ทอง" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
                     {{ props.data.gold_percent.name }}
@@ -53,10 +53,33 @@
                     {{ $filters.decimal(props.data.qty_out,2) }}
                 </template>
             </Column>
-            <Column field="qty_remain" header="จำนวนเหลือ" class="justify-end" headerClass="text-right"
+            <Column field="qty_end" header="จำนวนเหลือ" class="justify-end" headerClass="text-right"
                     bodyClass="text-right">
                 <template #body="props">
-                    {{ $filters.decimal(props.data.qty_remain,2) }}
+                    {{ $filters.decimal(props.data.qty_end,2) }}
+                </template>
+            </Column><Column field="wt_begin" header="นน.เริ่มต้น" class="justify-end" headerClass="text-right"
+                    bodyClass="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.wt_begin,2) }}
+                </template>
+            </Column>
+            <Column field="wt_in" header="นน.เข้า" class="justify-end" headerClass="text-right"
+                    bodyClass="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.wt_in,2) }}
+                </template>
+            </Column>
+            <Column field="wt_out" header="นน.ออก" class="justify-end" headerClass="text-right"
+                    bodyClass="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.wt_out,2) }}
+                </template>
+            </Column>
+            <Column field="wt_end" header="นน.เหลือ" class="justify-end" headerClass="text-right"
+                    bodyClass="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.wt_end,2) }}
                 </template>
             </Column>
             <Column field="ref_id" header="อ้างอิง" class="justify-center text-center">

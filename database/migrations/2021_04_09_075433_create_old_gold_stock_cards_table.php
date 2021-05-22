@@ -17,7 +17,7 @@ class CreateOldGoldStockCardsTable extends Migration
             $table->id();
             $table->foreignId('gold_percent_id');
             $table->foreignId('team_id');
-            $table->double('avg_per_bath')->default(0);
+            $table->double('avg_per_baht')->default(0);
             $table->double('qty_begin')->nullable();
             $table->double('qty_in')->nullable();
             $table->double('qty_out')->nullable();

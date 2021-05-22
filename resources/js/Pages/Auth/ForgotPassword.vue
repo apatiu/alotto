@@ -43,7 +43,7 @@
             JetAuthenticationCardLogo,
 
             JetInput,
-            JetLabel,
+            ALabel,
             JetValidationErrors
         },
 

@@ -36,7 +36,7 @@ class Product extends Model
 
     public function getQtyAttribute()
     {
-        return $this->stockCards()->latest('dt')->first()->qty_end;
+        return $this->stockCards()->latest('dt')->first()->qty_end ?? 0;
     }
 
     public function getWtGramAttribute()

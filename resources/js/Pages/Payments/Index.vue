@@ -1,10 +1,19 @@
 <template>
     <app-layout>
-
         <Toolbar>
             <template #left>
-                <div class="p-formgroup-inline">
-
+                <div class="flex space-x-2 ">
+                    <div>สร้างรายการเงินสด:</div>
+                    <select-payment-type
+                        v-model="formPayment.payment_type"
+                        :refable="false"
+                        @update:modelValue="formPayment.payment_type_id = $event.id"
+                    ></select-payment-type>
+                    <InputNumber v-model="formPayment.amount"
+                                 ref="inputAmount"
+                                 inputClass="text-right"></InputNumber>
+                    <Button label="เพิ่มรายการ" @click="storePayment"
+                            :disabled="v.formPayment.$invalid"></Button>
                 </div>
             </template>
             <template #right>
@@ -16,7 +25,8 @@
 
         <DataTable :value="payments"
                    dataKey="id"
-                   class="p-datatable-sm">
+                   class="p-datatable-sm"
+                   rowHover autoLayout>
             <Column field="team.name" header="สาขา"></Column>
             <Column field="dt" header="วันที่">
                 <Column field="code" header="#"></Column>
@@ -37,7 +47,12 @@
                 </template>
             </Column>
             <Column field="user.name" header="พนักงาน"></Column>
-
+            <Column>
+                <template #body="props">
+                    <ButtonTrash @click="removePayment(props)"
+                                 v-if="!props.data.paymentable_id"/>
+                </template>
+            </Column>
 
         </DataTable>
 
@@ -94,14 +109,21 @@ import ALabel from "@/A/ALabel"
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import SelectBank from "@/A/SelectBank";
-import useVuelidate from "@vuelidate/core";
 import {required} from "@vuelidate/validators";
 import AppLayout from "@/Layouts/AppLayout";
 import CellRef from "@/A/CellRef";
+import SelectPaymentType from "@/A/SelectPaymentType";
+import UseVuelidate from "@vuelidate/core";
+import ButtonTrash from "@/A/ButtonTrash";
 
 export default {
-
+    name: 'Index',
+    setup() {
+        return {v: UseVuelidate()}
+    },
     components: {
+        ButtonTrash,
+        SelectPaymentType,
         CellRef,
         AppLayout,
         SelectBank,
@@ -109,7 +131,7 @@ export default {
         JetFormSection,
         JetInput,
         JetInputError,
-        JetLabel,
+        ALabel,
         JetSecondaryButton,
     },
     props: ['payments', 'd'],
@@ -118,27 +140,46 @@ export default {
             form: this.$inertia.form({
                 d: this.d
             }),
+            formPayment: this.$inertia.form({
+                payment_type_id: null,
+                method_id: 'cash',
+                amount: null,
+            }),
             item: {},
             itemDialog: false,
             deleteItemDialog: false,
         }
     },
-    validations: {
-        item: {
-            name: {required, $autoDirty: true},
-            bank: {required, $autoDirty: true},
-            acc_no: {required, $autoDirty: true},
-            acc_name: {required, $autoDirty: true},
+    validations() {
+        return {
+            item: {
+                name: {required, $autoDirty: true},
+                bank: {required, $autoDirty: true},
+                acc_no: {required, $autoDirty: true},
+                acc_name: {required, $autoDirty: true},
+            },
+            formPayment: {
+                payment_type_id: {required},
+                amount: {required}
+            }
+        }
+    },
+    watch: {
+        'formPayment.payment_type_id': function (val) {
+            this.$refs.inputAmount.$el.children[0].focus()
         }
     },
     mounted() {
         this.form.d = new Date(this.d)
     },
     methods: {
-        openNew() {
-            this.item = {bank: 'BBL'};
-            this.submitted = false;
-            this.itemDialog = true;
+        storePayment() {
+
+            this.formPayment.post(route('payments.store'), {
+                onSuccess: (e) => {
+                    this.formPayment.reset();
+                }
+            })
         },
         filter() {
             this.form.get(route('payments.index'))
@@ -195,15 +236,9 @@ export default {
             this.item = item;
             this.deleteItemDialog = true;
         },
-        deleteItem() {
-            this.$inertia.delete(route('bank-accounts.destroy', this.item.id), {
-                onSuccess: () => {
-                    this.deleteItemDialog = false;
-                    this.$toast.add({severity: 'success', summary: 'Successful', detail: 'ลบข้อมูลแล้ว', life: 3000});
-                }
-            })
-
-        },
+        removePayment(e) {
+            console.log(e);
+        }
     },
 }
 </script>

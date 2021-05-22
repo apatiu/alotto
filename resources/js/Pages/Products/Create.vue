@@ -31,7 +31,7 @@ import JetInputError from "@/Jetstream/InputError"
 
 export default {
     name: "CreateProduct",
-    components: {JetLabel, JetInput, JetInputError,  DialogModal},
+    components: {ALabel, JetInput, JetInputError,  DialogModal},
     props: {
         value: Object,
         show: {type: Boolean, default: false},
