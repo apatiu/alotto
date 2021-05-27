@@ -4,6 +4,7 @@
             :modelValue="modelValue"
             @update:modelValue="$emit('update:modelValue',$event)"
             inputClass="text-right"
+            minFractionDigits="2"
             v-bind="$attrs"></InputNumber>
         <span class="p-inputgroup-addon">บาท</span>
     </div>

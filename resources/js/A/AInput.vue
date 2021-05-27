@@ -1,12 +1,9 @@
 <template>
-    <div class="p-field">
-        <label v-if="label">{{ label }}</label>
-        <InputText :modelValue="modelValue"
-                   @update:modelValue="$emit('update:modelValue', $event)"
-                   v-bind="$attrs"
-                   :class="{'p-invalid': errors.length}"
-        ></InputText>
-    </div>
+    <InputText :modelValue="modelValue"
+               @update:modelValue="$emit('update:modelValue', $event)"
+               v-bind="$attrs"
+               :class="{'p-invalid': errors.length}"
+    ></InputText>
 </template>
 
 <script>

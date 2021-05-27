@@ -143,7 +143,7 @@ app.config.globalProperties.$filters = {
 
         return moment(value).format('DD/MM/YYYY')
     },
-    datetime(value, utc = true) {
+    datetime(value, utc = false) {
         if (!value) return '-'
         if (utc)
             value += ' UTC'

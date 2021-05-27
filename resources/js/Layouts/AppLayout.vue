@@ -5,10 +5,17 @@
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
                 <div class="layout-logo">
                     <img v-if="$page.props.company_logo_url"
-                        :src="'/' + $page.props.company_logo_url" class="w-20 m-auto" alt="">
+                         :src="'/' + $page.props.company_logo_url" class="w-20 m-auto" alt="">
                 </div>
 
                 <AppProfile/>
+                <div v-if="$page.props.current_shift" class="text-sm text-center p-2">
+                    <inertia-link href="/shifts/current">
+                        <Button class="p-button-outlined p-button-success w-full justify-center">
+                            กะทำงาน: {{ $filters.date($page.props.current_shift.d) }}
+                        </Button>
+                    </inertia-link>
+                </div>
                 <AppMenu :model="menu" @menuitem-click="onMenuItemClick"/>
             </div>
         </transition>
@@ -69,6 +76,9 @@ export default {
                     label: 'ออมทอง',
                     url: route('savings.index')
                 }, {
+                    label: 'กะทำงาน',
+                    url: route('shifts.show-current')
+                }, {
                     label: 'รับจ่าย',
                     url: route('payments.index')
                 }, {
@@ -96,9 +106,6 @@ export default {
                 }, {
                     label: 'ลูกค้า',
                     url: route('customers.index')
-                }, {
-                    label: 'กะทำงาน',
-                    url: route('shifts.show-latest')
                 }, {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
@@ -137,7 +144,7 @@ export default {
         }
     },
     mounted() {
-        if (this.$page.props.shift.status === 'close') {
+        if (!this.$page.props.current_shift) {
             this.$refs.openShift.show()
         }
     },

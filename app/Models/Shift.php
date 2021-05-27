@@ -13,14 +13,13 @@ class Shift extends Model
 
     protected $fillable = [
         'team_id',
+        'd', 'opened_at', 'closed_at',
         'cash_begin', 'cash_in', 'cash_out', 'cash_count',
         'cash_to_safe', 'cash_to_bank', 'cash_end',
         'bank_transfer_in', 'bank_transfer_out', 'bank_transfer_end',
         'card',
         'open_user_id',
         'close_user_id',
-        'opened_at',
-        'closed_at',
         'status'
     ];
 
@@ -44,7 +43,7 @@ class Shift extends Model
                 $this->bank_transfer_in = $row->receive;
                 $this->bank_transfer_out = $row->pay;
             }
-            $this->cash_end = $this->cash_count - $this->cash_to_safe - $this->cash_to_bank;
+            $this->cash_end = $this->cash_begin + $this->cash_in - $this->cash_out - $this->cash_to_safe - $this->cash_to_bank;
             $this->bank_transfer_end = $this->bank_transfer_in - $this->bank_transfer_out;
         }
 
@@ -67,6 +66,7 @@ class Shift extends Model
 
     static function current()
     {
-        return Shift::whereStatus('open')->first();
+        return Shift::whereTeamId(Auth::user()->currentTeam->id)
+            ->whereStatus('open')->first();
     }
 }

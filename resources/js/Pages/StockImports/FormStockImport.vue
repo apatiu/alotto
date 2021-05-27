@@ -31,7 +31,9 @@
             </div>
         </div>
         <div class="flex p-mt-3 justify-end">
-            <Button @click="createLine" class="mb-2">เพิ่มสินค้า</Button>
+            <Button @click="createLine" class="mb-2"
+                    :disabled="isApproved">เพิ่มสินค้า
+            </Button>
         </div>
         <DataTable :value="form.lines">
             <Column field="product_code" header="รหัส"></Column>
@@ -54,7 +56,7 @@
             </Column>
             <Column field="product_weight_total" header="รวมน้ำหนัก">
                 <template #body="{data}">
-                    {{ $filters.decimal(data.product_weight_total,2) }}
+                    {{ $filters.decimal(data.product_weight_total, 2) }}
                 </template>
                 <template #footer>{{ $filters.decimal(form.product_weight_total, 2) }}</template>
             </Column>
@@ -69,16 +71,27 @@
             </template>
         </DataTable>
 
-        <div class="flex justify-end mt-6">
-            <div class="grid grid-cols-5 grid-rows-3 gap-4">
-                <div class="row-span-2">
-                    <label for="">บันทึกย่อ</label>
-                    <Textarea v-model="form.note"></Textarea>
+        <div class="flex justify-end space-x-2 p-fluid mt-4">
+            <div class="flex flex-col">
+                <div class="p-field">
+                    <label>ราคาทอง</label>
+                    <InputNumber v-model="form.cost_gold_total"
+                                 class="w-full"
+                                 input-class="text-right"
+                                 :maxFractionDigits="2" disabled></InputNumber>
                 </div>
-                <div class="flex items-center justify-end auto-cols-max">
-                    น้ำหนักชั่งจริง
+                <div class="p-field">
+                    <label>รวมค่าแรง</label>
+                    <InputNumber v-model="form.cost_wage_total"
+                                 class="w-full"
+                                 input-class="text-right"
+                                 :maxFractionDigits="2"
+                                 disabled></InputNumber>
                 </div>
-                <div>
+            </div>
+            <div class="flex flex-col">
+                <div class="p-field">
+                    <label>น้ำหนักชั่งจริง</label>
                     <InputNumber
                         v-model="form.real_weight_total"
                         mode="decimal"
@@ -87,17 +100,8 @@
                         :maxFractionDigits="2"></InputNumber>
                     <input-error :model-value="v.form.real_weight_total.$errors"></input-error>
                 </div>
-                <div class="flex items-center justify-end">
-                    ราคาทอง
-                </div>
-                <div>
-                    <InputNumber v-model="form.cost_gold_total"
-                                 class="w-full"
-                                 input-class="text-right"
-                                 :maxFractionDigits="2" disabled></InputNumber>
-                </div>
-                <div class="flex items-center justify-end">ยอดจ่ายจริง</div>
-                <div>
+                <div class="p-field">
+                    <label>ยอดจ่ายจริง</label>
                     <InputNumber v-model="form.real_cost"
                                  mode="decimal"
                                  :minFractionDigits="2"
@@ -106,29 +110,27 @@
                                  class="w-full"></InputNumber>
                     <input-error :model-value="v.form.real_cost.$errors"></input-error>
                 </div>
-                <div class="flex items-center justify-end">ค่าแรง</div>
-                <div>
-                    <InputNumber v-model="form.cost_wage_total"
-                                 class="w-full"
-                                 input-class="text-right"
-                                 :maxFractionDigits="2"
-                                 disabled></InputNumber>
-                </div>
             </div>
         </div>
-        <div class="pt-4 flex justify-end">
-            <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
-            <Button :class="{ 'opacity-25': form.processing }"
-                    :disabled="!saveable"
-                    @click="save(false)">
-                บันทึก
-            </Button>
-            <Button class="p-ml-2"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="!saveable"
-                    @click="save(true)">
-                อนุมัติ
-            </Button>
+        <div class="pt-4 flex space-x-4 items-end">
+            <div class="flex-1">
+                <label>Note:</label>
+                <InputText v-model="form.note" class="w-full"></InputText>
+            </div>
+            <div>
+                <Button @click="$inertia.visit('/stock-imports')" class="p-mr-2 p-button-text">ยกเลิก</Button>
+                <Button :class="{ 'opacity-25': form.processing }"
+                        :disabled="!saveable"
+                        @click="save(false)">
+                    บันทึก
+                </Button>
+                <Button class="p-ml-2"
+                        :class="{ 'opacity-25': form.processing }"
+                        :disabled="!saveable"
+                        @click="save(true)">
+                    อนุมัติ
+                </Button>
+            </div>
         </div>
     </div>
     <create-stock-import-line ref="createLineDialog"

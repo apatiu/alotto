@@ -46,12 +46,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call(ProductTypeSeeder::class);
         $this->call(BankSeeder::class);
-        $this->call(BankAccountSeeder::class);
         $this->call(PaymentMethodSeeder::class);
 //        $this->call(IntRangeRateSeeder::class);
 //        $this->call(IntDiscountRateSeeder::class);
 
 
-        $this->call(TestSeeder::class);
+//        $this->call(TestSeeder::class);
+//        $this->call(CcSeeder::class);
     }
 }

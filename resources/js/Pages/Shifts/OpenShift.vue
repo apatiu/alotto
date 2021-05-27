@@ -21,6 +21,7 @@ export default {
         return {
             visible: false,
             form: this.$inertia.form({
+                d: new Date(),
                 cash_begin: 0,
                 cash_in: 0,
                 cash_out: 0,

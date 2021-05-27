@@ -47,11 +47,9 @@ class SharedInertiaData
                     $request->user()->permissions()->pluck('name')->toArray()
                 ));
             },
-            'shift' => function() use ($request) {
+            'current_shift' => function() use ($request) {
                 if ($request->user()) {
-                    $user = $request->user();
-                    $shift = Shift::whereTeamId($user->currentTeam->id)->latest()->first();
-                    return ($shift) ? $shift : ['status' => 'close'];
+                    return Shift::current();
                 }
             }
         ]));

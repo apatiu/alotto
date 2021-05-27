@@ -1,311 +1,309 @@
 <template>
     <app-layout>
-        <div v-if="shiftClosed">
-            ยังไม่มีกะทำงานที่เปิดอยู่
-        </div>
+        <Toolbar>
+            <template #left>
+                <h4>ข้อมูลกะทำงาน</h4>
+            </template>
+            <template #right>
+                <div class="flex space-x-2 items-center">
+                    <label>กะทำงาน</label>
+                    <Calendar v-model="form.d"
+                              :manualInput="false"></Calendar>
+                    <Button icon="pi pi-search" class="ml-2" @click="filter"></Button>
+                </div>
+            </template>
+        </Toolbar>
 
-        <form @submit.prevent="submit" v-if="!shiftClosed">
-            <div class="text-2xl mb-3">สรุปกะทำงาน {{ $filters.datetime(shift.opened_at) }} -
-                {{ $filters.datetime(shift.closed_at) }}
-            </div>
-            <div class="p-grid p-fluid">
-                <div class="p-sm-8">
-                    <div class="p-fluid">
-                        <div class="p-grid">
+        <DataTable :value="shift.payments"
+                   dataKey="id"
+                   class="p-datatable-sm"
+                   rowHover autoLayout>
+            <Column field="dt" header="วันที่">
+                <Column field="code" header="#"></Column>
+                <template #body="props">
+                    {{ $filters.datetime(props.data.dt, false) }}
+                </template>
+            </Column>
+            <Column field="payment_type.name" header="ประเภท"></Column>
+            <Column field="method.name" header="ช่องทาง"></Column>
+            <Column field="receive" header="รับ" class="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.receive) }}
+                </template>
+            </Column>
+            <Column field="pay" header="จ่าย" class="text-right">
+                <template #body="props">
+                    {{ $filters.decimal(props.data.pay) }}
+                </template>
+            </Column>
+            <Column field="user.name" header="พนักงาน"></Column>
+            <Column>
+                <template #body="props">
+                    <ButtonTrash @click="removePayment(props)"
+                                 v-if="!props.data.paymentable_id"/>
+                </template>
+            </Column>
+
+        </DataTable>
+
+        <Card class="shift-summary mt-4">
+            <template #title>
+                สรุปกะทำงาน
+            </template>
+            <template #content>
+                <div class="flex space-x-4 p-fluid">
+                    <div class="sum-cash">
+                        <h5>เงินสด</h5>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">เริ่มต้น</label>
                             <div class="p-col">
-                                <Card>
-                                    <template #content>
-                                        <h5>เงินสด</h5>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">ต้นวัน</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_begin" inputClass="text-right"
-                                                             disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">เงินสดรับ</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_in" inputClass="text-right" disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">เงินสดจ่าย</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_out" inputClass="text-right" disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">รวม</label>
-                                            <div class="p-col">
-                                                <InputNumber :modelValue="cashTotal" inputClass="text-right"
-                                                             disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">นับจริง</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_count"
-                                                             inputClass="text-right"
-                                                             />
-                                                <InputError v-model="v.form.cash_count.$errors"/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">ส่งเข้าเซฟ</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_to_safe"
-                                                             inputClass="text-right"
-                                                             />
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">ส่งธนาคาร</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_to_bank"
-                                                             inputClass="text-right"
-                                                             />
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-28">ยอดยกไป</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.cash_end"
-                                                             inputClass="text-right"
-                                                />
-                                                <InputError v-model="v.form.cash_end.$errors"/>
-                                            </div>
-                                        </div>
-                                        <Divider/>
-                                        <h5>เงินโอน</h5>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-40">โอนเข้า</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.bank_transfer_in" inputClass="text-right"
-                                                             disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-40">โอนออก</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.bank_transfer_out" inputClass="text-right"
-                                                             disabled/>
-                                            </div>
-                                        </div>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-40">รวมเงินโอน</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.bank_transfer_end" inputClass="text-right"
-                                                             disabled/>
-                                            </div>
-                                        </div>
-                                        <Divider/>
-                                        <h5>บัตรเครดิต</h5>
-                                        <div class="p-field p-formgrid p-grid">
-                                            <label class="p-col-fixed w-40">ยอดรวมบัตรเครดิต</label>
-                                            <div class="p-col">
-                                                <InputNumber v-model="form.card" inputClass="text-right" disabled/>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </Card>
+                                <InputBaht v-model="formShift.cash_begin" disabled></InputBaht>
                             </div>
                         </div>
-                        <!--                        <div class="p-grid">-->
-                        <!--                            <div class="p-col">-->
-                        <!--                                <Card>-->
-                        <!--                                    <template #content>-->
-                        <!--                                        <h5>ขายฝาก</h5>-->
-                        <!--                                        <label class="w-20">รับขายฝาก</label>-->
-                        <!--                                        <InputNumber v-model="form.pawn_amount" disabled-->
-                        <!--                                                     inputClass="text-right"/>-->
-                        <!--                                        <label class="w-20">จำนวนห่อ</label>-->
-                        <!--                                        <InputNumber v-model="form.pawn_count" disabled-->
-                        <!--                                                     inputClass="text-right"/>-->
-                        <!--                                    </template>-->
-                        <!--                                </Card>-->
-                        <!--                            </div>-->
-                        <!--                            <div class="p-col">-->
-                        <!--                                <Card>-->
-                        <!--                                    <template #content>-->
-                        <!--                                        <h5>ออมทอง</h5>-->
-                        <!--                                        <label class="w-20">ส่งออม</label>-->
-                        <!--                                        <InputNumber v-model="form.saving_amount" disabled-->
-                        <!--                                                     inputClass="text-right"/>-->
-                        <!--                                        <label class="w-20">จำนวนรายการ</label>-->
-                        <!--                                        <InputNumber v-model="form.saving_count" disabled-->
-                        <!--                                                     inputClass="text-right"/>-->
-                        <!--                                    </template>-->
-                        <!--                                </Card>-->
-                        <!--                            </div>-->
-                        <!--                        </div>-->
-                        <Card>
-                            <template #content>
-                                <h5>น้ำหนักชั่งจริง</h5>
-                                <div class="p-grid">
-                                    <label class="p-col-fixed w-40"></label>
-                                    <div class="p-col text-right">ตามบิล</div>
-                                    <div class="p-col text-right">ชั่งจริง</div>
-                                </div>
-                                <div class="p-field p-formgrid p-grid">
-                                    <label class="p-col-fixed w-40">ทองเก่า 96.5</label>
-                                    <div class="p-col">
-                                        <InputNumber v-model="form.old_gold_96" inputClass="text-right" disabled/>
-                                    </div>
-                                    <div class="p-col">
-                                        <InputNumber
-                                            v-model="form.real_old_gold_96"
-                                            inputClass="text-right"></InputNumber>
-                                    </div>
-                                </div>
-                                <div class="p-field p-formgrid p-grid">
-                                    <label class="p-col-fixed w-40">ทองเก่า 90</label>
-                                    <div class="p-col">
-                                        <InputNumber
-                                            v-model="form.old_gold_90"
-                                            inputClass="text-right" disabled/>
-                                    </div>
-                                    <div class="p-col">
-                                        <InputNumber
-                                            v-model="form.real_old_gold_90"
-                                            inputClass="text-right"></InputNumber>
-                                    </div>
-                                </div>
-                                <div class="p-field p-formgrid p-grid">
-                                    <label class="p-col-fixed w-40">ทองเก่า 99.99</label>
-                                    <div class="p-col">
-                                        <InputNumber v-model="form.old_gold_99" inputClass="text-right" disabled/>
-                                    </div>
-                                    <div class="p-col">
-                                        <InputNumber
-                                            v-model="form.real_old_gold_99"
-                                            inputClass="text-right"></InputNumber>
-                                    </div>
-                                </div>
-                            </template>
-                        </Card>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">รับ</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.cash_in" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">จ่าย</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.cash_out" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">ส่งเซฟ</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.cash_to_safe" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid" >
+                            <label class="p-col-fixed w-24">ส่งธนาคาร</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.cash_to_bank" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">คงเหลือ</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.cash_end" disabled></InputBaht>
+                            </div>
+                        </div>
+                    </div>
+                    <Divider layout="vertical"/>
+                    <div class="sum-bank-transfer">
+                        <h5>โอน</h5>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">โอนเข้า</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.bank_transfer_in" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">โอนออก</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.bank_transfer_out" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">รวม</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.bank_transfer_end" disabled></InputBaht>
+                            </div>
+                        </div>
+                    </div>
+                    <Divider layout="vertical"/>
+                    <div class="sum_pawn">
+                        <h5>ขายฝาก</h5>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">ยอดเงิน</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.pawn_amount" disabled></InputBaht>
+                            </div>
+                        </div>
+                        <Divider/>
 
-
+                        <h5>ออมทอง</h5>
+                        <div class="p-field p-grid">
+                            <label class="p-col-fixed w-24">ยอดเงิน</label>
+                            <div class="p-col">
+                                <InputBaht v-model="formShift.saving_amount" disabled></InputBaht>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="p-sm-4">
-                    <Card>
+            </template>
+        </Card>
 
-                        <template #title>วันเวลา</template>
-                        <template #content>
-                            <div class="p-fluid">
-                                <div class="p-field">
-                                    <label for="">เปิดกะ</label>
-                                    <Calendar v-model="form.opened_at" disabled></Calendar>
-                                </div>
-                                <div class="p-field">
-                                    <label for="">ปิดกะ</label>
-                                    <Calendar v-model="form.closed_at" disabled></Calendar>
-                                </div>
-                            </div>
-                        </template>
-                    </Card>
-                    <Card class="p-my-6">
-                        <template #title>พนักงาน</template>
-                        <template #content>
-                            <div class="p-field">
-                                <label for="">ผู้เปิดกะ</label>
-                                <select-user v-model="form.open_user_id" disabled></select-user>
-                            </div>
-                            <div class="p-field">
-                                <label for="">ผู้ปิดกะ</label>
-                                <select-user v-model="form.close_user_id" disabled></select-user>
-                                <InputError v-model="v.form.close_user_id.$errors"/>
-                            </div>
-                        </template>
-                    </Card>
-                </div>
-            </div>
-            <div class="flex flex-col space-y-2">
-                <InputError v-model="v.form.$errors"/>
-                <Button label="ปิดกะ" class="p-button-danger" type="submit"></Button>
-            </div>
-        </form>
+        <h5 v-if="shiftClosed">ปิดกะทำงานไปเมื่อ {{ $filters.datetime(formShift.closed_at) }}</h5>
+
     </app-layout>
+
 </template>
 
 <script>
+
+import JetFormSection from '@/Jetstream/FormSection'
+import JetInput from '@/Jetstream/Input'
+import JetInputError from '@/Jetstream/InputError'
+import ALabel from "@/A/ALabel"
+import JetActionMessage from '@/Jetstream/ActionMessage'
+import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import SelectBank from "@/A/SelectBank";
+import {required} from "@vuelidate/validators";
 import AppLayout from "@/Layouts/AppLayout";
-import UseVuelidate from '@vuelidate/core'
-import {required} from '@vuelidate/validators'
-import SelectUser from "@/A/SelectUser";
-import InputError from "@/Jetstream/InputError";
+import CellRef from "@/A/CellRef";
+import SelectPaymentType from "@/A/SelectPaymentType";
+import UseVuelidate from "@vuelidate/core";
+import ButtonTrash from "@/A/ButtonTrash";
+import InputBaht from "@/A/InputBaht";
+import InputGram from "@/A/InputGram";
+import JetDropdown from "@/Jetstream/JetDropdown";
+import Expanable from "@/A/Expanable";
 
 export default {
-    name: "Show",
+    name: 'Index',
     setup() {
         return {v: UseVuelidate()}
     },
-    components: {SelectUser, AppLayout, InputError},
-    props: ['shift'],
+    components: {
+        Expanable,
+        JetDropdown,
+        InputGram,
+        InputBaht,
+        ButtonTrash,
+        SelectPaymentType,
+        CellRef,
+        AppLayout,
+        SelectBank,
+        JetActionMessage,
+        JetFormSection,
+        JetInput,
+        JetInputError,
+        ALabel,
+        JetSecondaryButton,
+    },
+    props: ['payments', 'd', 'shift'],
     data() {
         return {
-            form: this.$inertia.form(this.$page.props.shift)
+            form: this.$inertia.form({
+                d: this.d
+            }),
+            formShift: this.$inertia.form(this.shift),
+            item: {},
+            itemDialog: false,
+            deleteItemDialog: false,
+            closing: false,
         }
     },
     validations() {
         return {
-            form: {
-                cash_count: {required},
-                cash_end: {required},
-                close_user_id: {required}
-            }
         }
     },
-    watch:{
-        'form.cash_count': function() {
-            this.calcCashEnd()
+    watch: {
+        'formPayment.payment_type_id': function (val) {
+            this.$refs.inputAmount.$el.children[0].focus()
         },
-        'form.cash_to_safe': function() {
-            this.calcCashEnd()
+        'formShift.cash_to_safe': function (val) {
+            this.updateCashEnd()
         },
-        'form.cash_to_bank': function() {
-            this.calcCashEnd()
+        'formShift.cash_to_bank': function (val) {
+            this.updateCashEnd()
+        },
+        'formShift.recentlySuccessful': function (val) {
+            if (val)
+                this.notify('ปิดกะทำงานสำเร็จแล้ว')
         }
+    },
+    mounted() {
+        this.form.d = new Date(this.d)
     },
     computed: {
-        cashTotal() {
-            return numeral(this.form.cash_begin).add(this.form.cash_in).subtract(this.form.cash_out).value()
-        },
         shiftClosed() {
-            return this.shift.status === 'close'
+            return this.formShift.status === 'close'
         }
     },
     methods: {
-        calcCashEnd(e) {
-            return this.form.cash_end = numeral(this.form.cash_count)
-                .subtract(this.form.cash_to_safe)
-                .subtract(this.form.cash_to_bank)
-                .value()
+        updateCashEnd() {
+            this.formShift.cash_end = numeral(this.formShift.cash_begin)
+                .add(this.formShift.cash_in)
+                .subtract(this.formShift.cash_out)
+                .subtract(this.formShift.cash_to_safe)
+                .subtract(this.formShift.cash_to_bank)
+                .value();
         },
-        submit() {
-            this.v.form.$touch()
-            if (this.v.form.$error) return
+        storePayment() {
 
-            this.$confirm.require({
-                message: 'ท่านต้องการปิดกะทำงาน?',
-                header: 'Confirmation',
-                icon: 'pi pi-exclamation-triangle',
-                accept: () => {
-                    this.form.status = 'close';
-                    this.form.closed_at = new Date();
-                    this.form.put(route('shifts.update', this.form.id));
-                },
-                reject: () => {
-                    //callback to execute when user rejects the action
+            this.formPayment.post(route('payments.store'), {
+                onSuccess: (e) => {
+                    this.formPayment.reset();
                 }
-            });
+            })
+        },
+        filter() {
+            this.form.get(route('payments.index'))
+        },
+        hideDialog() {
+            this.itemDialog = false;
+            this.submitted = false;
+        },
+        saveItem() {
+            this.submitted = true;
 
+            this.v.$touch()
+            if (this.v.$error) return
+
+            if (this.item.name.trim()) {
+                if (this.item.id) {
+                    this.form.reset();
+                    _.assign(this.form, this.item);
+                    this.form.put(route('bank-accounts.update', this.item.id), {
+                        onSuccess: () => {
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: 'Item Updated',
+                                life: 3000
+                            });
+                        }
+                    })
+
+                } else {
+                    this.form.reset();
+                    _.assign(this.form, this.item);
+                    this.form.post(route('bank-accounts.store'), {
+                        onSuccess: () => {
+                            this.$toast.add({
+                                severity: 'success',
+                                summary: 'Successful',
+                                detail: 'Item Created',
+                                life: 3000
+                            });
+                        }
+                    });
+                }
+
+                this.itemDialog = false;
+                this.item = {};
+            }
+        },
+        editItem(item) {
+            this.item = {...item};
+            this.itemDialog = true;
+        },
+        confirmDeleteItem(item) {
+            this.item = item;
+            this.deleteItemDialog = true;
+        },
+        removePayment(e) {
+            console.log(e);
+        },
+        closeShift() {
+            this.formShift.status = 'close'
+            this.formShift.closed_at = new Date();
+            this.formShift.put(route('shifts.update', this.shift.id));
         }
-    }
+    },
 }
 </script>
-
-<style scoped>
-
-</style>

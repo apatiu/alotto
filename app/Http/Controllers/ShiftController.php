@@ -4,7 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Shift;
+use Carbon\Traits\Creator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 
 class ShiftController extends Controller
@@ -37,6 +44,13 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
+        $d = now();
+        $latest = Shift::whereTeamId($request->user()->currentTeam->id)->latest('d')->first();
+        if ($latest) {
+            $d = new Carbon($latest->d);
+            $d->addDay()->toDateString();
+        }
+
         $shift = new Shift();
         $shift->fill(array_merge($request->all(), [
             'team_id' => $request->user()->currentTeam->id,
@@ -45,7 +59,7 @@ class ShiftController extends Controller
             'opened_at' => now(),
             'status' => 'open'
         ]));
-//        dd($shift);
+        $shift->d = $d;
         $shift->save();
         return redirect()->back();
     }
@@ -58,9 +72,25 @@ class ShiftController extends Controller
      */
     public function show(Shift $shift)
     {
-        $shift->calc();
+
+        $shift->load('payments', 'payments.method', 'payments.payment_type', 'payments.user');
         return Inertia::render('Shifts/Show', [
-            'shift' => $shift->load('payments')
+            'd' => $shift->d,
+            'shift' => $shift
+        ]);
+    }
+
+    public function showCurrent()
+    {
+
+        $shift = Shift::current();
+        if ($shift) {
+            $shift->calc();
+            $shift->load('payments', 'payments.method', 'payments.payment_type', 'payments.user');
+        }
+
+        return Inertia::render('Shifts/Current', [
+            'shift' => $shift
         ]);
     }
 
@@ -96,11 +126,44 @@ class ShiftController extends Controller
      * @param \App\Models\Shift $shift
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Shift $shift)
+    public function close(Request $request, Shift $shift)
     {
-        $shift->fill($request->all());
-        $shift->save();
-        return redirect('/dashboard');
+        DB::transaction(function () use ($shift, $request) {
+            $shift->fill($request->except('d'));
+            $shift->closed_at = jsDateToDateTimeString(request('closed_at'));
+            $shift->status = 'close';
+            $next_d = jsDateToDateTimeString($request->input('next_d'));
+            $shift->save();
+            $this->createNextShift($next_d, $shift);
+        });
+        return Redirect::route('shifts.show', $shift->id);
+
+    }
+
+    private function createNextShift($d, Shift $old_shift)
+    {
+
+        $shift = new Shift();
+        $shift->fill([
+            'team_id' => Auth::user()->currentTeam->id,
+            'd' => $d,
+            'cash_begin' => $old_shift->cash_count,
+            'cash_in' => 0,
+            'cash_out' => 0,
+            'cash_count' => 0,
+            'cash_to_safe' => 0,
+            'cash_to_bank' => 0,
+            'cash_end' => 0,
+            'bank_transfer_in' => 0,
+            'bank_transfer_out' => 0,
+            'bank_transfer_end' => 0,
+            'card' => 0,
+            'open_user_id' => Auth::user()->id,
+            'opened_at' => now(),
+            'status' => 'open'
+        ]);
+
+        return $shift->save();
     }
 
     /**

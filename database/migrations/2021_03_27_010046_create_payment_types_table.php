@@ -24,7 +24,7 @@ class CreatePaymentTypesTable extends Migration
         \App\Models\PaymentType::insert([
             ['id' => 'paw', 'name' => 'รับขายฝาก', 'type' => 'pay', 'system' => true, 'refable' => true],
             ['id' => 'int', 'name' => 'ต่อดอก', 'type' => 'receive', 'system' => true, 'refable' => true],
-            ['id' => 'mor', 'name' => 'เพิ่มต้น', 'type' => 'pay', 'system' => true], 'refable' => true,
+            ['id' => 'mor', 'name' => 'เพิ่มต้น', 'type' => 'pay', 'system' => true, 'refable' => true],
             ['id' => 'les', 'name' => 'ตัดต้น', 'type' => 'receive', 'system' => true, 'refable' => true],
             ['id' => 'red', 'name' => 'ไถ่ถอน', 'type' => 'receive', 'system' => true, 'refable' => true],
             ['id' => 'stock-import', 'name' => 'นำเข้าสินค้า', 'type' => 'pay', 'system' => true, 'refable' => true],
