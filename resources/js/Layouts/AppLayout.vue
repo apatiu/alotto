@@ -76,9 +76,6 @@ export default {
                     label: 'ออมทอง',
                     url: route('savings.index')
                 }, {
-                    label: 'กะทำงาน',
-                    url: route('shifts.show-current')
-                }, {
                     label: 'รับจ่าย',
                     url: route('payments.index')
                 }, {

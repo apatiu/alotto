@@ -15,6 +15,11 @@ body {
     overflow-y: auto;
 }
 
+h4,h5,h6 {
+    font-weight: bold;
+    color: #0b7ad1;
+}
+
 .layout-topbar {
     background-color: var(--surface-a);
     display: flex;

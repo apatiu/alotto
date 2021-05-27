@@ -26,6 +26,7 @@
             </template>
         </Toolbar>
 
+        <h6>รายการรับจ่าย</h6>
         <DataTable :value="shift.payments"
                    dataKey="id"
                    class="p-datatable-sm"
