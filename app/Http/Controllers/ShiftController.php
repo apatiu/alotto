@@ -23,7 +23,7 @@ class ShiftController extends Controller
      */
     public function index()
     {
-        //
+        return 'Shift index';
     }
 
     /**

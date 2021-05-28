@@ -13,8 +13,9 @@ class CreateIntDiscountRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('int_discount_rates', function (Blueprint $table) {
+        Schema::create('intr_discount_rates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pawn_config_id');
             $table->unsignedInteger('days');
             $table->unsignedDecimal('rate');
             $table->timestamps();

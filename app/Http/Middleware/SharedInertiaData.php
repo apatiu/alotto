@@ -27,6 +27,7 @@ class SharedInertiaData
                 if (!$request->user()) {
                     return;
                 }
+
                 $output = array_map(function ($item) {
                     return true;
                 }, array_flip(

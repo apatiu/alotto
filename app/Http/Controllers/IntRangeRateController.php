@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IntRangeRate;
+use App\Models\IntrRangeRate;
 use Illuminate\Http\Request;
 
 class IntRangeRateController extends Controller
@@ -41,10 +41,10 @@ class IntRangeRateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\IntRangeRate  $intRangeRate
+     * @param  \App\Models\IntrRangeRate  $intRangeRate
      * @return \Illuminate\Http\Response
      */
-    public function show(IntRangeRate $intRangeRate)
+    public function show(IntrRangeRate $intRangeRate)
     {
         //
     }
@@ -52,10 +52,10 @@ class IntRangeRateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\IntRangeRate  $intRangeRate
+     * @param  \App\Models\IntrRangeRate  $intRangeRate
      * @return \Illuminate\Http\Response
      */
-    public function edit(IntRangeRate $intRangeRate)
+    public function edit(IntrRangeRate $intRangeRate)
     {
         //
     }
@@ -64,10 +64,10 @@ class IntRangeRateController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\IntRangeRate  $intRangeRate
+     * @param  \App\Models\IntrRangeRate  $intRangeRate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, IntRangeRate $intRangeRate)
+    public function update(Request $request, IntrRangeRate $intRangeRate)
     {
         //
     }
@@ -75,10 +75,10 @@ class IntRangeRateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\IntRangeRate  $intRangeRate
+     * @param  \App\Models\IntrRangeRate  $intRangeRate
      * @return \Illuminate\Http\Response
      */
-    public function destroy(IntRangeRate $intRangeRate)
+    public function destroy(IntrRangeRate $intRangeRate)
     {
         //
     }

@@ -107,6 +107,8 @@ export default {
                     label: 'รายงาน',
                     icon: 'pi pi-file-pdf',
                     items: [{
+                        label: 'กะทำงาน', url: route('shifts.index'),
+                    }, {
                         label: 'สินค้า',
                         items: [{
                             label: 'เคลื่อนไหวสินค้า', url: route('stock-cards.index')
@@ -122,11 +124,14 @@ export default {
                 }, {
                     label: 'Settings', icon: 'pi pi-cog',
                     visible: () => {
-                        return this.$page.props.user_roles.admin;
+                        return this.$page.props.user_roles.manager || this.$page.props.user.current_team.personal_team;
                     },
                     items: [
+                        {label: 'System', url: route('settings.index'),
+                        visible: () => {
+                            return this.$page.props.user.current_team.personal_team
+                        }},
                         {label: 'ตั้งค่าสาขา', url: route('teams.show', this.$page.props.user.current_team)},
-                        {label: 'System', url: route('settings.index')},
                         {label: 'Users', url: route('users.index')},
                         {
                             label: 'API Token', url: route('api-tokens.index'),

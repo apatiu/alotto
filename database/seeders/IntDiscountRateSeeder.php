@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\IntRangeRate;
+use App\Models\IntrRangeRate;
 use Illuminate\Database\Seeder;
 
 class IntDiscountRateSeeder extends Seeder

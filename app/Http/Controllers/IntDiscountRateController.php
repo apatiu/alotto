@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IntDiscountRate;
+use App\Models\IntrDiscountRate;
 use Illuminate\Http\Request;
 
 class IntDiscountRateController extends Controller
@@ -41,10 +41,10 @@ class IntDiscountRateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\IntDiscountRate  $intDiscountRate
+     * @param  \App\Models\IntrDiscountRate  $intDiscountRate
      * @return \Illuminate\Http\Response
      */
-    public function show(IntDiscountRate $intDiscountRate)
+    public function show(IntrDiscountRate $intDiscountRate)
     {
         //
     }
@@ -52,10 +52,10 @@ class IntDiscountRateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\IntDiscountRate  $intDiscountRate
+     * @param  \App\Models\IntrDiscountRate  $intDiscountRate
      * @return \Illuminate\Http\Response
      */
-    public function edit(IntDiscountRate $intDiscountRate)
+    public function edit(IntrDiscountRate $intDiscountRate)
     {
         //
     }
@@ -64,10 +64,10 @@ class IntDiscountRateController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\IntDiscountRate  $intDiscountRate
+     * @param  \App\Models\IntrDiscountRate  $intDiscountRate
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, IntDiscountRate $intDiscountRate)
+    public function update(Request $request, IntrDiscountRate $intDiscountRate)
     {
         //
     }
@@ -75,10 +75,10 @@ class IntDiscountRateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\IntDiscountRate  $intDiscountRate
+     * @param  \App\Models\IntrDiscountRate  $intDiscountRate
      * @return \Illuminate\Http\Response
      */
-    public function destroy(IntDiscountRate $intDiscountRate)
+    public function destroy(IntrDiscountRate $intDiscountRate)
     {
         //
     }

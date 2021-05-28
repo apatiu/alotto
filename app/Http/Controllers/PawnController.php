@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Helpers\MetaHelper;
 use App\Models\Customer;
-use App\Models\IntDiscountRate;
-use App\Models\IntRangeRate;
+use App\Models\IntrDiscountRate;
+use App\Models\IntrRangeRate;
 use App\Models\Media;
 use App\Models\Pawn;
 use App\Models\Payment;
@@ -203,9 +203,9 @@ class PawnController extends Controller
         MetaHelper::set('pawn_int_discount_rates_enable', $request->input('int_discount_rates_enable'));
         DB::transaction(function () use ($request) {
             DB::table('int_range_rates')->truncate();
-            IntRangeRate::insert($request->input('int_range_rates'));
+            IntrRangeRate::insert($request->input('int_range_rates'));
             DB::table('int_discount_rates')->truncate();
-            IntDiscountRate::insert($request->input('int_discount_rates'));
+            IntrDiscountRate::insert($request->input('int_discount_rates'));
         });
 
         return redirect()->back();

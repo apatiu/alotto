@@ -19,24 +19,24 @@ class CreateSavingsTable extends Migration
             $table->string('code');
             $table->foreignId('customer_id');
             $table->foreignId('team_id');
-            $table->double('gold_price_sale');
+            $table->decimal('gold_price_sale');
             $table->dateTime('dt');
             $table->dateTime('dt_due')->nullable();
             $table->dateTime('dt_close')->nullable();
-            $table->double('price_total')->nullable();
-            $table->double('price_pay')->nullable();
-            $table->double('price_remain')->nullable();
+            $table->decimal('price_total')->nullable();
+            $table->decimal('price_pay')->nullable();
+            $table->decimal('price_remain')->nullable();
             $table->string('note')->nullable();
-            $table->double('items_wt')->nullable();
-            $table->double('items_qty')->nullable();
+            $table->decimal('items_wt')->nullable();
+            $table->decimal('items_qty')->nullable();
             $table->enum('status',['open','close','cancel']);
             $table->foreignId('user_id');
             $table->integer('life')->nullable();
-            $table->double('price_refund')->nullable();
-            $table->double('price_forward')->nullable();
+            $table->decimal('price_refund')->nullable();
+            $table->decimal('price_forward')->nullable();
             $table->foreignId('prev_id')->nullable();
             $table->foreignId('next_id')->nullable();
-            $table->double('saving_wt')->nullable();
+            $table->decimal('saving_wt')->nullable();
         });
 
         Schema::create('saving_items', function (Blueprint $table) {
@@ -46,10 +46,10 @@ class CreateSavingsTable extends Migration
             $table->foreignId('product_id');
             $table->string('product_name');
             $table->string('product_wt');
-            $table->double('qty');
-            $table->double('wt');
-            $table->double( 'price');
-            $table->double('price_total');
+            $table->decimal('qty');
+            $table->decimal('wt');
+            $table->decimal( 'price');
+            $table->decimal('price_total');
             $table->foreignId('sale_id')->nullable();
         });
 
@@ -57,11 +57,11 @@ class CreateSavingsTable extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('saving_id');
-            $table->double('amount');
+            $table->decimal('amount');
             $table->dateTime('dt');
             $table->string('note')->nullable();
-            $table->double('wt')->nullable();
-            $table->double('gold_price_sale');
+            $table->decimal('wt')->nullable();
+            $table->decimal('gold_price_sale');
             $table->boolean('is_forward')->default(false)->nullable();
         });
     }

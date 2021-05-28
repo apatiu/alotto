@@ -1,19 +1,19 @@
 <template>
     <jet-form-section @submitted="createTeam">
         <template #title>
-            Team Details
+            ข้อมูลสาขา
         </template>
 
         <template #description>
-            Create a new team to collaborate with others on projects.
+            สร้างสาขาใหม่.
         </template>
 
         <template #form>
             <div class="col-span-6">
-                <a-label value="Team Owner" />
-
+                <label>ผู้ดูแล</label>
                 <div class="flex items-center mt-2">
-                    <img class="w-12 h-12 rounded-full object-cover" :src="$page.props.user.profile_photo_url" :alt="$page.props.user.name">
+                    <img class="w-12 h-12 rounded-full object-cover" :src="$page.props.user.profile_photo_url"
+                         :alt="$page.props.user.name">
 
                     <div class="ml-4 leading-tight">
                         <div>{{ $page.props.user.name }}</div>
@@ -23,14 +23,16 @@
             </div>
 
             <div class="col-span-6 sm:col-span-4">
-                <a-label for="name" value="Team Name" />
-                <jet-input id="name" type="text" class="mt-1 block w-full" v-model="form.name" autofocus />
-                <jet-input-error :message="form.errors.name" class="mt-2" />
+                <div class="p-field">
+                    <label>ชื่อสาขา</label>
+                    <InputText id="name" type="text" v-model="form.name" autofocus/>
+                    <form-input-error :message="form.errors.name"/>
+                </div>
             </div>
         </template>
 
         <template #actions>
-            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+            <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" type="submit">
                 Create
             </Button>
         </template>
@@ -39,35 +41,35 @@
 
 <script>
 
-    import JetFormSection from '@/Jetstream/FormSection'
-    import JetInput from '@/Jetstream/Input'
-    import JetInputError from '@/Jetstream/InputError'
-    import ALabel from "@/A/ALabel"
+import JetFormSection from '@/Jetstream/FormSection'
+import JetInput from '@/Jetstream/Input'
+import FormInputError from '@/A/FormInputError'
+import ALabel from "@/A/ALabel"
 
-    export default {
-        components: {
+export default {
+    components: {
 
-            JetFormSection,
-            JetInput,
-            JetInputError,
-            ALabel,
+        JetFormSection,
+        JetInput,
+        FormInputError,
+        ALabel,
+    },
+
+    data() {
+        return {
+            form: this.$inertia.form({
+                name: '',
+            })
+        }
+    },
+
+    methods: {
+        createTeam() {
+            this.form.post(route('teams.store'), {
+                errorBag: 'createTeam',
+                preserveScroll: true
+            });
         },
-
-        data() {
-            return {
-                form: this.$inertia.form({
-                    name: '',
-                })
-            }
-        },
-
-        methods: {
-            createTeam() {
-                this.form.post(route('teams.store'), {
-                    errorBag: 'createTeam',
-                    preserveScroll: true
-                });
-            },
-        },
-    }
+    },
+}
 </script>

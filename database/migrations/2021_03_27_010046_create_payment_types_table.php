@@ -37,6 +37,8 @@ class CreatePaymentTypesTable extends Migration
             ['id' => 'cash-from-safe', 'name' => 'เบิกเงินเซฟ', 'type' => 'receive', 'system' => true, 'refable' => false],
             ['id' => 'cash-to-bank', 'name' => 'ส่งเข้าแบงค์', 'type' => 'pay', 'system' => true, 'refable' => false],
             ['id' => 'cash-from-bank', 'name' => 'เบิกจากแบงค์', 'type' => 'receive', 'system' => true, 'refable' => false],
+            ['id' => 'cash-in', 'name' => 'เงินสด เพิ่ม', 'type' => 'receive', 'system' => true, 'refable' => false],
+            ['id' => 'cash-out', 'name' => 'เงินสด ลด', 'type' => 'pay', 'system' => true, 'refable' => false],
         ]);
     }
 

@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\MetaHelper;
-use App\Models\IntDiscountRate;
-use App\Models\IntRangeRate;
+use App\Models\IntrDiscountRate;
+use App\Models\IntrRangeRate;
 use App\Models\Media;
 use App\Models\OldGoldStockCard;
 use App\Models\Pawn;
@@ -155,7 +155,7 @@ class PawnController extends Controller
         $comments = [];
 
         if (MetaHelper::get('pawn_int_discount_rates_enable', false)) {
-            $discounts = IntDiscountRate::orderBy('days')->where('days', '>=', $days)->first();
+            $discounts = IntrDiscountRate::orderBy('days')->where('days', '>=', $days)->first();
             if ($discounts) {
                 $int_days = ceil($intPerMonth * $discounts->rate / 100);
                 array_push($comments, 'ได้รับส่วนลดดอกเบี้ยตามจำนวนวัน');

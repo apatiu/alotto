@@ -16,7 +16,7 @@ class CreateLotteryPrizesTable extends Migration
         Schema::create('lottery_prizes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->double('prize_amount');
+            $table->decimal('prize_amount');
             $table->timestamps();
         });
 

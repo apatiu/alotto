@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\IntRangeRate;
+use App\Models\IntrRangeRate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class IntRangeRateFactory extends Factory
@@ -12,7 +12,7 @@ class IntRangeRateFactory extends Factory
      *
      * @var string
      */
-    protected $model = IntRangeRate::class;
+    protected $model = IntrRangeRate::class;
 
     /**
      * Define the model's default state.

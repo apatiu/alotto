@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\IntDiscountRate;
+use App\Models\IntrDiscountRate;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class IntDiscountRateFactory extends Factory
@@ -12,7 +12,7 @@ class IntDiscountRateFactory extends Factory
      *
      * @var string
      */
-    protected $model = IntDiscountRate::class;
+    protected $model = IntrDiscountRate::class;
 
     /**
      * Define the model's default state.

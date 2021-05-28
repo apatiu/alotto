@@ -52,7 +52,7 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 
 Route::middleware(['role:admin'])->group(function () {
-    Route::resource('settings', \App\Http\Controllers\SettingController::class);
+
     Route::resource('company', CompanyController::class);
     Route::resource('company-config', CompanyConfigController::class);
 
@@ -61,8 +61,8 @@ Route::middleware(['role:admin'])->group(function () {
         ->name('users.restore');
 });
 
-Route::middleware(['auth:sanctum', 'auth', 'verified'])->group(function () {
-
+Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::resource('settings', \App\Http\Controllers\SettingController::class);
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::resource('sales', \App\Http\Controllers\SaleController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);

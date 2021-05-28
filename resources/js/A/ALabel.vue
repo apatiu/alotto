@@ -1,7 +1,6 @@
-<template>
+.<template>
     <label>
-        <span v-if="value">{{ value }}</span>
-        <span v-else><slot></slot></span>
+        <slot></slot>
     </label>
 </template>
 

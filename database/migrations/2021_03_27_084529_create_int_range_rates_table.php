@@ -13,11 +13,12 @@ class CreateIntRangeRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('int_range_rates', function (Blueprint $table) {
+        Schema::create('intr_range_rates', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('pawn_config_id');
             $table->decimal('min',10,2);
             $table->decimal('max',10,2);
-            $table->decimal('rate');
+            $table->decimal('rate', 3,2);
             $table->timestamps();
         });
     }
