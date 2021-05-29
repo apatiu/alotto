@@ -131,8 +131,10 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
             Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
             Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
             Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
-            Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
+            Route::post('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
             Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
+            Route::delete('/current-team/profile-photo', [TeamController::class, 'destroyCurrentTeamProfilePhoto'])
+                ->name('current-team-photo.destroy');
             Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
             Route::post('/teams/{team}/members', [BranchMemberController::class, 'store'])->name('team-members.store');
             Route::put('/teams/{team}/members/{user}', [TeamMemberController::class, 'update'])->name('team-members.update');

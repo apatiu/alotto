@@ -33,7 +33,6 @@ import AppLayout from '@/Layouts/AppLayout'
 import DeleteTeamForm from './DeleteTeamForm'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
-import PawnConfig from "@/Pages/Teams/PawnConfig"
 import PawnSettings from "@/Pages/Teams/PawnSettings";
 
 export default {
@@ -45,7 +44,6 @@ export default {
 
     components: {
         PawnSettings,
-        PawnConfig,
         AppLayout,
         DeleteTeamForm,
         JetSectionBorder,

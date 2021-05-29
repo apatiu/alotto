@@ -91,9 +91,17 @@ class TeamController extends Controller
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateTeamName');
 
-        $team->forceFill($input)->save();
+        if (isset($input['photo'])) {
+            $team->updateProfilePhoto($input['photo']);
+        }
+
+        $team->forceFill([
+            'name' => $input['name'],
+            'company_name' => $input['company_name']
+        ])->save();
         return back(303);
     }
 
@@ -115,5 +123,10 @@ class TeamController extends Controller
         $deleter->delete($team);
 
         return $this->redirectPath($deleter);
+    }
+
+    public function destroyCurrentTeamProfilePhoto() {
+        request()->user()->currentTeam->deleteProfilePhoto();
+        return back(303)->with('status', 'profile-photo-deleted');
     }
 }

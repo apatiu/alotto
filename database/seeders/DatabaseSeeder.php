@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         // \App\Models\User::factory(10)->create();
-//        $role = Role::firstOrCreate(['name' => 'admin']);
+        $role = Role::firstOrCreate(['name' => 'gm']);
 
         $details = [
             'name' => 'apatiu',
@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         $user = $this->creator->create($details);
+        $user->assignRole('gm');
 
         $cust_cash = Customer::updateOrCreate([
             'id' => 1
