@@ -110,7 +110,7 @@ export default {
         }
     },
     created() {
-        axios.get(route('payment-methods.index'))
+        axios.get(route('api.payment-methods.index'))
             .then(res => {
                 this.methods = res.data
             })

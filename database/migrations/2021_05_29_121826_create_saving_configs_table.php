@@ -15,6 +15,8 @@ class CreateSavingConfigsTable extends Migration
     {
         Schema::create('saving_configs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('team_id');
+            $table->decimal('withdraw_fee_percent')->nullable();
             $table->timestamps();
         });
     }

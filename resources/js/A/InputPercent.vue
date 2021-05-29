@@ -5,7 +5,7 @@
             @update:modelValue="$emit('update:modelValue',$event)"
             inputClass="text-right"
             minFractionDigits="2"
-            v-bind="$attrs"></InputNumber>
+            ></InputNumber>
         <span class="p-inputgroup-addon">%</span>
     </div>
 </template>
@@ -13,7 +13,6 @@
 <script>
 export default {
     name: "InputPercent",
-    inheritAttrs: false,
     props: {
         modelValue: [Object,Number]
     }

@@ -12,6 +12,7 @@
                 <Divider />
                 <pawn-settings :team="team" class="mt-10 sm:mt-0"/>
                 <Divider />
+                <SavingSettings :team="team" />
                 <team-member-manager class="mt-10 sm:mt-0"
                                      :team="team"
                                      :available-roles="availableRoles"
@@ -34,6 +35,7 @@ import DeleteTeamForm from './DeleteTeamForm'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
 import PawnSettings from "@/Pages/Teams/PawnSettings";
+import SavingSettings from "./SavingSetting";
 
 export default {
     props: [
@@ -43,6 +45,7 @@ export default {
     ],
 
     components: {
+        SavingSettings,
         PawnSettings,
         AppLayout,
         DeleteTeamForm,

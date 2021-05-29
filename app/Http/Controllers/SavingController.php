@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Pawn;
 use App\Models\Saving;
+use App\Models\SavingConfig;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class SavingController extends Controller
@@ -124,5 +127,23 @@ class SavingController extends Controller
     public function destroy(Saving $saving)
     {
         //
+    }
+
+    public function storeConfig(Request $request)
+    {
+        $this->validate($request, [
+            'withdraw_fee_percent' => ['required']
+        ])->validateWithBag('savingConfig');
+
+        DB::transaction(function () use ($request) {
+            $team = $request->user()->currentTeam;
+            $config = $team->saving_config;
+            $row = ($config) ? $config : new SavingConfig();
+            $row->team_id = $team->id;
+            $row->forceFill($request->all());
+            $row->save();
+        });
+
+        return back()->with('status', 'บันทึกเรียบร้อย');
     }
 }

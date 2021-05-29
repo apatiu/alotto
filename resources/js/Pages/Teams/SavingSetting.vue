@@ -9,23 +9,25 @@
         </template>
 
         <template #form>
-            <div class="p-field">
-                <label for="">จำนวนหักเมื่อต้องการถอนเงินคืน</label>
-                <InputNumber v-model="form.withdraw_fee_percent"></InputNumber>
+            <div class="p-fluid">
+                <div class="p-field">
+                    <label for="">เปอร์เซ็นหักเมื่อถอนเงิน</label>
+                    <InputPercent class="w-28" v-model="form.withdraw_fee_percent"></InputPercent>
+                    <FormInputError :message="form.errors.withdraw_fee_percent"/>
+                </div>
             </div>
         </template>
 
         <template #actions>
             <jet-action-message :on="form.recentlySuccessful" class="mr-3">
-                Saved.
+                บันทึกแล้ว.
             </jet-action-message>
 
-            <Button :class="{ 'opacity-25': form.processing }"
-                    class="p-button-sm"
+            <ButtonSave :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                     @click="save">
                 Save
-            </Button>
+            </ButtonSave>
         </template>
     </jet-form-section>
 </template>
@@ -38,10 +40,18 @@ import JetInputError from '@/Jetstream/InputError'
 import ALabel from "@/A/ALabel"
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import InputPercent from "../../A/InputPercent";
+import InputError from "../../Jetstream/InputError";
+import FormInputError from "../../A/FormInputError";
+import ButtonSave from "../../A/ButtonSave";
 
 export default {
     name: "SavingSettings",
     components: {
+        ButtonSave,
+        FormInputError,
+        InputError,
+        InputPercent,
         ALabel,
         JetInput,
         JetFormSection,
@@ -59,31 +69,17 @@ export default {
         }
     },
     methods: {
-        createIntrRangRate() {
-            this.form.intr_range_rates.push({
-                min: 0,
-                max: 0,
-                rate: null
-            })
-        },
-        removeIntrRangeRate(i) {
-            this.form.intr_range_rates.splice(i, 1);
-        },
-        createIntrDiscountRate() {
-            this.form.intr_discount_rates.push({
-                days: 1,
-                rate: 0,
-            })
-        },
-        removeIntrDiscountRate(i) {
-            this.form.intr_discount_rates.splice(i, 1);
-        },
         save() {
-            this.form.post(route('teams.savings.configs.store'), {
+            this.form.post(route('savings-config.store'), {
                 errorBag: 'savingConfig',
                 preserveScroll: true,
                 onSuccess: (e) => {
-                    this.$toast.add({severity:'success', summary: 'บันทึกข้อมูลแล้ว', detail:'การตั้งค่าระบบขายฝาก', life: 3000})
+                    this.$toast.add({
+                        severity: 'success',
+                        summary: 'บันทึกข้อมูลแล้ว',
+                        detail: 'การตั้งค่าระบบออมทอง',
+                        life: 3000
+                    })
                 }
             });
         },

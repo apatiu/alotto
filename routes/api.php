@@ -30,17 +30,7 @@ Route::middleware('auth:sanctum')->group(function () {
         return \App\Models\ProductDesign::all();
     });
 
-    Route::get('/pawn-configs', function () {
-        return [
-            'goldprice' => GoldPrice(),
-            'pawn_life' => MetaHelper::get('pawn_life', '3'),
-            'pawn_int_default_rate' => MetaHelper::get('pawn_int_default_rate', 3),
-            'pawn_int_min' => MetaHelper::get('pawn_int_min', 50),
-            'pawn_int_range_rates_enable' => MetaHelper::get('pawn_int_range_rates_enable', false),
-            'pawn_int_discount_rates_enable' => MetaHelper::get('pawn_int_discount_rates_enable', false),
 
-        ];
-    });
     Route::namespace('\App\Http\Controllers\Api')
         ->name('api.')
         ->group(function () {
@@ -48,6 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/users',function() {
                 return \App\Models\User::all();
             });
+
+            Route::resource('payment-methods', PaymentMethodController::class);
+
             Route::resource('banks', 'BankController');
             Route::resource('bank-accounts', 'BankAccountController');
             Route::post('/check-product', [\App\Http\Controllers\Api\ProductController::class, 'check'])
@@ -60,6 +53,18 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('product-sizes', 'ProductSizeController');
 
             Route::resource('product-percents', 'ProductPercentController');
+
+            Route::get('/pawn-configs', function () {
+                return [
+                    'goldprice' => GoldPrice(),
+                    'pawn_life' => MetaHelper::get('pawn_life', '3'),
+                    'pawn_int_default_rate' => MetaHelper::get('pawn_int_default_rate', 3),
+                    'pawn_int_min' => MetaHelper::get('pawn_int_min', 50),
+                    'pawn_int_range_rates_enable' => MetaHelper::get('pawn_int_range_rates_enable', false),
+                    'pawn_int_discount_rates_enable' => MetaHelper::get('pawn_int_discount_rates_enable', false),
+
+                ];
+            });
             Route::get('/pawns/search',[\App\Http\Controllers\Api\PawnController::class,'search'])
                 ->name('pawns.search');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
@@ -103,7 +108,7 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
 
-    Route::resource('payment-methods', \App\Http\Controllers\PaymentMethodController::class);
+
 
 
 });

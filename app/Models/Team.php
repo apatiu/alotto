@@ -51,4 +51,8 @@ class Team extends JetstreamTeam
     public function pawn_config() {
         return $this->hasOne(PawnConfig::class);
     }
+
+    public function saving_config() {
+        return $this->hasOne(SavingConfig::class);
+    }
 }
