@@ -51,17 +51,18 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->name('dashboard');
 
-Route::middleware(['role:admin'])->group(function () {
+Route::middleware(['role:manager'])->group(function () {
 
     Route::resource('company', CompanyController::class);
     Route::resource('company-config', CompanyConfigController::class);
 
-    Route::resource('users',UserController::class);
+
     Route::put('users/{user}/restore', [UserController::class, 'restore'])
         ->name('users.restore');
 });
 
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+    Route::resource('users',UserController::class);
     Route::resource('settings', \App\Http\Controllers\SettingController::class);
     Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
     Route::resource('sales', \App\Http\Controllers\SaleController::class);

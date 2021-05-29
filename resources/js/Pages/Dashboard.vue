@@ -1,7 +1,7 @@
 <template>
     <app-layout>
         <gold-prices></gold-prices>
-        <welcome></welcome>
+<!--        <welcome></welcome>-->
     </app-layout>
 </template>
 

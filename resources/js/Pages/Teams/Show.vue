@@ -9,7 +9,9 @@
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <update-team-name-form :team="team" :permissions="permissions"/>
-                <pawn-config :team="team" :permissions="permissions"/>
+                <Divider />
+                <pawn-settings :team="team" class="mt-10 sm:mt-0"/>
+                <Divider />
                 <team-member-manager class="mt-10 sm:mt-0"
                                      :team="team"
                                      :available-roles="availableRoles"
@@ -32,6 +34,7 @@ import DeleteTeamForm from './DeleteTeamForm'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
 import PawnConfig from "@/Pages/Teams/PawnConfig"
+import PawnSettings from "@/Pages/Teams/PawnSettings";
 
 export default {
     props: [
@@ -41,6 +44,7 @@ export default {
     ],
 
     components: {
+        PawnSettings,
         PawnConfig,
         AppLayout,
         DeleteTeamForm,

@@ -9,6 +9,9 @@ class PawnConfig extends Model
 {
     use HasFactory;
 
+    public function team() {
+        return $this->belongsTo(Team::class);
+    }
     public function intr_range_rates() {
         return $this->hasMany(IntrRangeRate::class);
     }

@@ -124,14 +124,13 @@ export default {
                 }, {
                     label: 'Settings', icon: 'pi pi-cog',
                     visible: () => {
-                        return this.$page.props.user_roles.manager || this.$page.props.user.current_team.personal_team;
+                        return this.$page.props.user_roles.manager || this.$page.props.user.current_team.user_id === this.$page.props.user.id
                     },
                     items: [
-                        {label: 'System', url: route('settings.index'),
-                        visible: () => {
-                            return this.$page.props.user.current_team.personal_team
-                        }},
-                        {label: 'ตั้งค่าสาขา', url: route('teams.show', this.$page.props.user.current_team)},
+                        {
+                            label: 'ตั้งค่าสาขา',
+                            url: route('teams.show', this.$page.props.user.current_team),
+                        },
                         {label: 'Users', url: route('users.index')},
                         {
                             label: 'API Token', url: route('api-tokens.index'),

@@ -22,18 +22,7 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Index', [
             'filters' => request()->all('search', 'role', 'trashed'),
-            'users' => User::orderBy('name')
-                ->filter(request()->only('search', 'role', 'trashed'))
-                ->get()
-                ->transform(function ($user) {
-                    return [
-                        'id' => $user->id,
-                        'name' => $user->name,
-                        'username' => $user->email,
-                        'photo' => $user->profile_photo_path,
-                        'deleted_at' => $user->deleted_at,
-                    ];
-                }),
+            'users' => request()->user()->staffs()
         ]);
     }
 

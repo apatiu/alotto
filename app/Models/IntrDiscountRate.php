@@ -8,4 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class IntrDiscountRate extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'pawn_config_id', 'days', 'rate'];
 }

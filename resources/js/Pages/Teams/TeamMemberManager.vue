@@ -3,10 +3,11 @@
         <div v-if="userPermissions.canAddTeamMembers">
             <Divider/>
 
+
             <!-- Add Team Member -->
             <jet-form-section @submitted="addTeamMember">
                 <template #title>
-                    เพิ่มพนักงาน
+                    พนักงาน
                 </template>
 
                 <template #description>
@@ -14,9 +15,9 @@
                 </template>
 
                 <template #form>
-
+                    <ButtonCreate label="สร้างพนักงานใหม่" @click="dlgCreateuser=true"></ButtonCreate>
                     <!-- Member Username -->
-                    <div class="col-span-6 sm:col-span-4">
+                    <div class="col-span-6 sm:col-span-4 mt-8">
                         <a-label for="username" value="Username"/>
                         <jet-input id="username" type="text" class="mt-1 block w-full"
                                    v-model="addTeamMemberForm.username"/>
@@ -26,7 +27,7 @@
                     <!-- Role -->
                     <div class="col-span-6 lg:col-span-4" v-if="availableRoles.length > 0">
                         <a-label for="roles" value="Role"/>
-                        <jet-input-error :message="addTeamMemberForm.errors.role" class="mt-2"/>
+                        <FormInputError :message="addTeamMemberForm.errors.role" class="mt-2"/>
 
                         <div class="relative z-0 mt-1 border border-gray-200 rounded-lg cursor-pointer">
                             <button type="button"
@@ -117,11 +118,11 @@
             <!-- Manage Team Members -->
             <jet-action-section class="mt-10 sm:mt-0">
                 <template #title>
-                    Team Members
+                    พนักงานในสาขา
                 </template>
 
                 <template #description>
-                    All of the people that are part of this team.
+
                 </template>
 
                 <!-- Team Member List -->
@@ -206,14 +207,10 @@
             </template>
 
             <template #footer>
-                <jet-secondary-button @click="currentlyManagingRole = false">
-                    Cancel
-                </jet-secondary-button>
+                <ButtonCancel @click="currentlyManagingRole = false" />
 
-                <Button class="ml-2" @click="updateRole" :class="{ 'opacity-25': updateRoleForm.processing }"
-                        :disabled="updateRoleForm.processing">
-                    Save
-                </Button>
+                <ButtonSave class="ml-2" @click="updateRole" :class="{ 'opacity-25': updateRoleForm.processing }"
+                        :disabled="updateRoleForm.processing" />
             </template>
         </jet-dialog-modal>
 
@@ -261,6 +258,9 @@
                 </jet-danger-button>
             </template>
         </jet-confirmation-modal>
+        <Dialog v-model:visible="dlgCreateuser">
+            <FormCreateUser @cancel="dlgCreateuser=false"></FormCreateUser>
+        </Dialog>
     </div>
 </template>
 
@@ -278,9 +278,17 @@ import ALabel from "@/A/ALabel"
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import InputError from "@/Jetstream/InputError";
+import ButtonCreate from "@/A/ButtonCreate";
+import FormCreateUser from "@/Pages/Users/FormCreateUser";
+import ButtonSave from "@/A/ButtonSave";
+import ButtonCancel from "@/A/ButtonCancel";
 
 export default {
     components: {
+        ButtonSave,
+        ButtonCancel,
+        FormCreateUser,
+        ButtonCreate,
         InputError,
         JetActionMessage,
         JetActionSection,
@@ -319,6 +327,7 @@ export default {
             managingRoleFor: null,
             confirmingLeavingTeam: false,
             teamMemberBeingRemoved: null,
+            dlgCreateuser: false,
         }
     },
 

@@ -13,3 +13,10 @@ html {
     top: 70px;
 }
 
+.p-button {
+    @apply px-4 py-2 text-xs font-semibold uppercase
+}
+
+.p-button-label {
+    @apply font-semibold uppercase text-sm
+}

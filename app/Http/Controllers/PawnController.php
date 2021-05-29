@@ -8,7 +8,9 @@ use App\Models\IntrDiscountRate;
 use App\Models\IntrRangeRate;
 use App\Models\Media;
 use App\Models\Pawn;
+use App\Models\PawnConfig;
 use App\Models\Payment;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -196,16 +198,20 @@ class PawnController extends Controller
 
     public function storeConfig(Request $request)
     {
-        MetaHelper::set('pawn_life', $request->input('pawn_life'));
-        MetaHelper::set('pawn_int_default_rate', $request->input('int_default_rate'));
-        MetaHelper::set('pawn_int_min', $request->input('int_min'));
-        MetaHelper::set('pawn_int_range_rates_enable', $request->input('int_range_rates_enable'));
-        MetaHelper::set('pawn_int_discount_rates_enable', $request->input('int_discount_rates_enable'));
-        DB::transaction(function () use ($request) {
-            DB::table('int_range_rates')->truncate();
-            IntrRangeRate::insert($request->input('int_range_rates'));
-            DB::table('int_discount_rates')->truncate();
-            IntrDiscountRate::insert($request->input('int_discount_rates'));
+        DB::transaction(function() use ($request) {
+            $team = $request->user()->currentTeam;
+            $pawn_config = $team->pawn_config;
+            $row = ($pawn_config) ? $pawn_config : new PawnConfig();
+            $row->team_id = $team->id;
+            $row->forceFill($request->except('intr_range_rates','intr_discount_rates'));
+            $row->save();
+
+            $row->intr_range_rates()->truncate();
+            $row->intr_range_rates()->createMany($request->input('intr_range_rates',[]));
+
+            $row->intr_discount_rates()->truncate();
+            $row->intr_discount_rates()->createMany($request->input('intr_discount_rates',[]));
+
         });
 
         return redirect()->back();

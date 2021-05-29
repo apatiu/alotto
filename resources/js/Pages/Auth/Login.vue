@@ -12,21 +12,25 @@
 
         <form @submit.prevent="submit">
             <div>
-                <a-label for="username" value="Username"/>
-                <jet-input id="username" type="text" class="mt-1 block w-full" v-model="form.username" required
+                <label for="username">Username</label>
+                <InputText id="username" type="text"
+                           class="mt-1 block w-full"
+                           v-model="form.username" required
                            autofocus/>
             </div>
 
             <div class="mt-4">
-                <a-label for="password" value="Password"/>
-                <jet-input id="password" type="password" class="mt-1 block w-full" v-model="form.password" required
+                <label for="password">Password</label>
+                <InputText id="password"
+                           type="password"
+                           class="mt-1 block w-full" v-model="form.password" required
                            autocomplete="current-password"/>
             </div>
 
             <div class="block mt-4">
                 <div class="flex items-center">
                     <Checkbox v-model="form.remember" :binary="true"></Checkbox>
-                    <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                    <span class="ml-2 text-sm text-gray-600">จดจำบัญชีไว้</span>
                 </div>
             </div>
 
@@ -34,7 +38,7 @@
                 <inertia-link v-if="canResetPassword"
                               :href="route('password.request')"
                               class="underline text-sm text-gray-600 hover:text-gray-900 mr-2">
-                    Forgot your password?
+                    ลืมรหัสผ่าน?
                 </inertia-link>
 
                 <Button type="submit" class="ml-4" :class="{ 'opacity-25': form.processing }"

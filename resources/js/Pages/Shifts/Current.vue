@@ -278,22 +278,22 @@
                 <label for="bankName">ชื่อเรียก</label>
                 <InputText id="bankName" v-model.trim="item.name" required="true" autofocus
                            :class="{'p-invalid': v.item.name.$error}"/>
-                <jet-input-error :errors="v.item.name.$errors"/>
+                <FormInputError :errors="v.item.name.$errors"/>
             </div>
             <div class="p-field">
                 <label for="bank">ธนาคาร</label>
                 <select-bank id="bank" v-model="item.bank" required="true"/>
-                <jet-input-error :errors="v.item.bank.$errors"/>
+                <FormInputError :errors="v.item.bank.$errors"/>
             </div>
             <div class="p-field">
                 <label for="acc_no">เลขบัญชี</label>
                 <InputText id="acc_no" v-model="item.acc_no" required="true"/>
-                <jet-input-error :errors="v.item.acc_no.$errors"/>
+                <FormInputError :errors="v.item.acc_no.$errors"/>
             </div>
             <div class="p-field">
                 <label for="acc_name">ชื่อบัญชี</label>
                 <InputText id="acc_name" v-model="item.acc_name" required="true"/>
-                <jet-input-error :errors="v.item.acc_name.$errors"/>
+                <FormInputError :errors="v.item.acc_name.$errors"/>
             </div>
             <template #footer>
                 <Button label="Cancel" icon="pi pi-times" class="p-button-text" @click="hideDialog"/>

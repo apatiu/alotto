@@ -14,11 +14,6 @@
                             <jet-section-border/>
                         </div>
 
-                        <div v-if="$page.props.jetstream.canUpdatePassword">
-                            <pawn-settings :data="pawn_config" class="mt-10 sm:mt-0"/>
-                            <jet-section-border/>
-                        </div>
-
                         <div v-if="$page.props.jetstream.canManageTwoFactorAuthentication">
                             <!--                    <two-factor-authentication-form class="mt-10 sm:mt-0" />-->
                             <jet-section-border/>
@@ -49,14 +44,12 @@ import AppLayout from '@/Layouts/AppLayout'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import CompanyData from './CompanyData'
 import UpdateCompanyConfig from "@/Pages/Settings/UpdateCompanyConfig";
-import PawnSettings from './PawnSettings'
 import BankAccounts from "@/Pages/Settings/BankAccounts";
 
 export default {
     props: [
         'company',
         'company_config',
-        'pawn_config',
         'bank_accounts'
     ],
 

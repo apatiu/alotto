@@ -10,30 +10,27 @@
 
         <template #form>
             <!-- Profile Photo -->
+            <div class="p-fluid">
+                <div class="p-field">
+                    <a-label for="bullionPriceDiff" value="ส่วนต่างซื้อ-ขายราคาทองแท่ง"/>
+                    <jet-input id="bullionPriceDiff" type="number" step="0.01" class="mt-1 block w-full"
+                               v-model="form.bullion_price_diff"/>
+                    <FormInputError :message="form.errors.bullionPriceDiff" class="mt-2"/>
+                </div>
+                <div class="p-field">
+                    <a-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
+                    <jet-input id="goldbahtWeight" type="number" step="0.01" class="mt-1 block w-full"
+                               v-model="form.gold_baht_weight"/>
+                    <FormInputError :message="form.errors.goldbahtWeight" class="mt-2"/>
+                </div>
+                <div class="p-field-checkbox">
+                    <Checkbox id="goldBuyPriceDevideByGoldByWeight" :binary="true"
+                              v-model="data.gold_buy_price_devide_by_gold_baht_weight"/>
+                    <label for="goldBuyPriceDevideByGoldByWeight">คำนวนราคารับซื้อด้วยการหารน้ำหนักต่อบาท<br/>(ปกติใช้ *.0656)</label>
+                    <FormInputError :message="form.errors.goldBuyPriceDevideByGoldbahtWeight" class="mt-2"/>
+                </div>
 
-            <div class="col-span-6 sm:col-span-8">
-                <a-label for="bullionPriceDiff" value="ส่วนต่างซื้อ-ขายราคาทองแท่ง"/>
-                <jet-input id="bullionPriceDiff" type="number" step="0.01" class="mt-1 block w-full"
-                           v-model="form.bullion_price_diff"/>
-                <jet-input-error :message="form.errors.bullionPriceDiff" class="mt-2"/>
             </div>
-            <div class="col-span-2">
-                <a-label for="goldbahtWeight" value="น้ำหนัก/ 1 บาททอง (กรัม)"/>
-                <jet-input id="goldbahtWeight" type="number" step="0.01" class="mt-1 block w-full"
-                           v-model="form.gold_baht_weight"/>
-                <jet-input-error :message="form.errors.goldbahtWeight" class="mt-2"/>
-            </div>
-            <div class="col-span-4 pt-5">
-                <jet-checkbox id="goldBuyPriceDevideByGoldByWeight"
-                              :value="data.gold_buy_price_devide_by_gold_baht_weight"
-                              v-model:checked="form.gold_buy_price_devide_by_gold_baht_weight"
-                              class="mt-1"
-                              autocomplete="addr"/>
-                <label for="goldBuyPriceDevideByGoldByWeight" class="ml-2">คำนวนราคารับซื้อด้วยการหารน้ำหนักต่อบาท<br/>(ปกติใช้ *.0656)</label>
-                <jet-input-error :message="form.errors.goldBuyPriceDevideByGoldbahtWeight" class="mt-2"/>
-            </div>
-
-
         </template>
 
         <template #actions>

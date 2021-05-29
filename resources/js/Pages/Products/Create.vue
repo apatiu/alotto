@@ -11,7 +11,7 @@
                 <div class="col-span-3">
                     <a-label for="id" value="รหัสสินค้า"/>
                     <jet-input id="id" type="text" class="mt-1 block w-full" v-model="form.id"/>
-                    <jet-input-error :message="form.errors.id" class="mt-2"/>
+                    <FormInputError :message="form.errors.id" class="mt-2"/>
                 </div>
             </div>
         </template>

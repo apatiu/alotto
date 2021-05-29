@@ -16,7 +16,7 @@
                     <a-label for="name" value="Name"/>
                     <jet-input id="name" type="text" class="mt-1 block w-full" v-model="createApiTokenForm.name"
                                autofocus/>
-                    <jet-input-error :message="createApiTokenForm.errors.name" class="mt-2"/>
+                    <FormInputError :message="createApiTokenForm.errors.name" class="mt-2"/>
                 </div>
 
                 <!-- Token Permissions -->

@@ -1,5 +1,6 @@
 .<template>
     <label>
+        {{ value }}
         <slot></slot>
     </label>
 </template>

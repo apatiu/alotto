@@ -17,7 +17,7 @@ class SettingController extends Controller
         return Inertia::render('Settings/Index', [
             'company' => [
                 'name' => Meta::get('company_name', 'บริษัท กำไรดี จำกัด'),
-                'logo_url' => Meta::get('company_logo_url'),
+                'logo_url' => Meta::get('company_logo_url','/images/logo-default.png'),
                 'addr' => Meta::get('company_addr'),
                 'tel'=> Meta::get('company_tel'),
                 'tax_id'=> Meta::get('company_tax_id'),

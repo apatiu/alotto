@@ -34,7 +34,7 @@
                                     v-model="form.password"
                                     @keyup.enter="deleteUser" />
 
-                        <jet-input-error :message="form.errors.password" class="mt-2" />
+                        <FormInputError :message="form.errors.password" class="mt-2" />
                     </div>
                 </template>
 

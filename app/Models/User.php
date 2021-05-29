@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
+use Laravel\Jetstream\Jetstream;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -80,5 +81,13 @@ class User extends Authenticatable
                 $query->onlyTrashed();
             }
         });
+    }
+
+    public function staffs() {
+        $rows = $this->ownedTeams()->first()->users;
+        foreach ($this->ownedTeams() as $team) {
+            $rows->merge($team->users);
+        }
+        return $rows;
     }
 }

@@ -15,7 +15,7 @@
                        ref="photo"
                        @change="updatePhotoPreview">
 
-                <a-label for="photo" value="โลโก้"/>
+                <label for="photo">โลโก้</label>
 
                 <!-- Current Profile Photo -->
                 <div class="mt-2" v-show="! photoPreview">
@@ -40,37 +40,37 @@
                     Remove Photo
                 </jet-secondary-button>
 
-                <jet-input-error :message="form.errors.photo" class="mt-2"/>
+                <FormInputError :message="form.errors.photo" class="mt-2"/>
             </div>
 
             <!--             Name-->
             <div class="col-span-6 sm:col-span-8 p-field mt-4">
-                <a-label for="name" value="ชื่อบริษัท"/>
+                <label>ชื่อบริษัท</label>
                 <InputText id="name"
                            v-model="form.name" autocomplete="name"/>
-                <jet-input-error :message="form.errors.name" class="mt-2"/>
+                <FormInputError :message="form.errors.name" class="mt-2"/>
             </div>
             <div class="col-span-12">
-                <a-label for="addr" value="ที่อยู่"></a-label>
+                <label for="addr" value="ที่อยู่">ที่อยู่</label>
                 <jet-input id="addr" type="text" class="mt-1 block w-full" v-model="form.addr" autocomplete="addr"/>
-                <jet-input-error :message="form.errors.addr" class="mt-2"/>
+                <FormInputError :message="form.errors.addr" class="mt-2"/>
             </div>
             <div class="col-span-6">
-                <a-label for="tax_id" value="เลขผู้เสียภาษี"></a-label>
+                <label for="tax_id" value="เลขผู้เสียภาษี">เลขผู้เสียภาษี</label>
                 <jet-input id="tax_id" type="text" class="mt-1 block w-full" v-model="form.tax_id" />
-                <jet-input-error :message="form.errors.tax_id" class="mt-2"/>
+                <FormInputError :message="form.errors.tax_id" class="mt-2"/>
             </div>
             <div class="col-span-6">
-                <a-label for="tel" value="เบอร์โทร"></a-label>
+                <label for="tel" value="เบอร์โทร">เบอร์โทร</label>
                 <jet-input id="tel" type="text" class="mt-1 block w-full" v-model="form.tel" />
-                <jet-input-error :message="form.errors.tel" class="mt-2"/>
+                <FormInputError :message="form.errors.tel" class="mt-2"/>
             </div>
 
             <!-- Email -->
             <!--            <div class="col-span-6 sm:col-span-4">-->
             <!--                <a-label for="email" value="Email" />-->
             <!--                <jet-input id="email" type="email" class="mt-1 block w-full" v-model="form.email" />-->
-            <!--                <jet-input-error :message="form.errors.email" class="mt-2" />-->
+            <!--                <FormInputError :message="form.errors.email" class="mt-2" />-->
             <!--            </div>-->
         </template>
 
@@ -80,7 +80,7 @@
             </jet-action-message>
 
             <Button :class="{ 'opacity-25': form.processing }" :disabled="form.processing" @click="updateCompanyData">
-                Save
+                บันทึก
             </Button>
         </template>
     </jet-form-section>
@@ -95,9 +95,11 @@ import JetInputError from '@/Jetstream/InputError'
 import ALabel from "@/A/ALabel"
 import JetActionMessage from '@/Jetstream/ActionMessage'
 import JetSecondaryButton from '@/Jetstream/SecondaryButton'
+import FormInputError from "@/A/FormInputError";
 
 export default {
     components: {
+        FormInputError,
         JetActionMessage,
 
         JetFormSection,

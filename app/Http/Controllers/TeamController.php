@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 use Laravel\Jetstream\Actions\ValidateTeamDeletion;
 use Laravel\Jetstream\Contracts\CreatesTeams;
@@ -20,8 +21,8 @@ class TeamController extends Controller
     /**
      * Show the team management screen.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $teamId
+     * @param \Illuminate\Http\Request $request
+     * @param int $teamId
      * @return \Inertia\Response
      */
     public function show(Request $request, $teamId)
@@ -31,7 +32,8 @@ class TeamController extends Controller
         Gate::authorize('view', $team);
 
         return Jetstream::inertia()->render($request, 'Teams/Show', [
-            'team' => $team->load('owner', 'users', 'teamInvitations'),
+            'team' => $team->load('owner', 'users', 'teamInvitations',
+                'pawn_config','pawn_config.intr_range_rates', 'pawn_config.intr_discount_rates'),
             'availableRoles' => array_values(Jetstream::$roles),
             'availablePermissions' => Jetstream::$permissions,
             'defaultPermissions' => Jetstream::$defaultPermissions,
@@ -47,7 +49,7 @@ class TeamController extends Controller
     /**
      * Show the team creation screen.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Inertia\Response
      */
     public function create(Request $request)
@@ -60,7 +62,7 @@ class TeamController extends Controller
     /**
      * Create a new team.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
@@ -75,24 +77,31 @@ class TeamController extends Controller
     /**
      * Update the given team's name.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $teamId
+     * @param \Illuminate\Http\Request $request
+     * @param int $teamId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $teamId)
     {
         $team = Jetstream::newTeamModel()->findOrFail($teamId);
+        $user = $request->user();
+        $input = $request->all();
 
-        app(UpdatesTeamNames::class)->update($request->user(), $team, $request->all());
+        Gate::forUser($user)->authorize('update', $team);
 
+        Validator::make($input, [
+            'name' => ['required', 'string', 'max:255'],
+        ])->validateWithBag('updateTeamName');
+
+        $team->forceFill($input)->save();
         return back(303);
     }
 
     /**
      * Delete the given team.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $teamId
+     * @param \Illuminate\Http\Request $request
+     * @param int $teamId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, $teamId)
