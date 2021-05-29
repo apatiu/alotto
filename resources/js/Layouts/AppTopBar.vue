@@ -1,11 +1,11 @@
 <template>
-    <div class="layout-topbar block">
-        <button class="p-link layout-menu-button" @click="onMenuToggle">
-            <span class="pi pi-bars"></span>
-        </button>
-        <div class="layout-topbar-icons flex">
-            <jet-dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
-                <template #trigger>
+  <div class="layout-topbar block">
+    <button class="p-link layout-menu-button" @click="onMenuToggle">
+      <span class="pi pi-bars"></span>
+    </button>
+    <div class="layout-topbar-icons flex">
+      <jet-dropdown align="right" width="60" v-if="$page.props.jetstream.hasTeamFeatures">
+        <template #trigger>
                                         <span class="inline-flex rounded-md">
                                             <button type="button"
                                                     class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:bg-gray-50 hover:text-gray-700 focus:outline-none focus:bg-gray-50 active:bg-gray-50 transition ease-in-out duration-150">
@@ -19,53 +19,42 @@
                                                 </svg>
                                             </button>
                                         </span>
-                </template>
+        </template>
 
-                <template #content>
-                    <div class="w-60">
-                        <!-- Team Management -->
-                        <template v-if="$page.props.jetstream.hasTeamFeatures">
+        <template #content>
+          <div class="w-60">
 
-                            <!-- Team Switcher -->
-                            <div class="block px-4 py-2 text-xs text-gray-400">
-                                เปลี่ยนสาขา
-                            </div>
+            <!-- Team Management -->
+            <template v-if="$page.props.jetstream.hasTeamFeatures">
 
-                            <template v-for="team in $page.props.user.all_teams" :key="team.id">
-                                <form @submit.prevent="switchToTeam(team)">
-                                    <dropdown-link as="button">
-                                        <div class="flex items-center">
-                                            <svg v-if="team.id == $page.props.user.current_team_id"
-                                                 class="mr-2 h-5 w-5 text-green-400" fill="none"
-                                                 stroke-linecap="round" stroke-linejoin="round"
-                                                 stroke-width="2" stroke="currentColor"
-                                                 viewBox="0 0 24 24">
-                                                <path
-                                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            <div>{{ team.name }}</div>
-                                        </div>
-                                    </dropdown-link>
-                                </form>
-                            </template>
+              <!-- Team Switcher -->
+              <div class="block px-4 py-2 text-xs text-gray-400">
+                เปลี่ยนสาขา
+              </div>
 
-                            <div class="border-t border-gray-100"></div>
-
-                            <div class="block px-4 py-2 text-xs text-gray-400">
-                                จัดการสาขา
-                            </div>
-
-                            <dropdown-link :href="route('teams.create')"
-                                           v-if="$page.props.jetstream.canCreateTeams">
-                                สร้างสาขาใหม่
-                            </dropdown-link>
-
-                        </template>
+              <template v-for="team in $page.props.user.all_teams" :key="team.id">
+                <form @submit.prevent="switchToTeam(team)">
+                  <dropdown-link as="button">
+                    <div class="flex items-center">
+                      <svg v-if="team.id == $page.props.user.current_team_id"
+                           class="mr-2 h-5 w-5 text-green-400" fill="none"
+                           stroke-linecap="round" stroke-linejoin="round"
+                           stroke-width="2" stroke="currentColor"
+                           viewBox="0 0 24 24">
+                        <path
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <div>{{ team.name }}</div>
                     </div>
-                </template>
-            </jet-dropdown>
-        </div>
+                  </dropdown-link>
+                </form>
+              </template>
+            </template>
+          </div>
+        </template>
+      </jet-dropdown>
     </div>
+  </div>
 </template>
 
 <script>
@@ -79,25 +68,25 @@ import DropdownLink from "@/Jetstream/DropdownLink";
 import ResponsiveNavLink from "@/Jetstream/ResponsiveNavLink";
 
 export default {
-    name: "AppTopBar",
-    components: {Menubar, Button, ResponsiveNavLink, DropdownLink, JetDropdown, NavLink, JetApplicationMark},
-    data() {
-        return {
-            showingNavigationDropdown: false,
-        }
-    },
-    methods: {
-        onMenuToggle(event) {
-            this.$emit('menu-toggle', event);
-        },
-        switchToTeam(team) {
-            this.$inertia.put(route('current-team.update'), {
-                'team_id': team.id
-            }, {
-                preserveState: false
-            })
-        },
+  name: "AppTopBar",
+  components: {Menubar, Button, ResponsiveNavLink, DropdownLink, JetDropdown, NavLink, JetApplicationMark},
+  data() {
+    return {
+      showingNavigationDropdown: false,
     }
+  },
+  methods: {
+    onMenuToggle(event) {
+      this.$emit('menu-toggle', event);
+    },
+    switchToTeam(team) {
+      this.$inertia.put(route('current-team.update'), {
+        'team_id': team.id
+      }, {
+        preserveState: false
+      })
+    },
+  }
 }
 </script>
 

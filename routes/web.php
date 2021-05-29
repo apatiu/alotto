@@ -129,6 +129,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
         // Teams...
         if (Jetstream::hasTeamFeatures()) {
             Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
+            Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
             Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
             Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
             Route::post('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');

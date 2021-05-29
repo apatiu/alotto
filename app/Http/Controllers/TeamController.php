@@ -18,6 +18,11 @@ class TeamController extends Controller
 {
     use RedirectsActions;
 
+    public function index() {
+        return Jetstream::inertia()->render(request(),'Teams/Index',[
+            'teams'=> request()->user()->ownedTeams
+        ]);
+    }
     /**
      * Show the team management screen.
      *
@@ -100,7 +105,11 @@ class TeamController extends Controller
 
         $team->forceFill([
             'name' => $input['name'],
-            'company_name' => $input['company_name']
+            'company_name' => $input['company_name'],
+            'addr' => $input['addr'],
+            'branch_number' => $input['branch_number'],
+            'tax_id' => $input['tax_id'],
+            'phone' => $input['phone'],
         ])->save();
         return back(303);
     }

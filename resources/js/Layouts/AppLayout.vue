@@ -3,10 +3,6 @@
         <AppTopBar @menu-toggle="onMenuToggle"></AppTopBar>
         <transition name="layout-sidebar">
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
-                <div class="layout-logo">
-                    <img v-if="$page.props.company_logo_url"
-                         :src="'/' + $page.props.company_logo_url" class="w-20 m-auto" alt="">
-                </div>
 
                 <AppProfile/>
                 <div v-if="$page.props.current_shift" class="text-sm text-center p-2">
@@ -19,8 +15,13 @@
                 <AppMenu :model="menu" @menuitem-click="onMenuItemClick"/>
             </div>
         </transition>
-
+        <!-- Page Heading -->
         <div class="layout-main">
+            <header v-if="$slots.header">
+                <div class="mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                    <slot name="header"></slot>
+                </div>
+            </header>
             <slot></slot>
         </div>
 
@@ -130,14 +131,7 @@ export default {
                         {
                             label: 'ตั้งค่าสาขา',
                             url: route('teams.show', this.$page.props.user.current_team),
-                        },
-                        {label: 'Users', url: route('users.index')},
-                        {
-                            label: 'API Token', url: route('api-tokens.index'),
-                            visible: () => {
-                                return this.$page.props.jetstream.hasApiFeatures
-                            }
-                        },
+                        }
                     ]
                 }, {
                     label: 'ตั้งค่าขั้นสูง', icon: 'pi pi-cog',
@@ -148,7 +142,7 @@ export default {
                     items: [
                         {
                             label: 'สาขา',
-                            url: route('users.index', this.$page.props.user.current_team),
+                            url: route('teams.index'),
                         },
                         {label: 'Users', url: route('users.index')},
                         {
@@ -156,7 +150,7 @@ export default {
                             visible: () => {
                                 return this.$page.props.jetstream.hasApiFeatures
                             }
-                        },
+                        }
                     ]
                 }
             ],

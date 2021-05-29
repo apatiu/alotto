@@ -1,9 +1,9 @@
 <template>
     <app-layout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Create Team
-            </h2>
+            <h3 class="font-semibold text-gray-800 leading-tight">
+                สร้างสาขา
+            </h3>
         </template>
 
         <div>

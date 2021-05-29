@@ -1,6 +1,12 @@
 <template>
-    <div class="layout-profile">
-        <div class="flex justify-center">
+    <div class="layout-profile bg-gradient-to-b from-white ">
+        <div class="">
+            <img :src="$page.props.user.current_team.profile_photo_url" class="w-44 m-auto" alt="">
+        </div>
+        <div class="text-center font-medium">{{ $page.props.user.current_team.name}}</div>
+
+        <div class="flex justify-center items-center">
+
             <button v-if="$page.props.jetstream.managesProfilePhotos"
                     @click="onClick"
                     class="p-link layout-profile-link w-full flex items-center justify-center">
