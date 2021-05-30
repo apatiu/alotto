@@ -35,8 +35,6 @@
         <ConfirmDialog></ConfirmDialog>
     </div>
     <div id="printable"></div>
-
-
 </template>
 
 <script>

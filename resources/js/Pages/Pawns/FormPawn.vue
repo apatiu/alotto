@@ -70,7 +70,7 @@
                         <div class="p-field p-grid">
                             <label for="" class="p-col-fixed w-28">อัตราดอกเบี้ย</label>
                             <InputNumber v-model="form.int_rate"
-                                         :disabled="!actionable && !creating"
+                                         :disabled="!creating"
                                          class="p-col"></InputNumber>
                         </div>
                         <div class="p-field p-grid">
@@ -201,10 +201,10 @@
                 <div class="flex items-center">
                     <action-message :on="form.recentlySuccessful">บันทึกข้อมูลแล้ว</action-message>
                     <Button label="ปิด" class="p-button-text" @click="$emit('update:visible',false)"></Button>
-                    <Button label="บันทึก" icon="pi pi-check"
-                            @click="getPayments"
-                            v-if="creating || actionable"
-                            :disabled="v.form.$invalid"></Button>
+                    <ButtonSave
+                        @click="getPayments"
+                        v-if="creating"
+                        :disabled="v.form.$invalid"></ButtonSave>
                 </div>
             </div>
         </template>
@@ -369,6 +369,7 @@ import InputPayment from "@/A/InputPayment";
 import PawnStatus from "@/A/PawnStatus";
 import CaptureImage from "@/A/CaptureImage";
 import InputImage from "@/A/InputImage";
+import ButtonSave from "../../A/ButtonSave";
 
 export default {
     name: "FormPawn",
@@ -378,6 +379,7 @@ export default {
         }
     },
     components: {
+        ButtonSave,
         InputImage,
         PawnStatus,
         InputPayment, ActionMessage,
@@ -389,7 +391,6 @@ export default {
         return {
             paymentDialog: false,
             saved: false,
-            printHtml: null,
             form: this.$inertia.form({
                     id: null,
                     dt: null,
@@ -590,6 +591,7 @@ export default {
             this.calcPrice();
         },
         calcPrice() {
+            console.log('calcPrice')
             let price = 0;
             _.each(this.form.items, (o) => {
                 price += o.price;
@@ -747,16 +749,12 @@ export default {
                     //callback to execute when user rejects the action
                 }
             });
-
-
         },
-
         print() {
             axios.get(route('api.pawns.print', this.form.id))
                 .then(response => {
-                    this.printHtml = response.data;
+                    console.log(response.data);
                     this.$print(response.data);
-
                 })
         }
     }

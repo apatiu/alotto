@@ -40,6 +40,13 @@ export default {
             selectedPawn: null,
         }
     },
+    watch:{
+        visible(val){
+            if (!val) {
+                this.selectedPawn = null
+            }
+        }
+    },
     methods: {
         createPawn() {
             this.pawnId = null;

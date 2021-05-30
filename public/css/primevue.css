@@ -11288,51 +11288,56 @@ h4, h5, h6 {
   height: 1.5rem;
   width: 1.5rem;
 }
+
 @media only screen {
-  .p-button #printable .page {
+  #printable {
+    display: none;
+  }
+  #printable .page {
     background-color: white;
     padding: 1cm;
   }
-  .p-button #printable .page.A4 {
+  #printable .page.A4 {
     width: 21cm;
     max-height: 29.7cm;
   }
 }
-.p-button #printable {
-  display: none;
-}
 @media only print {
-  .p-button body {
+  body {
     background-color: white !important;
   }
-  .p-button .layout-wrapper, .p-button .p-dialog-mask, .p-button .p-toast {
+
+  .layout-wrapper, .p-dialog-mask, .p-toast {
     display: none !important;
   }
-  .p-button #printable {
+
+  #printable {
     display: block;
   }
-  .p-button .page {
+
+  .page {
     background-color: transparent;
     padding: 0px !important;
   }
-  .p-button .page.A4 {
+
+  .page.A4 {
     margin: 0cm;
     size: A4 portrait;
   }
-  .p-button .page.A4.landscape {
+  .page.A4.landscape {
     size: A4 landscape;
   }
+
   @page {
-    .p-button {
-      size: A4;
-      margin: 1cm;
-    }
+    size: A4;
+    margin: 1cm;
   }
-  .p-button .layout-topbar, .p-button .layout-sidebar {
+  .layout-topbar, .layout-sidebar {
     display: none !important;
     box-shadow: none;
   }
-  .p-button .layout-main {
+
+  .layout-main {
     margin: 0 !important;
     padding: 0 !important;
   }

@@ -1,0 +1,116 @@
+@import '~primevue/resources/themes/saga-blue/theme.css';
+@import '~primevue/resources/primevue.min.css';
+@import '~primeicons/primeicons.css';
+@import '~primeflex/primeflex.scss';
+@import "./varibles";
+@import "./sass/layout";
+
+html {
+    //font-size: 14px;
+}
+
+body {
+    margin: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+
+h4, h5, h6 {
+    font-weight: bold;
+    color: #0b7ad1;
+}
+
+.layout-topbar {
+    background-color: var(--surface-a);
+    display: flex;
+
+    .topbar-menu {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        margin-left: auto;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+    }
+}
+
+.p-toolbar {
+    background-color: transparent;
+    border: none;
+    padding: 4px;
+}
+
+.p-field > label {
+    margin-bottom: 0.25rem;
+}
+
+.p-button {
+
+    &.p-button-icon-only {
+        &.p-button-xs {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+
+    }
+}
+
+@media only screen {
+    #printable {
+        display: none;
+
+        .page {
+            background-color: white;
+            padding: 1cm;
+
+            &.A4 {
+                width: 21cm;
+                max-height: 29.7cm;
+            }
+        }
+    }
+}
+
+@media only print {
+    body {
+        background-color: white !important;
+    }
+    .layout-wrapper, .p-dialog-mask, .p-toast {
+        display: none !important;
+    }
+    #printable {
+        display: block;
+    }
+    .page {
+        background-color: transparent;
+        padding: 0px !important;
+    }
+
+    .page.A4 {
+        margin: 0cm;
+        size: A4 portrait;
+
+        &.landscape {
+            size: A4 landscape;
+        }
+    }
+
+    @page {
+        size: A4;
+        margin: 1cm;
+    }
+
+    .layout-topbar, .layout-sidebar {
+        display: none !important;
+        box-shadow: none;
+    }
+    .layout-main {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+}
+

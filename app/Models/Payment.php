@@ -48,7 +48,7 @@ class Payment extends Model
     public function parse($data, $paymentTypeId = null)
     {
         $this->fill($data);
-        $dt = isset($data['dt']) ? jsDateToDateString($data['dt']) : now()->toDateTimeString();
+        $dt = isset($data['dt']) ? jsDateToDateTimeString($data['dt']) : now()->toDateTimeString();
         $this->dt = $dt;
 
         $this->user_id = $data['user_id'] ?? Auth::user()->id;
