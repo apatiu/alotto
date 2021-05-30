@@ -29,11 +29,31 @@ class ShiftController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Inertia\Response
      */
     public function create()
     {
-        //
+        $shift = new Shift();
+        $team = request()->user()->currentTeam;
+        $latest = Shift::whereTeamId($team->id)->latest()->first();
+        if ($latest) {
+
+            if ($latest->status === 'close') {
+                $shift->cash_begin = $latest->cash_end;
+            } else {
+                $this->show($latest);
+            }
+        } else {
+            $shift->cash_begin = 0;
+        }
+
+        $shift->team_id = $team->id;
+        $shift->status = 'open';
+        $shift->load('team');
+
+        return Inertia::render('Shifts/Create', [
+            'shift' => $shift
+        ]);
     }
 
     /**
@@ -44,24 +64,16 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
-        $d = now();
-        $latest = Shift::whereTeamId($request->user()->currentTeam->id)->latest('d')->first();
-        if ($latest) {
-            $d = new Carbon($latest->d);
-            $d->addDay()->toDateString();
-        }
-
         $shift = new Shift();
-        $shift->fill(array_merge($request->all(), [
+        $shift->fill( [
             'team_id' => $request->user()->currentTeam->id,
             'cash_begin' => $request->input('cash_begin'),
             'open_user_id' => $request->user()->id,
             'opened_at' => now(),
             'status' => 'open'
-        ]));
-        $shift->d = $d;
+        ]);
         $shift->save();
-        return redirect()->back();
+        return redirect('dashboard');
     }
 
     /**

@@ -3,12 +3,18 @@
         <AppTopBar @menu-toggle="onMenuToggle"></AppTopBar>
         <transition name="layout-sidebar">
             <div :class="sidebarClass" @click="onSidebarClick" v-show="isSidebarVisible()">
-
                 <AppProfile/>
                 <div v-if="$page.props.current_shift" class="text-sm text-center p-2">
                     <inertia-link href="/shifts/current">
                         <Button class="p-button-outlined p-button-success w-full justify-center">
                             กะทำงาน: {{ $filters.date($page.props.current_shift.d) }}
+                        </Button>
+                    </inertia-link>
+                </div>
+                <div v-else class="p-2">
+                    <inertia-link href="/shifts/create">
+                        <Button class="p-button-warning w-full justify-center">
+                            เปิดกะ
                         </Button>
                     </inertia-link>
                 </div>
@@ -27,7 +33,6 @@
 
         <Toast :baseZIndex="9999" :autoZIndex="false"/>
         <ConfirmDialog></ConfirmDialog>
-        <open-shift ref="openShift"/>
     </div>
     <div id="printable"></div>
 
@@ -155,11 +160,6 @@ export default {
                 }
             ],
 
-        }
-    },
-    mounted() {
-        if (!this.$page.props.current_shift) {
-            this.$refs.openShift.show()
         }
     },
     computed: {

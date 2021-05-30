@@ -23,6 +23,9 @@ class Shift extends Model
         'status'
     ];
 
+    public function team() {
+        return $this->belongsTo(Team::class);
+    }
     public function payments()
     {
         return $this->hasMany(Payment::class);

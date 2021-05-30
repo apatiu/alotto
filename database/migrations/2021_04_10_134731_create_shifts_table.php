@@ -16,11 +16,11 @@ class CreateShiftsTable extends Migration
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id');
-            $table->date('d');
+            $table->date('d')->nullable();
             $table->decimal('cash_begin')->default(0);
             $table->decimal('cash_in')->default(0);
             $table->decimal('cash_out')->default(0);
-            $table->decimal('cash_count');
+            $table->decimal('cash_count')->default(0);
             $table->decimal('cash_to_safe')->default(0);
             $table->decimal('cash_to_bank')->default(0);
             $table->decimal('cash_end')->default(0);
