@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      selected: null,
+      selected: this.modelValue,
       filteredItems: null,
       creating: false
     }

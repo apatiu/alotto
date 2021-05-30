@@ -14,7 +14,29 @@ export default {
     data() {
         return {
             form: this.$inertia.form({
-                customer: null,
+                customer: {
+                    "id": 2,
+                    "initial": null,
+                    "name": "aaa",
+                    "team_id": null,
+                    "contact_person": null,
+                    "birthday": null,
+                    "tax_id": null,
+                    "address": null,
+                    "city": null,
+                    "district": null,
+                    "province": null,
+                    "country": null,
+                    "postal_code": null,
+                    "idcard_start": null,
+                    "idcard_end": null,
+                    "idcard_place": null,
+                    "email": null,
+                    "phone": null,
+                    "created_at": "2021-05-30T08:37:38.000000Z",
+                    "updated_at": "2021-05-30T08:37:38.000000Z",
+                    "id_label": "C00002"
+                },
                 customer_id: null,
             })
         }
