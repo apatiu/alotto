@@ -24,12 +24,14 @@
                 <InputText v-model="form.address"/>
             </div>
             <div class="p-field">
-                <a-input
+                <label>เลขบัตรประชาชน</label>
+                <InputText
                     v-model="form.tax_id"
                     label="เลขบัตร"/>
             </div>
             <div class="p-field">
-                <a-input
+                <label>เบอร์โทร</label>
+                <InputText
                     v-model="form.phone"
                     label="เบอร์โทร"/>
             </div>
@@ -133,7 +135,7 @@ export default {
     },
     methods: {
         store() {
-            if (this.data.id ?? false) {
+            if (this.data) {
                 this.form.put(route('customers.update', this.data.id), {
                     errorBag: 'customer',
                     preserveScroll: true,
@@ -144,15 +146,13 @@ export default {
                     }
                 })
             } else {
-                this.form.post(route('customers.store'), {
-                    errorBag: 'createCustomer',
-                    preserveScroll: true,
-                    onSuccess: () => {
-                        this.$emit('created', this.form.data());
+
+                axios.post(route('api.customers.store'), this.form.data())
+                    .then(({data}) => {
+                        this.$emit('created', data);
                         this.form.reset()
                         this.close();
-                    }
-                })
+                    })
             }
         },
         close() {

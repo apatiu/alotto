@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
                 return \App\Models\User::all();
             });
 
+            Route::resource('customers', CustomerController::class);
             Route::resource('payment-methods', PaymentMethodController::class);
 
             Route::resource('banks', 'BankController');
