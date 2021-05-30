@@ -1,6 +1,7 @@
 <template>
     <div
-        class="relative flex items-top justify-center min-h-screen bg-white sm:items-center sm:pt-0">
+        class="relative flex items-top justify-center min-h-screen bg-white sm:items-center sm:pt-0"
+    style="background-image: url('/images/bg-billboard.jpg')">
         <div v-if="canLogin" class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
             <inertia-link v-if="$page.props.user" href="/dashboard" class="text-sm text-gray-700 underline">
                 Dashboard
