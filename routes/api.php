@@ -95,6 +95,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/goldprice', function () {
                 return goldprice();
             })->name('goldprice');
+            Route::get('/gold-prices/now', function () {
+                return \App\Models\GoldPrice::now();
+            })->name('gold-prices.now');
 
             Route::get('/gold-prices/now', [App\Http\Controllers\Api\GoldPriceController::class, 'now'])
                 ->name('gold-prices.now');

@@ -42,6 +42,10 @@ Route::get('/test',function() {
     return Inertia::render('Test');
 });
 
+Route::get('/bb',function() {
+    return Inertia::render('Billboard');
+});
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
