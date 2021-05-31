@@ -122,6 +122,7 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
             Route::delete('/user', [CurrentUserController::class, 'destroy'])
                 ->name('current-user.destroy');
         }
+        Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
 
         Route::middleware(['shift'])->group(function() {
 

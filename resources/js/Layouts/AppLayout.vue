@@ -148,6 +148,7 @@ export default {
                             url: route('teams.index'),
                         },
                         {label: 'Users', url: route('users.index')},
+                        {label: 'บัญชีธนาคาร', url: route('bank-accounts.index')},
                         {
                             label: 'API Token', url: route('api-tokens.index'),
                             visible: () => {

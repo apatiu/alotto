@@ -25,7 +25,7 @@
                     <div class="p-field p-grid">
                         <label for="" class="p-col-fixed" style="width:100px;">วันที่ทำรายการ</label>
                         <div class="p-col">
-                            <Calendar v-model="row.dt"></Calendar>
+                            <Calendar v-model="row.dt" :showTime="true"></Calendar>
                         </div>
                     </div>
                     <div class="p-field p-grid">
@@ -40,22 +40,23 @@
                     <Button label="ลงรายการ" @click="savePayment"></Button>
                 </div>
             </div>
-            <div class="flex-col w-80">
+            <Divider layout="vertical"/>
+            <div class="flex flex-col space-y-2 w-60">
                 <div class="flex justify-between w-full">
-                    <div>ยอดเรียกเก็บ</div>
-                    <div class="text-right border-b">{{ target }}</div>
+                    <div>ยอดที่ต้องการ</div>
+                    <div class="text-right font-bold">{{ $filters.decimal(target) }}</div>
                 </div>
-                <div class="flex justify-between w-full">
-                    <div>คงเหลือ</div>
-                    <div class="text-right border-b">{{ remain }}</div>
-                </div>
-                <div class="col-span-2">ยอดจ่าย</div>
-                <div class="flex justify-between w-full">
+                <div class="flex-grow flex flex-col items-between w-full overflow-y-scroll pl-8">
                     <template v-for="row in rows">
-                        <div>{{ row.method_id }}</div>
-                        <div>{{ row.amount }}</div>
+                        <div class="flex w-full">
+                            <div>{{ methodName(row.method_id) }}</div>
+                            <div class="text-right flex-grow">{{ $filters.decimal(row.amount) }}</div>
+                        </div>
                     </template>
-
+                </div>
+                <div class="flex justify-between w-full border-t">
+                    <div class="pt-2">ต้องการอีก</div>
+                    <div class="text-right font-bold text-red-800 ">{{ $filters.decimal(remain) }}</div>
                 </div>
 
             </div>
@@ -78,9 +79,12 @@ export default {
         }
     },
     props: {
-        visible: Boolean,
+        visible: {type: Boolean, default: false},
         target: Number,
         payments: Array,
+    },
+    mounted() {
+        this.row.dt = new Date();
     },
     data() {
         return {
@@ -130,6 +134,9 @@ export default {
         }
     },
     methods: {
+        methodName(id) {
+            return _.find(this.methods, ['id', id]).name
+        },
         savePayment() {
             this.v.$touch()
             if (this.v.$error) return;

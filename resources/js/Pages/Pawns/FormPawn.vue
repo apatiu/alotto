@@ -38,20 +38,19 @@
                     <div class="p-col-6">
                         <div class="p-field p-grid">
 
-                            <label for="" class="p-col-fixed w-20">วันที่รับ</label>
+                            <label for="" class="p-col-fixed w-26">วันที่รับ</label>
                             <Calendar v-model="form.dt" class="p-col"
                                       :disabled="!actionable  && !creating"></Calendar>
                         </div>
                         <div class="p-field p-grid">
-                            <label for="" class="p-col-fixed w-20">ครบอายุ</label>
+                            <label for="" class="p-col-fixed w-26">ครบอายุ</label>
                             <Calendar v-model="form.dt_end"
                                       :disabled="!actionable  && !creating"
                                       class="p-col"></Calendar>
                         </div>
                         <div class="p-field p-grid">
-                            <label for="" class="p-col-fixed w-28">อายุสัญญา</label>
+                            <label for="" class="p-col-fixed w-26">อายุสัญญา</label>
                             <InputNumber v-model="form.life"
-                                         showButtons
                                          :disabled="!actionable  && !creating"
                                          class="p-col"></InputNumber>
                         </div>

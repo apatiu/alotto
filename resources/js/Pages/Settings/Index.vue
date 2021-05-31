@@ -31,7 +31,7 @@
             </TabPanel>
             <TabPanel header="บัญชีธนาคาร">
                 <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                    <bank-accounts :bank_accounts="bank_accounts"></bank-accounts>
+
                 </div>
             </TabPanel>
         </TabView>
@@ -44,13 +44,11 @@ import AppLayout from '@/Layouts/AppLayout'
 import JetSectionBorder from '@/Jetstream/SectionBorder'
 import CompanyData from './CompanyData'
 import UpdateCompanyConfig from "@/Pages/Settings/UpdateCompanyConfig";
-import BankAccounts from "@/Pages/Settings/BankAccounts";
 
 export default {
     props: [
         'company',
         'company_config',
-        'bank_accounts'
     ],
 
     components: {

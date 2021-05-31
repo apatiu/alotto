@@ -1,4 +1,7 @@
 <template>
+    <Button label="Input payment" @click="dlgInputPayment = true"/>
+    <InputPayment target="1500" v-model:visible="dlgInputPayment"></InputPayment>
+    <Divider/>
     <SelectCustomer v-model="form.customer" @update:modelValue="form.customer_id=$event.id"/>
     <p>customer:</p>
     <div>{{ form.customer }}</div>
@@ -7,12 +10,14 @@
 
 <script>
 import SelectCustomer from "@/A/SelectCustomer";
+import InputPayment from "@/A/InputPayment";
 
 export default {
     name: "Test",
-    components: {SelectCustomer},
+    components: {InputPayment, SelectCustomer},
     data() {
         return {
+            dlgInputPayment: false,
             form: this.$inertia.form({
                 customer: {
                     "id": 2,

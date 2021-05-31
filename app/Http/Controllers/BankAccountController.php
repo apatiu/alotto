@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class BankAccountController extends Controller
 {
@@ -15,7 +16,7 @@ class BankAccountController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('BankAccounts/Index');
     }
 
     /**
