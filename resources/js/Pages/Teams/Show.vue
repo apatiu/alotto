@@ -9,14 +9,17 @@
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <update-team-name-form :team="team" :permissions="permissions"/>
-                <Divider />
+                <Divider/>
+                <BankAccounts :team="team"/>
+                <Divider/>
                 <pawn-settings :team="team" class="mt-10 sm:mt-0"/>
-                <Divider />
-                <SavingSettings :team="team" />
+                <Divider/>
+                <SavingSettings :team="team"/>
                 <team-member-manager class="mt-10 sm:mt-0"
                                      :team="team"
                                      :available-roles="availableRoles"
                                      :user-permissions="permissions"/>
+
 
                 <template v-if="permissions.canDeleteTeam && ! team.personal_team">
                     <jet-section-border/>
@@ -36,6 +39,7 @@ import JetSectionBorder from '@/Jetstream/SectionBorder'
 import UpdateTeamNameForm from './UpdateTeamNameForm'
 import PawnSettings from "@/Pages/Teams/PawnSettings";
 import SavingSettings from "./SavingSetting";
+import BankAccounts from "./BankAccounts";
 
 export default {
     props: [
@@ -43,11 +47,11 @@ export default {
         'availableRoles',
         'permissions',
     ],
-
     components: {
         SavingSettings,
         PawnSettings,
         AppLayout,
+        BankAccounts,
         DeleteTeamForm,
         JetSectionBorder,
         TeamMemberManager,

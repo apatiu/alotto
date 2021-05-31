@@ -35,7 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.')
         ->group(function () {
 
-            Route::get('/users',function() {
+            Route::get('/users', function () {
                 return \App\Models\User::all();
             });
 
@@ -43,6 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('payment-methods', PaymentMethodController::class);
 
             Route::resource('banks', 'BankController');
+            Route::get('/bank-accounts/fetch/{team_id}', [\App\Http\Controllers\Api\BankAccountController::class, 'fetch'])
+                ->name('bank-accounts.fetch');
             Route::resource('bank-accounts', 'BankAccountController');
             Route::post('/check-product', [\App\Http\Controllers\Api\ProductController::class, 'check'])
                 ->name('check-product');
@@ -66,7 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 ];
             });
-            Route::get('/pawns/search',[\App\Http\Controllers\Api\PawnController::class,'search'])
+            Route::get('/pawns/search', [\App\Http\Controllers\Api\PawnController::class, 'search'])
                 ->name('pawns.search');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
@@ -74,16 +76,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
-            Route::post('/savings/actions/refund/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'refund'
+            Route::post('/savings/actions/refund/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'refund'
             ])->name('savings.actions.refund');
-            Route::post('/savings/actions/close/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'close'
+            Route::post('/savings/actions/close/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'close'
             ])->name('savings.actions.close');
-            Route::post('/savings/actions/deposit/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'deposit'
+            Route::post('/savings/actions/deposit/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'deposit'
             ])->name('savings.actions.deposit');
-            Route::get('/savings/search',[\App\Http\Controllers\Api\SavingController::class,'search'])
+            Route::get('/savings/search', [\App\Http\Controllers\Api\SavingController::class, 'search'])
                 ->name('savings.search');
             Route::resource('savings', 'SavingController');
             Route::resource('saving-details', 'SavingDetailController');
@@ -104,15 +106,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
 
-            Route::resource('sales','SaleController');
-            Route::resource('payment-types','PaymentTypeController');
+            Route::resource('sales', 'SaleController');
+            Route::resource('payment-types', 'PaymentTypeController');
             Route::get('/sales/print/guarantee-card/{sale}',
                 [\App\Http\Controllers\Api\SaleController::class, 'printGuaranteeCard'])
-            ->name('sales.print.guarantee-card');
+                ->name('sales.print.guarantee-card');
         });
-
-
-
 
 
 });
