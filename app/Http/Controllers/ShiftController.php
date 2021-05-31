@@ -94,7 +94,6 @@ class ShiftController extends Controller
 
     public function showCurrent()
     {
-
         $shift = Shift::current();
         if ($shift) {
             $shift->calc();
@@ -103,15 +102,6 @@ class ShiftController extends Controller
 
         return Inertia::render('Shifts/Current', [
             'shift' => $shift
-        ]);
-    }
-
-    public function showLatest()
-    {
-        $shift = $this->getLatestShift();
-        $shift->calc();
-        return Inertia::render('Shifts/Show', [
-            'shift' => $shift->load('payments')
         ]);
     }
 
@@ -144,9 +134,9 @@ class ShiftController extends Controller
             $shift->fill($request->except('d'));
             $shift->closed_at = jsDateToDateTimeString(request('closed_at'));
             $shift->status = 'close';
-            $next_d = jsDateToDateTimeString($request->input('next_d'));
+//            $next_d = jsDateToDateTimeString($request->input('next_d'));
             $shift->save();
-            $this->createNextShift($next_d, $shift);
+//            $this->createNextShift($next_d, $shift);
         });
         return Redirect::route('shifts.show', $shift->id);
 

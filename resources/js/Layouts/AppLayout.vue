@@ -7,7 +7,7 @@
                 <div v-if="$page.props.current_shift" class="text-sm text-center p-2">
                     <inertia-link href="/shifts/current">
                         <Button class="p-button-outlined p-button-success w-full justify-center">
-                            กะทำงาน: {{ $filters.date($page.props.current_shift.d) }}
+                            กะทำงาน: {{ $filters.date($page.props.current_shift.opened_at) }}
                         </Button>
                     </inertia-link>
                 </div>

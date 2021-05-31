@@ -5,12 +5,8 @@
                 <h4>ข้อมูลกะทำงาน</h4>
             </template>
             <template #right>
-                <div class="flex space-x-2 items-center">
-                    <label>กะทำงาน</label>
-                    <Calendar v-model="form.d"
-                              :manualInput="false"></Calendar>
-                    <Button icon="pi pi-search" class="ml-2" @click="filter"></Button>
-                </div>
+                    <div>เปิดกะ: <span class="font-bold">{{ $filters.datetime(shift.opened_at)}}</span></div>
+                    <div class="ml-2">ปิดกะ: <span class="font-bold">{{ $filters.datetime(shift.closed_at)}}</span></div>
             </template>
         </Toolbar>
 

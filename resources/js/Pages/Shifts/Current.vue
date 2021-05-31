@@ -18,10 +18,7 @@
             </template>
             <template #right>
                 <div class="flex space-x-2 items-center">
-                    <label>วันที่กะ</label>
-                    <Calendar v-model="formShift.d"
-                              :manualInput="false"
-                              disabled></Calendar>
+                    เปิดกะ:&nbsp;<span class="font-bold">{{ $filters.datetime(shift.opened_at) }}</span>
                 </div>
             </template>
         </Toolbar>
@@ -251,10 +248,6 @@
                                         <label>นับสต้อก</label>
                                         <Button label="นับสต้อก"/>
                                     </div>
-                                    <div class="p-field ">
-                                        <label>วันที่กะใหม่</label>
-                                        <Calendar v-model="formShift.next_d"></Calendar>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -368,7 +361,7 @@ export default {
                 method_id: 'cash',
                 amount: null,
             }),
-            formShift: this.$inertia.form(_.assign(this.shift, {next_d: new Date})),
+            formShift: this.$inertia.form(_.assign(this.shift)),
             item: {},
             itemDialog: false,
             deleteItemDialog: false,
@@ -392,7 +385,11 @@ export default {
     },
     watch: {
         'formPayment.payment_type_id': function (val) {
-            this.$refs.inputAmount.$el.children[0].focus()
+            if (val) {
+                this.$refs.inputAmount.$el.children[0].focus()
+            } else {
+                this.formPayment.payment_type = val
+            }
         },
         'formShift.cash_to_safe': function (val) {
             this.updateCashEnd()
@@ -428,10 +425,10 @@ export default {
                 .value();
         },
         storePayment() {
-
             this.formPayment.post(route('payments.store'), {
                 onSuccess: (e) => {
                     this.formPayment.reset();
+                    this.formShift = this.$inertia.form(this.shift)
                 }
             })
         },
@@ -462,7 +459,6 @@ export default {
                             });
                         }
                     })
-
                 } else {
                     this.form.reset();
                     _.assign(this.form, this.item);

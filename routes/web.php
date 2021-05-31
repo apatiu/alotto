@@ -72,8 +72,6 @@ Route::middleware(['role:manager'])->group(function () {
 Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('users',UserController::class);
     Route::resource('settings', \App\Http\Controllers\SettingController::class);
-    Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
-    Route::resource('sales', \App\Http\Controllers\SaleController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
     Route::resource('gold-percents', GoldPercentController::class);
     Route::resource('product-types', ProductTypeController::class);
@@ -83,9 +81,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('customers', CustomerController::class);
     Route::resource('stock-imports', StockImportController::class);
     Route::post('/pawns-config', [\App\Http\Controllers\PawnController::class, 'storeConfig'])->name('pawns-config.store');
-    Route::resource('pawns', \App\Http\Controllers\PawnController::class);
     Route::post('/savings-config', [\App\Http\Controllers\SavingController::class, 'storeConfig'])->name('savings-config.store');
-    Route::resource('savings', \App\Http\Controllers\SavingController::class);
     Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
     Route::resource('payments', \App\Http\Controllers\PaymentController::class);
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);
@@ -126,6 +122,16 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
             Route::delete('/user', [CurrentUserController::class, 'destroy'])
                 ->name('current-user.destroy');
         }
+
+        Route::middleware(['shift'])->group(function() {
+
+            Route::get('/pos', [PosController::class, 'index'])->name('pos.index');
+            Route::resource('sales', \App\Http\Controllers\SaleController::class);
+            Route::resource('pawns', \App\Http\Controllers\PawnController::class);
+            Route::resource('savings', \App\Http\Controllers\SavingController::class);
+
+
+        });
 
         // API...
         if (Jetstream::hasApiFeatures()) {
