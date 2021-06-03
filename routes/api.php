@@ -14,12 +14,22 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Public routes
+Route::name('api.')
+    ->group(function () {
+        Route::post('/auth/register',
+            [\App\Http\Controllers\Api\AuthController::class, 'register'])
+            ->name('auth.register');
+        Route::post('/auth/login',
+            [\App\Http\Controllers\Api\AuthController::class, 'login'])
+            ->name('auth.login');
+    });
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
     Route::post('/customers/search', function (Request $request) {
         return \App\Models\Customer::where('name', 'like', '%' . $request->input('q', '') . '%')->get();
@@ -35,7 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->name('api.')
         ->group(function () {
 
-            Route::get('/users',function() {
+            Route::get('/users', function () {
                 return \App\Models\User::all();
             });
 
@@ -66,7 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
                 ];
             });
-            Route::get('/pawns/search',[\App\Http\Controllers\Api\PawnController::class,'search'])
+            Route::get('/pawns/search', [\App\Http\Controllers\Api\PawnController::class, 'search'])
                 ->name('pawns.search');
             Route::post('/pawns/action/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'storeAction'])->name('pawns.storeAction');
             Route::get('/pawns/print/{pawn}', [\App\Http\Controllers\Api\PawnController::class, 'print_ticket'])->name('pawns.print');
@@ -74,16 +84,16 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('pawns', 'PawnController');
             Route::resource('pawn-int-receives', 'PawnIntReceiveController');
 
-            Route::post('/savings/actions/refund/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'refund'
+            Route::post('/savings/actions/refund/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'refund'
             ])->name('savings.actions.refund');
-            Route::post('/savings/actions/close/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'close'
+            Route::post('/savings/actions/close/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'close'
             ])->name('savings.actions.close');
-            Route::post('/savings/actions/deposit/{saving}',[
-                \App\Http\Controllers\Api\SavingController::class,'deposit'
+            Route::post('/savings/actions/deposit/{saving}', [
+                \App\Http\Controllers\Api\SavingController::class, 'deposit'
             ])->name('savings.actions.deposit');
-            Route::get('/savings/search',[\App\Http\Controllers\Api\SavingController::class,'search'])
+            Route::get('/savings/search', [\App\Http\Controllers\Api\SavingController::class, 'search'])
                 ->name('savings.search');
             Route::resource('savings', 'SavingController');
             Route::resource('saving-details', 'SavingDetailController');
@@ -104,15 +114,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::post('/products/search', [\App\Http\Controllers\Api\ProductController::class, 'search'])->name('products.search');
 
-            Route::resource('sales','SaleController');
-            Route::resource('payment-types','PaymentTypeController');
+            Route::resource('sales', 'SaleController');
+            Route::resource('payment-types', 'PaymentTypeController');
             Route::get('/sales/print/guarantee-card/{sale}',
                 [\App\Http\Controllers\Api\SaleController::class, 'printGuaranteeCard'])
-            ->name('sales.print.guarantee-card');
+                ->name('sales.print.guarantee-card');
         });
-
-
-
 
 
 });

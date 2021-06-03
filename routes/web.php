@@ -8,7 +8,6 @@ use App\Http\Controllers\ProductDesignController;
 use App\Http\Controllers\ProductTypeController;
 use App\Http\Controllers\StockImportController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyConfigController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\PosController;
@@ -61,7 +60,6 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::middleware(['role:manager'])->group(function () {
 
-    Route::resource('company', CompanyController::class);
     Route::resource('company-config', CompanyConfigController::class);
 
 
