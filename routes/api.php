@@ -27,9 +27,13 @@ Route::name('api.')
 
 Route::middleware('auth:sanctum')->group(function () {
 
+    Route::post('/auth/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
+
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        return new \App\Http\Resources\UserResource($request->user());
     });
+
+    Route::resource('teams', \App\Http\Controllers\Api\TeamController::class);
 
     Route::post('/customers/search', function (Request $request) {
         return \App\Models\Customer::where('name', 'like', '%' . $request->input('q', '') . '%')->get();

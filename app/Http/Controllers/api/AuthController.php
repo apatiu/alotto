@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\PawnConfig;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -45,7 +47,7 @@ class AuthController extends Controller
             return $e;
         }
         $user->load('currentTeam');
-        return ['user' => $user, 'token' => $token];
+        return ['user' => new UserResource($user), 'token' => $token];
     }
 
     public function login(Request $request)
@@ -59,14 +61,19 @@ class AuthController extends Controller
 
         if ($user &&
             Hash::check($request->password, $user->password)) {
-            $user->load('currentTeam');
-            return [
-                'token' => $user->tokens()->whereName('myapptoken')->first()->token,
-                'user' => $user
-            ];
+            return response([
+                'token' => $user->createToken('myapptoken')->plainTextToken,
+                'user' => new UserResource($user)
+            ], 201);
         }
         throw ValidationException::withMessages([
             Fortify::username() => [trans('auth.failed')],
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        auth()->user()->tokens()->delete();
+        return ['message' => 'Logged out'];
     }
 }
