@@ -85,8 +85,6 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function () {
     Route::resource('oldgoldstocks', \App\Http\Controllers\OldGoldStockCardController::class);
     Route::resource('stock-cards', \App\Http\Controllers\StockCardController::class);
 
-    Route::post('shifts/close/{shift}', [\App\Http\Controllers\ShiftController::class, 'close'])->name('shifts.close');
-    Route::get('shifts/current', [\App\Http\Controllers\ShiftController::class, 'showCurrent'])->name('shifts.show-current');
     Route::resource('shifts', \App\Http\Controllers\ShiftController::class);
 
     Route::get('api-gold_percents', function () {
@@ -120,7 +118,6 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
             Route::delete('/user', [CurrentUserController::class, 'destroy'])
                 ->name('current-user.destroy');
         }
-        Route::resource('bank-accounts', \App\Http\Controllers\BankAccountController::class);
 
         Route::middleware(['shift'])->group(function() {
 
@@ -128,6 +125,9 @@ Route::group(['middleware' => config('jetstream.middleware', ['web'])], function
             Route::resource('sales', \App\Http\Controllers\SaleController::class);
             Route::resource('pawns', \App\Http\Controllers\PawnController::class);
             Route::resource('savings', \App\Http\Controllers\SavingController::class);
+
+            Route::post('shifts/close/{shift}', [\App\Http\Controllers\ShiftController::class, 'close'])->name('shifts.close');
+            Route::get('shifts/current', [\App\Http\Controllers\ShiftController::class, 'showCurrent'])->name('shifts.show-current');
 
 
         });

@@ -16,7 +16,7 @@ class BankAccountController extends Controller
      */
     public function index()
     {
-        return Inertia::render('BankAccounts/Index');
+        return BankAccount::all();
     }
 
     /**

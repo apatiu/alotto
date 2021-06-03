@@ -53,6 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::resource('payment-methods', PaymentMethodController::class);
 
             Route::resource('banks', 'BankController');
+            Route::get('/bank-accounts/fetch/{team_id}', [\App\Http\Controllers\Api\BankAccountController::class, 'fetch'])
+                ->name('bank-accounts.fetch');
             Route::resource('bank-accounts', 'BankAccountController');
             Route::post('/check-product', [\App\Http\Controllers\Api\ProductController::class, 'check'])
                 ->name('check-product');
