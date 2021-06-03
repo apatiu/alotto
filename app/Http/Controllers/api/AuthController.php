@@ -44,7 +44,7 @@ class AuthController extends Controller
             DB::rollBack();
             return $e;
         }
-        $user->load('currenTeam');
+        $user->load('currentTeam');
         return ['user' => $user, 'token' => $token];
     }
 
