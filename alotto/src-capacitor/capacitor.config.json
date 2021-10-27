@@ -1,0 +1,7 @@
+{
+  "appId": "com.thaibbpro.alotto",
+  "appName": "Alotto",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "www"
+}
