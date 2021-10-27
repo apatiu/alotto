@@ -10,8 +10,12 @@
 
 <script>
 import { defineComponent } from 'vue';
+import {api} from "boot/axios";
 
 export default defineComponent({
-  name: 'PageIndex'
+  name: 'PageIndex',
+  mounted() {
+    api.get('/collections/get/Periods')
+  }
 })
 </script>
